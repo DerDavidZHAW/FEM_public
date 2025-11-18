@@ -1,0 +1,27 @@
+﻿region,edge_number,number
+Zürich,1,CH04
+Bern,2,CH02
+Luzern,3,CH06
+Uri,4,CH06
+Schwyz,5,CH06
+Obwalden,6,CH06
+Nidwalden,7,CH06
+Glarus,8,CH05
+Zug,9,CH06
+Freiburg ,10,CH02
+Solothurn ,11,CH02
+Basel-Stadt ,12,CH03
+Basel-Landschaft,13,CH03
+Schaffhausen,14,CH05
+Appenzell A.Rh.,15,CH05
+Appenzell I.Rh.,16,CH05
+Sankt Gallen ,17,CH05
+Graubünden ,18,CH05
+Aargau,19,CH03
+Thurgau,20,CH05
+Ticino,21,CH07
+Vaud,22,CH01
+Valais,23,CH01
+Neuchatel,24,CH02
+Geneve,25,CH01
+Jura,26,CH02

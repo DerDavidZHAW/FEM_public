@@ -1,0 +1,12 @@
+﻿fuel,limit_type,scenario,unit,2020,2030,2035,2040,2050
+resdiesel,import_capacity_annual,ZBA,mwh,17777778,17777778,17777778,17777778,17777778
+resmethane,import_capacity_annual,ZBA,mwh,17777778,17777778,17777778,17777778,17777778
+fossilmethane,import_capacity_annual,ZBA,mwh,36000000,36000000,36000000,36000000,36000000
+oil,import_capacity_annual,ZBA,mwh,68571428,68571428,68571428,68571428,68571428
+biomass,import_capacity_annual,ZBA,mwh,0.1,0.1,0.1,0.1,0.1
+biomass,production_capacity_CH,ZBA,mwh,1477130.594,1477130.594,4425000,5225000,6025000
+fossilmethane,storage_potential_capacity,ZBA,mwh,1430000,1430000,1430000,1430000,1430000
+resmethane,storage_potential_capacity,ZBA,mwh,1430000,1430000,1430000,1430000,1430000
+oil,storage_potential_capacity,ZBA,mwh,68571428,68571428,68571428,68571428,68571428
+biomass,storage_potential_capacity,ZBA,mwh,0.1,0.1,0.1,0.1,0.1
+V2G,storage_capacity,ZBA,mwh,6500,6500,6500,6500,11250

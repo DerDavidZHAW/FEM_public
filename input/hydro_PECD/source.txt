@@ -1,0 +1,2 @@
+https://zenodo.org/record/7224854 v2
+ENTSO-E Pan-European Climatic Database (PECD 2021.3) in Parquet format

@@ -1,0 +1,2 @@
+index,node,market,plant_type,tech,upperwn,lowerwn,eta,eta_pump,n_redispatch
+CH00_electrolyzer,CH00,CH00,electrolyzer,electrolyzer,,,,,

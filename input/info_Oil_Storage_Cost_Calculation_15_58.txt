@@ -1,0 +1,75 @@
+Oil Storage Cost Calculation — Documentation
+================================================
+
+Purpose
+-------
+Compute the cost of **maintaining oil storage capacity per 1 MWh of stored fuel energy**, using an
+all-in annual storage OPEX of **15.58 CHF per m³·year** derived from the breakdown below.
+
+Source Basis for 15.58 CHF/m³·yr
+--------------------------------
+Maintenance Costs for Storage Capacities (CHF/m³/year), 2023 (CARBURA context):
+1) Unleaded Gasoline 95 (Bleifrei 95)
+   - ZL (Approved Storage): ~ CHF 10.36 – 10.55 / m³·yr
+   - Pflichtlager (Compulsory Storage): ~ CHF 10.85 – 11.04 / m³·yr
+2) Jet Fuel (Flugpetrol)
+   - ZL: ~ CHF 10.54 – 10.90 / m³·yr
+   - Pflichtlager: ~ CHF 11.01 – 11.37 / m³·yr
+3) Diesel Oil (Dieselöl)
+   - ZL: ~ CHF 7.85 – 8.11 / m³·yr
+
+What is used here (to construct 15.58 CHF/m³·yr):
+- Maintenance cost (Diesel oil): **CHF 7.98 / m³·yr**
+  (average of CHF 7.85–8.11)
+- Operating & capital cost compensations: **CHF 6.20 / m³·yr**
+  (computed as 41 million CHF / 6.6 million m³)
+- Individual investment costs: **CHF 1.40 / m³·yr**
+  (computed as 9.2 million CHF / 6.6 million m³)
+
+Total storage OPEX used in calculations:
+**7.98 + 6.20 + 1.40 = 15.58 CHF / m³·year**
+
+Primary reference (context for maintenance-cost figures and CARBURA data):
+CARBURA (2023). Geschäftsbericht 2023.
+Link: https://www.carbura.ch/fileadmin/user_upload/editors/web_dokumente/pdf_dokumente/Geschaeftsberichte/2023_CARBURA_GB_DE.pdf
+
+Assumptions for Energy & Physical Properties
+--------------------------------------------
+- Oil lower heating value (LHV): **42 MJ/kg**
+- Oil density: **0.9 kg/L = 900 kg/m³**
+- Unit conversion: **1 MWh = 3,600 MJ**
+- (Power-plant efficiency = **35%**, only needed if converting the result to a
+  per–MWh of electricity-output basis; storage-per-MWh_fuel does **not** use efficiency.)
+
+Calculation — per 1 MWh of Stored Fuel Energy
+---------------------------------------------
+Step 1: Mass of oil required for 1 MWh_fuel
+  m = (3,600 MJ) / (42 MJ/kg) = **85.71 kg**
+
+Step 2: Volume of oil corresponding to that mass
+  V = m / ρ = (85.71 kg) / (900 kg/m³) = **0.095238 m³**  (≈ **95.2 L**)
+
+Step 3: Annual storage cost per MWh_fuel
+  C = V × (15.58 CHF/m³·yr)
+    = 0.095238 × 15.58
+    = **1.484 CHF / MWh_fuel · year**  (rounded to 1.48 CHF)
+
+Optional Conversion to Electricity Basis (35% efficiency)
+---------------------------------------------------------
+If the stored fuel is later used in a 35%-efficient plant:
+
+- Cost per MWh of electricity output:
+    C_e = 1.484 / 0.35 = **4.24 CHF / MWh_e · year**
+- Volume per MWh of electricity output:
+    V_e = 0.095238 / 0.35 = **0.272 m³ / MWh_e**
+
+Summary
+-------
+- **Storage OPEX used:** 15.58 CHF / m³·yr
+- **Volume per MWh_fuel:** 0.095238 m³ (≈ 95.2 L)
+- **Cost per MWh_fuel · yr:** **1.48 CHF**
+- (Optional) **Cost per MWh_e · yr (at 35%):** **4.24 CHF**
+- (Optional) **Volume per MWh_e (at 35%):** **0.272 m³**
+
+Author: Ali Darudi
+Date: 2025-10-29

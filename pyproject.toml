@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "future-markets"
+version = "0.1.0"
+description = ""
+authors = ["AD"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+pyomo = "^6.6.2"
+pandas = "^2.1.2"
+openpyxl = "^3.1.2"
+plotly = "^5.18.0"
+orca = "^1.8"
+matplotlib = "^3.10.0"
+pyarrow = "^15"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

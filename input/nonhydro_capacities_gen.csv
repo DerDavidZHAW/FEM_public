@@ -1,0 +1,411 @@
+name,scenario,2030,2035,2040,2050
+# AL00_battery,DistributedEnergy,179.4084474,223.7409211,268.0733949,237.3918841
+# AL00_battery,GlobalAmbition,100.2578217,104.8170739,109.376326,128.6508681
+# AL00_gas,DistributedEnergy,300,300,300,300
+# AL00_gas,GlobalAmbition,300,300,300,300
+AT00_battery,DistributedEnergy,4289.962533,6643.831659,8997.700784,14935.84669
+AT00_battery,GlobalAmbition,3062.877059,5065.363973,7067.850888,9042.406202
+AT00_biomass,DistributedEnergy,585.92,585.92,585.92,585.92
+AT00_biomass,GlobalAmbition,585.92,585.92,585.92,585.92
+AT00_dsr,DistributedEnergy,500,1250,2000,2260
+AT00_dsr,GlobalAmbition,500,1250,2000,2000
+AT00_gas,DistributedEnergy,4123.102,3716.051,3309,3309
+AT00_gas,GlobalAmbition,4123.102,2540.051,957,957
+AT00_oil,DistributedEnergy,163.606,81.803,,
+AT00_oil,GlobalAmbition,163.606,81.803,,
+# BA00_battery,DistributedEnergy,245.0935074,211.904552,178.7155966,158.261256
+# BA00_battery,GlobalAmbition,66.83854783,69.87804926,72.91755069,85.7672454
+# BA00_hardcoal,DistributedEnergy,1918,959,,
+# BA00_hardcoal,GlobalAmbition,1303,651.5,,
+BE00_battery,DistributedEnergy,4254.295408,6588.594259,8922.89311,10889.71547
+BE00_battery,GlobalAmbition,2842.640536,3358.344103,3874.047671,4958.283163
+BE00_biomass,DistributedEnergy,903.6,903.6,903.6,903.6
+BE00_biomass,GlobalAmbition,903.6,903.6,903.6,903.6
+BE00_dsr,DistributedEnergy,2047.804535,2119.477722,2191.150909,2476.000528
+BE00_dsr,GlobalAmbition,2047.804535,2119.477722,2191.150909,2191.150909
+BE00_gas,DistributedEnergy,9843.843568,16064.17265,22284.50173,38438.73065
+BE00_gas,GlobalAmbition,9843.843568,9733.172647,9622.501726,8792.201726
+BE00_oil,DistributedEnergy,158,158,158,140
+BE00_oil,GlobalAmbition,158,158,158,140
+# BG00_battery,DistributedEnergy,1218.62677,1723.116531,2227.606291,2440.510451
+# BG00_battery,GlobalAmbition,859.3407444,863.7796861,868.2186278,1111.208268
+# BG00_biomass,DistributedEnergy,302,305.5,309,309
+# BG00_biomass,GlobalAmbition,302,305.5,309,309
+# BG00_gas,DistributedEnergy,2025,4265,6505,6283
+# BG00_gas,GlobalAmbition,2025,1969,1913,1691
+# BG00_hardcoal,DistributedEnergy,2519,1259.5,,
+# BG00_hardcoal,GlobalAmbition,2519,1259.5,,
+# BG00_nuclear,DistributedEnergy,1960,980,,
+# BG00_nuclear,GlobalAmbition,1960,2960,3960,2000
+# CY00_battery,DistributedEnergy,210.9721397,279.5484537,348.1247676,501.2541306
+# CY00_battery,GlobalAmbition,144.7148062,180.1144416,215.5140771,278.2787577
+# CY00_biomass,DistributedEnergy,15,15,15,15
+# CY00_biomass,GlobalAmbition,15,15,15,15
+# CY00_dsr,DistributedEnergy,50,50,50,56.5
+# CY00_dsr,GlobalAmbition,50,50,50,50
+# CY00_gas,DistributedEnergy,1210,1210,1210,380
+# CY00_gas,GlobalAmbition,1210,1210,1210,380
+# CY00_oil,DistributedEnergy,287.7,143.85,,
+# CY00_oil,GlobalAmbition,287.7,143.85,,
+CZ00_battery,DistributedEnergy,1926.862682,2784.743999,3642.625315,3810.830748
+CZ00_battery,GlobalAmbition,1057.666426,1297.668681,1537.670936,1984.897265
+CZ00_biomass,DistributedEnergy,676.45,752.4,828.35,828.35
+CZ00_biomass,GlobalAmbition,676.45,752.4,828.35,828.35
+CZ00_gas,DistributedEnergy,3760.4,9026.4,14292.4,15598.97921
+CZ00_gas,GlobalAmbition,3760.4,4572.4,5384.4,4461.2
+CZ00_hardcoal,DistributedEnergy,2906.5,1453.25,,
+CZ00_hardcoal,GlobalAmbition,2906.5,1453.25,,
+CZ00_nuclear,DistributedEnergy,4055.2,3096.4,2137.6,
+CZ00_nuclear,GlobalAmbition,4055.2,4625.2,5195.2,3277.599999
+DE00_battery,DistributedEnergy,18249.67895,28263.13606,38276.59317,63537.71272
+DE00_battery,GlobalAmbition,14638.82771,21985.4529,29332.07808,37469.66589
+DE00_biomass,DistributedEnergy,7570.4,8113.8,8657.2,8657.2
+DE00_biomass,GlobalAmbition,7570.4,8113.8,8657.2,8657.2
+DE00_dsr,DistributedEnergy,1758.864952,2466.732464,3174.599975,3587.297972
+DE00_dsr,GlobalAmbition,1758.864952,2466.732464,3174.599975,3174.599975
+DE00_gas,DistributedEnergy,55980.37508,84832.32504,113684.275,126188.225
+DE00_gas,GlobalAmbition,38501.27508,39631.22504,40761.175,55684.225
+DE00_hardcoal,DistributedEnergy,9030.9,4515.45,,
+DE00_hardcoal,GlobalAmbition,9030.9,4515.45,,
+DE00_oil,DistributedEnergy,850.93,744.07,637.21,143.81
+DE00_oil,GlobalAmbition,850.93,744.07,637.21,143.81
+# DEKF_battery,DistributedEnergy,0,0,0,0
+# DEKF_battery,GlobalAmbition,0,0,0,0
+DKE1_battery,DistributedEnergy,51.51918053,79.78735479,108.055529,179.3681358
+DKE1_battery,GlobalAmbition,41.32568085,82.78597538,124.2462699,241.3396458
+DKE1_biomass,DistributedEnergy,1369.12,1234.88,1100.64,356.41
+DKE1_biomass,GlobalAmbition,1369.12,1234.88,1100.64,356.41
+DKE1_gas,DistributedEnergy,399.2639426,2186.722705,3974.181467,4082.201651
+DKE1_gas,GlobalAmbition,399.2639426,395.722705,392.1814674,292.1814674
+DKE1_oil,DistributedEnergy,588.29,588.29,588.29,62.32
+DKE1_oil,GlobalAmbition,588.29,588.29,588.29,62.32
+# DKKF_battery,DistributedEnergy,0,0,0,0
+# DKKF_battery,GlobalAmbition,0,0,0,0
+DKW1_battery,DistributedEnergy,82.23253816,127.3528932,172.4732483,286.2991398
+DKW1_battery,GlobalAmbition,65.96214443,132.139153,198.3161616,385.2152039
+DKW1_biomass,DistributedEnergy,1137.154191,879.7091909,622.2641909,445.2641909
+DKW1_biomass,GlobalAmbition,1137.154191,879.7091909,622.2641909,445.2641909
+DKW1_gas,DistributedEnergy,1249.697427,3902.208988,6554.72055,8093.38369
+DKW1_gas,GlobalAmbition,1249.697427,882.2089883,514.7205501,514.7205501
+DKW1_oil,DistributedEnergy,223.1,216.1,209.1,209.1
+DKW1_oil,GlobalAmbition,223.1,216.1,209.1,209.1
+# EE00_battery,DistributedEnergy,411.1626908,477.4085357,543.6543805,595.6143159
+# EE00_battery,GlobalAmbition,113.4322906,162.6619002,211.8915098,271.1939023
+# EE00_biomass,DistributedEnergy,381.85,333.75,285.65,285.65
+# EE00_biomass,GlobalAmbition,381.85,333.75,285.65,285.65
+# EE00_dsr,DistributedEnergy,90,131.6666667,173.3333333,195.8666667
+# EE00_dsr,GlobalAmbition,90,131.6666667,173.3333333,173.3333333
+# EE00_gas,DistributedEnergy,155,155,155,993.6469492
+# EE00_gas,GlobalAmbition,155,155,155,155
+# EE00_oil,DistributedEnergy,426.8,281.9,137,137
+# EE00_oil,GlobalAmbition,426.8,281.9,137,137
+ES00_battery,DistributedEnergy,12389.29901,16384.27779,20379.25657,28496.48582
+ES00_battery,GlobalAmbition,7509.93243,12404.92188,17299.91133,22312.44195
+ES00_biomass,DistributedEnergy,1730,1730,1730,1730
+ES00_biomass,GlobalAmbition,1730,1730,1730,1730
+ES00_dsr,DistributedEnergy,,1600,1600,1808
+ES00_dsr,GlobalAmbition,,1600,1600,1600
+ES00_gas,DistributedEnergy,28478.56,28855.56,29232.56,29232.56
+ES00_gas,GlobalAmbition,28478.56,28478.56,28478.56,28478.56
+ES00_nuclear,GlobalAmbition,7117.300001,3558.650001,,
+# FI00_battery,DistributedEnergy,1487.823057,1856.067445,2224.311833,2503.301483
+# FI00_battery,GlobalAmbition,411.5653155,634.2606525,856.9559894,1093.67715
+# FI00_biomass,DistributedEnergy,3707.32,3581.37,3455.42,3379.42
+# FI00_biomass,GlobalAmbition,3707.32,3581.37,3455.42,3379.42
+# FI00_dsr,DistributedEnergy,4490.831543,7207.503296,9924.175048,11214.3178
+# FI00_dsr,GlobalAmbition,4490.831543,7207.503296,9924.175048,9924.175048
+# FI00_gas,DistributedEnergy,2360.5,1654.099998,947.6999969,297.5236638
+# FI00_gas,GlobalAmbition,2360.5,1654.099998,947.6999969,208.2999992
+# FI00_nuclear,DistributedEnergy,3887,3189,2491,1600
+# FI00_nuclear,GlobalAmbition,5594,5594,5594,5594
+FR00_battery,DistributedEnergy,1253.303142,1940.980843,2628.658543,4363.474842
+FR00_battery,GlobalAmbition,1005.326659,2013.928055,3022.529451,5871.050999
+FR00_biomass,DistributedEnergy,2411,2498.5,2586,2586
+FR00_biomass,GlobalAmbition,2411,2498.5,2586,2586
+FR00_dsr,DistributedEnergy,5480,5480,5480,6192.4
+FR00_dsr,GlobalAmbition,5480,5480,5480,5480
+FR00_gas,DistributedEnergy,9712.199951,25534.84998,41357.5,84485.28874
+FR00_gas,GlobalAmbition,9712.199951,9301.849975,8891.5,6143.5
+FR00_nuclear,DistributedEnergy,57350.99999,46712,36073.00001,15209
+FR00_nuclear,GlobalAmbition,61696,61938.5,62181,51606
+FR00_oil,DistributedEnergy,1255,769.5,284,
+FR00_oil,GlobalAmbition,1255,769.5,284,
+# FR15_battery,DistributedEnergy,51.46963655,82.0302312,112.5908258,166.1743188
+# FR15_battery,GlobalAmbition,46.78698348,99.95691997,153.1268565,197.6935006
+# FR15_dsr,DistributedEnergy,1.5,1.5,1.5,1.695
+# FR15_dsr,GlobalAmbition,1.5,1.5,1.5,1.5
+# GR00_battery,DistributedEnergy,2972.260415,4243.494315,5514.728214,6041.800067
+# GR00_battery,GlobalAmbition,2042.054562,2095.721176,2149.38779,2750.940153
+# GR00_biomass,DistributedEnergy,511.2,689.65,868.1,1028.1
+# GR00_biomass,GlobalAmbition,511.2,689.65,868.1,1028.1
+# GR00_gas,DistributedEnergy,7669.124,7394.024,7118.924,11207.68529
+# GR00_gas,GlobalAmbition,7669.124,7394.024,7118.924,5569.3
+# GR03_battery,DistributedEnergy,98.03740296,156.2480594,214.4587159,316.5225121
+# GR03_battery,GlobalAmbition,89.11806378,131.5132111,173.9083584,204.5548803
+# GR03_oil,DistributedEnergy,408,253,98,98
+# GR03_oil,GlobalAmbition,408,253,98,98
+HR00_battery,DistributedEnergy,346.0363804,599.9969159,853.9574514,914.2772088
+HR00_battery,GlobalAmbition,95.24697767,215.6404744,336.0339712,431.0798609
+HR00_biomass,DistributedEnergy,400,400,400,400
+HR00_biomass,GlobalAmbition,400,400,400,400
+HR00_dsr,DistributedEnergy,1.25,1.25,1.25,1.4125
+HR00_dsr,GlobalAmbition,1.25,1.25,1.25,1.25
+HR00_gas,DistributedEnergy,897,738.5,580,3193.475266
+HR00_gas,GlobalAmbition,897,738.5,580,200
+HU00_battery,DistributedEnergy,1884.413103,2918.375939,3952.338774,5437.689619
+HU00_battery,GlobalAmbition,1391.394958,2060.104807,2728.814656,3508.364182
+HU00_biomass,DistributedEnergy,904.87,948.32,991.77,991.77
+HU00_biomass,GlobalAmbition,904.87,948.32,991.77,991.77
+HU00_gas,DistributedEnergy,3338.012106,4247.174776,5156.337446,9176.88264
+HU00_gas,GlobalAmbition,3338.012106,2851.174776,2364.337446,1106.337446
+HU00_nuclear,DistributedEnergy,948,474,,
+HU00_nuclear,GlobalAmbition,3080,2958,2836,2360
+HU00_oil,DistributedEnergy,410,410,410,
+HU00_oil,GlobalAmbition,410,410,410,
+# IE00_battery,DistributedEnergy,399.8940498,580.658242,761.4224342,789.6110717
+# IE00_battery,GlobalAmbition,133.8959666,218.6818021,303.4676376,390.4920774
+# IE00_biomass,DistributedEnergy,109,131.5,154,154
+# IE00_biomass,GlobalAmbition,109,131.5,154,154
+# IE00_dsr,DistributedEnergy,500,700,900,1017
+# IE00_dsr,GlobalAmbition,500,700,900,900
+# IE00_gas,DistributedEnergy,4643.710701,5338.103582,6032.496462,12691.30491
+# IE00_gas,GlobalAmbition,4643.710701,4633.103582,4622.496462,4622.496462
+# IE00_hardcoal,DistributedEnergy,39,19.5,,
+# IE00_hardcoal,GlobalAmbition,39,19.5,,
+# IE00_oil,DistributedEnergy,324,324,324,324
+# IE00_oil,GlobalAmbition,324,324,324,324
+IT00_battery,DistributedEnergy,15109.92459,22160.27949,29210.63438,39358.69518
+IT00_battery,GlobalAmbition,11955.3543,13699.92716,15444.50001,19711.71469
+IT00_biomass,DistributedEnergy,4714.31,4794.615,4874.92,4874.92
+IT00_biomass,GlobalAmbition,4714.31,4794.615,4874.92,4874.92
+IT00_dsr,DistributedEnergy,2704.643346,2704.643346,2704.643346,3056.246981
+IT00_dsr,GlobalAmbition,2704.643346,2704.643346,2704.643346,2704.643346
+IT00_gas,DistributedEnergy,50245.8,50065.30029,49884.80059,55582.60252
+IT00_gas,GlobalAmbition,50245.8,50579.80029,50913.80059,53813.80059
+# LT00_battery,DistributedEnergy,661.8233192,763.8264394,865.8295597,948.5814873
+# LT00_battery,GlobalAmbition,341.663526,339.5620622,337.4605985,431.9061989
+# LT00_biomass,DistributedEnergy,212.39,212.39,212.39,212.39
+# LT00_biomass,GlobalAmbition,212.39,212.39,212.39,212.39
+# LT00_dsr,DistributedEnergy,40,45,50,56.5
+# LT00_dsr,GlobalAmbition,40,45,50,50
+# LT00_gas,DistributedEnergy,538.2,1346.2,2154.2,1783.2
+# LT00_gas,GlobalAmbition,538.2,538.2,538.2,167.2
+# LT00_oil,DistributedEnergy,150,150,150,150
+# LT00_oil,GlobalAmbition,150,150,150,150
+LU00_battery,DistributedEnergy,329.4307947,419.786616,510.1424373,594.4288696
+LU00_battery,GlobalAmbition,168.1520533,180.8930156,193.6339778,246.1723788
+LU00_biomass,DistributedEnergy,96.3,108.8,121.3,121.3
+LU00_biomass,GlobalAmbition,96.3,108.8,121.3,121.3
+LU00_dsr,DistributedEnergy,8.5714283,8.5714283,8.5714283,9.68571398
+LU00_dsr,GlobalAmbition,8.5714283,8.5714283,8.5714283,8.5714283
+LU00_gas,DistributedEnergy,100,486,872,1679.183658
+LU00_gas,GlobalAmbition,100,100,100,100
+# LV00_battery,DistributedEnergy,38.4376915,80.79472578,123.1517601,127.3503473
+# LV00_battery,GlobalAmbition,10.54376381,29.84026604,49.13676826,63.24411275
+# LV00_biomass,DistributedEnergy,159.09,229.545,300,300
+# LV00_biomass,GlobalAmbition,159.09,229.545,300,300
+# LV00_dsr,DistributedEnergy,36.8,36.8,36.8,41.584
+# LV00_dsr,GlobalAmbition,36.8,36.8,36.8,36.8
+# LV00_gas,DistributedEnergy,1061,1061,1061,1169.258142
+# LV00_gas,GlobalAmbition,1061,1061,1061,65
+# ME00_battery,DistributedEnergy,30.63668842,30.95595891,31.2752294,27.69571981
+# ME00_battery,GlobalAmbition,8.354818479,10.55769493,12.76057137,15.00926795
+# ME00_biomass,DistributedEnergy,49,49,49,49
+# ME00_biomass,GlobalAmbition,49,49,49,49
+# ME00_hardcoal,DistributedEnergy,450,225,,
+# ME00_hardcoal,GlobalAmbition,450,225,,
+# MK00_battery,DistributedEnergy,250.5863124,214.0489318,177.5115513,170.5808486
+# MK00_battery,GlobalAmbition,68.8870362,69.55027423,70.21351226,81.98656216
+# MK00_biomass,DistributedEnergy,31,31,31,31
+# MK00_biomass,GlobalAmbition,31,31,31,31
+# MK00_gas,DistributedEnergy,276.8,138.4,,
+# MK00_gas,GlobalAmbition,276.8,138.4,,
+# MK00_hardcoal,DistributedEnergy,410,205,,
+# MK00_hardcoal,GlobalAmbition,410,205,,
+# MT00_battery,DistributedEnergy,128.7047666,154.8290115,180.9532565,211.1382278
+# MT00_battery,GlobalAmbition,65.29159115,66.94085579,68.59012044,87.18155488
+# MT00_gas,DistributedEnergy,760.3,850.15,940,1007.101526
+# MT00_gas,GlobalAmbition,615.42,772.82,930.22,1006
+NL00_battery,DistributedEnergy,13749.67668,19037.17364,24324.6706,28313.4911
+NL00_battery,GlobalAmbition,7486.176821,8610.822149,9735.467476,12428.87845
+NL00_biomass,DistributedEnergy,3900,2250,600,600
+NL00_biomass,GlobalAmbition,3900,2250,600,600
+NL00_dsr,DistributedEnergy,700,700,700,791
+NL00_dsr,GlobalAmbition,700,700,700,700
+NL00_gas,DistributedEnergy,18593.92401,36537.25851,54480.59302,61340.74664
+NL00_gas,GlobalAmbition,15279.92401,19937.25851,24594.59302,35910.59302
+NL00_nuclear,DistributedEnergy,486,243,,
+NL00_nuclear,GlobalAmbition,486,243,,
+NOM1_battery,DistributedEnergy,110.2920783,95.35704839,80.42201846,71.21756522
+NOM1_battery,GlobalAmbition,30.07734652,31.44512217,32.81289781,38.59526043
+NOM1_dsr,DistributedEnergy,1423,1423,1423,1607.99
+NOM1_dsr,GlobalAmbition,1423,1423,1423,1423
+NOM1_gas,DistributedEnergy,20,20,20,20
+NOM1_gas,GlobalAmbition,20,20,20,20
+NON1_battery,DistributedEnergy,0,0,0,0
+NON1_battery,GlobalAmbition,0,0,0,0
+NON1_biomass,DistributedEnergy,0.03,0.03,0.03,0.03
+NON1_biomass,GlobalAmbition,0.03,0.03,0.03,0.03
+NON1_dsr,DistributedEnergy,1296,1296,1296,1464.48
+NON1_dsr,GlobalAmbition,1296,1296,1296,1296
+NON1_gas,DistributedEnergy,195,195,195,195
+NON1_gas,GlobalAmbition,195,195,195,1312.4
+NOS0_battery,DistributedEnergy,297.7886115,257.4640307,217.1394498,192.2874261
+NOS0_battery,GlobalAmbition,81.20883562,84.90182985,88.59482409,104.2072032
+NOS0_dsr,DistributedEnergy,3575,3575,3575,4039.75
+NOS0_dsr,GlobalAmbition,3575,3575,3575,3575
+NOS0_gas,DistributedEnergy,50,928,1806,1806
+NOS0_gas,GlobalAmbition,50,50,50,50
+PL00_battery,DistributedEnergy,3963.013887,4955.544898,5948.075909,6516.565102
+PL00_battery,GlobalAmbition,1397.813817,1858.050318,2318.28682,2967.109205
+PL00_biomass,DistributedEnergy,2887.918854,1718.552303,549.1857513,549.1857513
+PL00_biomass,GlobalAmbition,2887.918854,1719.108531,550.2982086,550.2982086
+PL00_gas,DistributedEnergy,24407.77998,37258.37001,50108.96004,61292.50017
+PL00_gas,GlobalAmbition,15363.15998,20423.06001,25482.96004,22539.76003
+PL00_hardcoal,DistributedEnergy,7445.5,3722.75,,
+PL00_hardcoal,GlobalAmbition,7445.5,3722.75,,
+PL00_nuclear,GlobalAmbition,,4400,4400,9900
+PT00_battery,DistributedEnergy,1582.936664,2165.292717,2747.648769,3951.366815
+PT00_battery,GlobalAmbition,1113.644914,1847.286278,2580.927641,3334.65655
+PT00_biomass,DistributedEnergy,1049.7,1113.7,1177.7,1177.7
+PT00_biomass,GlobalAmbition,1049.7,1113.7,1177.7,1177.7
+PT00_gas,DistributedEnergy,3465.589327,3372.381151,3279.172974,3279.172974
+PT00_gas,GlobalAmbition,3465.589327,3372.381151,3279.172974,3279.172974
+# RO00_battery,DistributedEnergy,2725.562801,3181.023476,3636.484151,3984.042247
+# RO00_battery,GlobalAmbition,1381.413968,1399.374241,1417.334514,1814.006035
+# RO00_biomass,DistributedEnergy,137,243.5,350,350
+# RO00_biomass,GlobalAmbition,137,243.5,350,350
+# RO00_gas,DistributedEnergy,6739.401999,6695.401999,6651.401999,12697.93196
+# RO00_gas,GlobalAmbition,6739.401999,6689.401999,6639.401999,5439.402
+# RO00_hardcoal,DistributedEnergy,1685.3,842.65,,
+# RO00_hardcoal,GlobalAmbition,1685.3,842.65,,
+# RO00_nuclear,DistributedEnergy,1300,1300,1300,650
+# RO00_nuclear,GlobalAmbition,1965,2297.5,2630,2630
+# RS00_battery,DistributedEnergy,288.4000489,283.9758046,279.5515603,263.4281245
+# RS00_battery,GlobalAmbition,78.77435888,95.10507838,111.4357979,130.3616783
+# RS00_biomass,DistributedEnergy,141.75,219.3,296.85,296.85
+# RS00_biomass,GlobalAmbition,141.75,219.3,296.85,296.85
+# RS00_gas,DistributedEnergy,400.9,400.9,400.9,400.9
+# RS00_gas,GlobalAmbition,400.9,400.9,400.9,400.9
+# RS00_hardcoal,DistributedEnergy,1106,553,,
+# RS00_hardcoal,GlobalAmbition,737.3333333,368.6666667,,
+SE01_battery,DistributedEnergy,382.3600697,327.7430013,273.125933,299.2300284
+SE01_battery,GlobalAmbition,105.4861726,105.9690589,106.4519452,136.2448096
+SE01_biomass,DistributedEnergy,299.7,299.7,299.7,299.7
+SE01_biomass,GlobalAmbition,299.7,299.7,299.7,299.7
+SE01_dsr,DistributedEnergy,214.2000046,214.2000046,214.2000046,242.0460052
+SE01_dsr,GlobalAmbition,214.2000046,214.2000046,214.2000046,214.2000046
+SE01_gas,DistributedEnergy,0,0,0,0
+SE01_gas,GlobalAmbition,70.22,70.22,70.22,70
+SE02_battery,DistributedEnergy,650.0121201,557.1631036,464.3140872,508.6910495
+SE02_battery,GlobalAmbition,179.3264938,180.1474005,180.9683072,231.6161769
+SE02_biomass,DistributedEnergy,767.57,767.57,767.57,767.57
+SE02_biomass,GlobalAmbition,767.57,767.57,767.57,767.57
+SE02_dsr,DistributedEnergy,323.4000093,323.4000093,323.4000093,365.4420105
+SE02_dsr,GlobalAmbition,323.4000093,323.4000093,323.4000093,323.4000093
+SE02_gas,DistributedEnergy,107.496,1364.496,2621.496,2621.496
+SE02_gas,GlobalAmbition,107.496,107.496,107.496,107.496
+SE03_battery,DistributedEnergy,3403.004642,2916.912731,2430.820819,2663.14727
+SE03_battery,GlobalAmbition,938.8269418,943.1246299,947.422318,1212.578813
+SE03_biomass,DistributedEnergy,2865.4,2865.4,2865.4,2865.4
+SE03_biomass,GlobalAmbition,2865.4,2865.4,2865.4,2865.4
+SE03_dsr,DistributedEnergy,936.6000366,936.6000366,936.6000366,1058.358041
+SE03_dsr,GlobalAmbition,936.6000366,936.6000366,936.6000366,936.6000366
+SE03_gas,DistributedEnergy,114.082,6642.082,13170.082,114.082
+SE03_gas,GlobalAmbition,114.082,114.082,114.082,114.082
+SE03_nuclear,DistributedEnergy,3687,1843.5,,
+SE03_nuclear,GlobalAmbition,6835,6283,5731,3567
+SE04_battery,DistributedEnergy,917.6641705,786.583206,655.5022414,718.1520706
+SE04_battery,GlobalAmbition,253.166815,254.3257421,255.4846693,326.9875442
+SE04_biomass,DistributedEnergy,822.09,822.09,822.09,822.09
+SE04_biomass,GlobalAmbition,822.09,822.09,822.09,822.09
+SE04_dsr,DistributedEnergy,264.5999909,264.5999909,264.5999909,298.9979896
+SE04_dsr,GlobalAmbition,264.5999909,264.5999909,264.5999909,264.5999909
+SE04_gas,DistributedEnergy,,4108,4108,4177.77896
+SI00_battery,DistributedEnergy,662.8140726,1026.495007,1390.175941,2307.640055
+SI00_battery,GlobalAmbition,483.0123158,874.7003519,1266.388388,1620.814393
+SI00_biomass,DistributedEnergy,70,85.5,101,101
+SI00_biomass,GlobalAmbition,70,85.5,101,101
+SI00_dsr,DistributedEnergy,108,108,108,122.04
+SI00_dsr,GlobalAmbition,108,108,108,108
+SI00_gas,DistributedEnergy,966,966,966,966
+SI00_gas,GlobalAmbition,966,966,966,966
+SI00_hardcoal,DistributedEnergy,539,269.5,,
+SI00_hardcoal,GlobalAmbition,539,269.5,,
+SI00_nuclear,DistributedEnergy,703,703,703,
+SI00_nuclear,GlobalAmbition,1803,1803,1803,1803
+SK00_battery,DistributedEnergy,1177.015124,999.949769,822.8844135,901.5318456
+SK00_battery,GlobalAmbition,324.7170151,322.7197839,320.7225528,410.4836514
+SK00_biomass,DistributedEnergy,666.5948958,694.5898958,722.5848958,722.5848958
+SK00_biomass,GlobalAmbition,666.5948958,694.5898958,722.5848958,722.5848958
+SK00_gas,DistributedEnergy,896.1286784,3069.520186,5242.911694,8028.029218
+SK00_gas,GlobalAmbition,896.1286784,904.5201863,912.9116943,911.7900879
+SK00_hardcoal,DistributedEnergy,61.9105242,30.9552621,,
+SK00_hardcoal,GlobalAmbition,61.9105242,30.9552621,,
+SK00_nuclear,DistributedEnergy,2674,2674,2674,1333.6
+SK00_nuclear,GlobalAmbition,2674,2898.2,3122.4,3122.4
+SK00_oil,DistributedEnergy,137.83,137.83,137.83,
+SK00_oil,GlobalAmbition,137.83,137.83,137.83,
+# TR00_battery,DistributedEnergy,12619.37451,15245.46708,17871.55966,17408.73816
+# TR00_battery,GlobalAmbition,5347.083827,6319.419448,7291.755069,9434.396994
+# TR00_biomass,DistributedEnergy,3900,4525,5150,5150
+# TR00_biomass,GlobalAmbition,3900,4525,5150,5150
+# TR00_gas,DistributedEnergy,44169.12837,67549.29998,90929.4716,118560.8662
+# TR00_gas,GlobalAmbition,45158.93837,68044.20498,90929.4716,118715.86
+# TR00_hardcoal,DistributedEnergy,10851.90599,5425.952994,,
+# TR00_hardcoal,GlobalAmbition,10744.02895,5372.014476,,
+# TR00_oil,DistributedEnergy,316.7191862,218.3147093,119.9102323,64.9512
+# TR00_oil,GlobalAmbition,316.7191862,218.3147093,119.9102323,64.9512
+# UA01_battery,DistributedEnergy,133.330868,199.8085535,266.2862389,235.8092715
+# UA01_battery,GlobalAmbition,99.58943627,104.1182934,108.6471505,127.7931956
+# UA01_gas,DistributedEnergy,,,,1598.906024
+# UA01_gas,GlobalAmbition,,6.76219884,6.76219884,236
+UK00_battery,DistributedEnergy,20288.70753,23719.36144,27150.01535,30863.82635
+UK00_battery,GlobalAmbition,6443.640066,8428.657741,10413.67541,13275.65072
+UK00_biomass,DistributedEnergy,6344.55,8029.025,9713.5,9713.5
+UK00_biomass,GlobalAmbition,6344.55,8029.025,9713.5,9713.5
+UK00_dsr,DistributedEnergy,4257.12,6081.6,7906.08,8933.8704
+UK00_dsr,GlobalAmbition,4257.12,6081.6,7906.08,11294.4
+UK00_gas,DistributedEnergy,31934.32511,60105.95718,88277.58926,120243.891
+UK00_gas,GlobalAmbition,26820.84511,29144.21718,31467.58926,35495.58926
+UK00_nuclear,DistributedEnergy,4460,4460,4460,5570
+UK00_nuclear,GlobalAmbition,7658,10998,14338,16008
+UK00_oil,DistributedEnergy,70.8,70.8,70.8,70.8
+UK00_oil,GlobalAmbition,70.8,70.8,70.8,70.8
+# UKNI_battery,DistributedEnergy,103.5123481,132.5130989,161.5138497,167.4932576
+# UKNI_battery,GlobalAmbition,28.40217474,46.38704893,64.37192312,82.83165279
+# UKNI_biomass,DistributedEnergy,2937.11,2949.61,2962.11,2962.11
+# UKNI_biomass,GlobalAmbition,2937.11,2949.61,2962.11,2962.11
+# UKNI_dsr,DistributedEnergy,100,112.5,125,141.25
+# UKNI_dsr,GlobalAmbition,100,112.5,125,125
+# UKNI_gas,DistributedEnergy,1824,1840.484622,1856.969245,9832.882546
+# UKNI_gas,GlobalAmbition,1824,1824,1824,1824
+# UKNI_oil,DistributedEnergy,389,389,389,389
+# UKNI_oil,GlobalAmbition,389,389,389,389
+SE04_gas,GlobalAmbition,0,0,0,0
+PL00_nuclear,DistributedEnergy,0,0,0,0
+ES00_nuclear,DistributedEnergy,0,0,0,0
+IT01_windon,DistributedEnergy,0,0,0,0
+IT01_windon,GlobalAmbition,0,0,0,0
+AT00_newCCGTCCS,DistributedEnergy,0,0,0,0
+AT00_newCCGTCCS,GlobalAmbition,0,0,0,0
+FR01_pvrf,DistributedEnergy,0,0,0,0
+FR01_pvrf,GlobalAmbition,0,0,0,0
+AT01_pvrf,DistributedEnergy,0,0,0,0
+AT01_pvrf,GlobalAmbition,0,0,0,0
+AT01_windon,DistributedEnergy,0,0,0,0
+AT01_windon,GlobalAmbition,0,0,0,0
+DE00_newCCGTCCS,DistributedEnergy,0,0,0,0
+DE00_newCCGTCCS,GlobalAmbition,0,0,0,0
+IT01_pvrf,DistributedEnergy,0,0,0,0
+IT01_pvrf,GlobalAmbition,0,0,0,0
+FR01_windon,DistributedEnergy,0,0,0,0
+FR01_windon,GlobalAmbition,0,0,0,0
+DE01_pvrf,DistributedEnergy,0,0,0,0
+DE01_pvrf,GlobalAmbition,0,0,0,0
+DE01_windon,DistributedEnergy,0,0,0,0
+DE01_windon,GlobalAmbition,0,0,0,0
+FR00_newCCGTCCS,DistributedEnergy,0,0,0,0
+FR00_newCCGTCCS,GlobalAmbition,0,0,0,0
+IT00_newCCGTCCS,DistributedEnergy,0,0,0,0
+IT00_newCCGTCCS,GlobalAmbition,0,0,0,0

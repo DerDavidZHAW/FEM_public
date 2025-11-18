@@ -1,0 +1,61 @@
+plants_DH_CH_capacities.csv
+dsrTh capacities
+read the number from input_tyndp22\HSLU_unused, DH_large_profiles_ or DH_medium_profiles_, divide it by 5 
+(1/2 flexible(hard coded), out of which we allow to use 40 of 1-kelvin flexibility )
+
+
+
+fuel_limits.csv
+- biomass 2050 and 2035: total electricity generation from biomass numbers from Fabio (Speicherbedarf), multiplied by /0.4 (0.4 is the efficiency of biomass power plants). This effectively means no biomass is left for district heating as of now. Target Fabio numbers: 1.77 TWh for 2035, 2.41 TWh for 2050
+
+res_capacities_CH.csv
+The values for ZBA has been adjusted to the new values of Fabio sent in the email on the 24.12.2024.
+Jahr	PV [TWh]	Wind [TWh]	Biomasse [TWh]
+2030	21.00		0.66		1.58
+2035	31.83		1.40		1.77
+2040	33.79		2.56		1.99
+2050	37.62		4.97		2.41
+
+The current simulation (only for 2050) gave the following in MWh
+PV	39698860
+Windon	4198174
+
+The old values of 2050 were multiplied with the following factors to make the simulations reach the respective targets
+--- OUDATED !! ---
+Jahr	PV [TWh]	Wind [TWh]	Biomasse [TWh]
+2030	0.5290		0.1572		
+2035	0.8018		0.3335		
+2040	0.8512		0.6098		
+2050	0.9476		1.1838		
+
+For ZBA, the 2035 column could be determined using the afformentioned technique.
+For the other scenarios, the 2035 column has been interpolated.
+
+res_capacities_CH_old.csv
+Before the here mentioned changes on res_capacities_CH.csv have been done.
+
+plants_DH_CH_capacities.csv
+The year 2035 has been added by interpolating.
+--- WARNING! THE ENTIRE FILE CURRENTLY ONLY CONSISTS OF DUMMY NUMBERS AND MUST BE REPLACED! ---
+
+nonhydro_capacities_gen.csv
+The line 2035 has been determined by interpolation. If 2040 was 0, it was interpolated between 2030 and 0.
+
+generation.csv
+The year 2035 has been added by interpolating between 2030 and 2040.
+
+generation_CH.csv
+The year 2035 has been added by interpolating between 2030 and 2040.
+
+electrolyzer_net_demand.csv
+The year 2035 has been added by interpolating between 2030 and 2040.
+
+electrolyzer_net_demand_CH.csv
+The year 2035 has been added by interpolating between 2030 and 2040.
+
+fuel_limits.csv
+V2G: From consentec: 50 kWh per EV, 20% of the capacity is used for V2G
+From Ali's estimation: 10% of EVs participate in V2G
+From ETH's Vehicle-to-grid in Switzerland: numbers of EV in Switzerland: 2030: 1.7, 2040: 3.5, 2050: 4.5 million
+=> 2035: mean(1.7, 3.5) * 1,000,000 * 0.1 * 50 * 0.2
+=> 2050: 4.5 * 1,000,000 * 0.1 * 50 * 0.2

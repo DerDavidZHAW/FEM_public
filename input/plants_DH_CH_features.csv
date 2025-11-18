@@ -1,0 +1,10 @@
+index,nodeDH,nodeElec,market,tech,efficiency,electric_connection,hp_source,self_discharge_per_day_percent,TES_charge_efficiecy,TES_discharge_efficiecy,TES_type,power_to_heat_ratio,CHPDH
+DH_Mittelland_HPG,DH_Mittelland,CH00,CH00,heat_pump,5,True,ground_MSW,,,,,,
+DH_Mittelland_dsrTh,DH_Mittelland,na,na,dsrTh,,,,,,,,,
+DH_Alpen_HPG,DH_Alpen,CH00,CH00,heat_pump,5,True,ground_MSW,,,,,,
+DH_Alpen_dsrTh,DH_Alpen,na,na,dsrTh,,,,,,,,,
+DH_Jura_HPG,DH_Jura,CH00,CH00,heat_pump,5,True,ground_MSW,,,,,,
+DH_Jura_dsrTh,DH_Jura,na,na,dsrTh,,,,,,,,,
+DH_Voralpen_HPG,DH_Voralpen,CH00,CH00,heat_pump,5,True,ground_MSW,,,,,,
+DH_Voralpen_dsrTh,DH_Voralpen,na,na,dsrTh,,,,,,,,,
+DH_medium_dsrTh,DH_medium,na,na,dsrTh,,,,,,,,,
