@@ -226,6 +226,8 @@ Results are saved in the `output/` directory:
 - **Economic indicators** (costs, prices, revenues)
 - **Interactive HTML plots** for visualization
 
+> An extensive documentation for model *settings* and *output* files can be found in `FEM_settings_and_output_documentation.pdf`. The model also exports `settings.csv` to the `output/<scenario>/` folder to help track scenario inputs.
+
 ## Project Structure
 
 ```
