@@ -55,6 +55,8 @@ from data_prep.definitions_common import (
     PlantDH_capacity,
     EV_weekly_energy_consumption_data,
     EV_charging_power_rate,
+    EV_inflexible_demand_data,
+    HP_inflexible_demand_data,
     Fuel_limits_data,    
     BA_th_con,
     BA_th_lim,
@@ -70,6 +72,7 @@ from data_prep.definitions_common import (
     cost_data_inv_discharge_slp,
     flexible_household_heatpump_share,
     KVAinfeed,
+    emission_factor_per_MWh,
 )
 from data_prep.definitions_common import (
     Map_eff_in_plant,
@@ -134,6 +137,8 @@ def obj_expression(model):
     model.cost_inv_fuel_storage_dict = {}
     # trade cost for CH_only mode (neighbor electricity trade)
     model.trade_cost_dict = {}
+    # CO2 emissions per plant and scenario (for reporting, not in objective)
+    model.emissions_dict = {}
 
     for scen in model.Scenarios:
         # part 1: -------------------------------------------------------------------------------------------------------------------------------------
@@ -145,8 +150,8 @@ def obj_expression(model):
                     # investment cost ----------------------------------------------------
                     # currently, model.investment_genmax_slp[p]/10000  is arbitrary, it should be replaced by the quadratic cost of the plant
                     if p in model.P_allinv | model.PDH_allinvTh:
-                        model.cost_inv_dict[p,scen] = model.weight_in_objective_fcn[scen] * model.investment_genmax_slp[p,scen] * model.gen_max[p,scen] + \
-                                        model.weight_in_objective_fcn[scen] * model.investment_genmax_slp[p,scen]/100000/10/1/1 *  model.gen_max[p,scen] *  model.gen_max[p,scen]
+                        model.cost_inv_dict[p,scen] = model.weight_in_objective_fcn[scen] * model.investment_genmax_slp[p,scen] * model.gen_max[p,scen] #+ \
+                                        #model.weight_in_objective_fcn[scen] * model.investment_genmax_slp[p,scen]/100000/10/1/1 *  model.gen_max[p,scen] *  model.gen_max[p,scen]
                         # investment cost is divided by the number of scenarios because given that run_year is identical for all scenarios (so far) ...
                         # without this coefficient, one investment will be counted twice. Note that later we fix gen_max to be the same among scenarios.
                         # This is not the case for operation cost, lost load cost, and slack cost
@@ -156,9 +161,16 @@ def obj_expression(model):
                             # slope cost
                             model.operation_slp[p, scen] * model.gen[p, t, scen]
                             # quadratic cost
-                            + model.operation_qdr[p, scen] * model.gen[p, t, scen] ** 2
+                            #+ model.operation_qdr[p, scen] * model.gen[p, t, scen] ** 2
                             for t in model.T
                             if p in model.P_gen
+                        ]
+                    )
+                    # CO2 emissions (tCO2) - for reporting only, not in objective
+                    model.emissions_dict[p, scen] = sum(
+                        [
+                            model.emission_factor_per_MWh[p, scen] * model.gen[p, t, scen]
+                            for t in model.T
                         ]
                     )
                 elif tech_typ_gen_e == "cap_op_energy":
@@ -186,6 +198,13 @@ def obj_expression(model):
                             model.operation_slp[p, scen] * model.gen[p, t, scen]
                             for t in model.T
                             if p in model.P_gen
+                        ]
+                    )
+                    # CO2 emissions (tCO2) - for reporting only, not in objective
+                    model.emissions_dict[p, scen] = sum(
+                        [
+                            model.emission_factor_per_MWh[p, scen] * model.gen[p, t, scen]
+                            for t in model.T
                         ]
                     )
 
@@ -350,9 +369,9 @@ def define_sets(
 
     # define model.Week for the given time steps, and match it using timemaps_hydro_year.csv
     # read the csv file
-    time_maps_hydro = pd.read_csv("input/timemaps_hydro_year.csv")
+    time_maps_hydro_full = pd.read_csv("input/timemaps_hydro_year.csv")
     # in time_maps_hydro, only keep the rows if the time step (column hour) is in model.T 
-    time_maps_hydro = time_maps_hydro[time_maps_hydro["t"].isin(model.T)]
+    time_maps_hydro = time_maps_hydro_full[time_maps_hydro_full["t"].isin(model.T)]
     # model.Week is equal to the unique values in the column "week" in time_maps_hydro, initialize it with the unique values in the column "week" in time_maps_hydro
     model.Week = Set(
         initialize=list(time_maps_hydro["week"].unique()),
@@ -366,6 +385,15 @@ def define_sets(
         initialize={week: list(time_maps_hydro[time_maps_hydro["week"] == week]["hour"]) for week in model.Week},
         within=pyo.Any,
         doc="mapping of week to corresponding time steps",
+    )
+    
+    # store a mapping of week to ALL time steps in that week (not filtered by model.T)
+    # This is needed for calculating the fraction of a week that is being modeled (for partial week runs)
+    model.Map_week_t_full = Param(
+        model.Week,
+        initialize={week: list(time_maps_hydro_full[time_maps_hydro_full["week"] == week]["hour"]) for week in model.Week},
+        within=pyo.Any,
+        doc="mapping of week to ALL time steps in that week (unfiltered, for partial week calculations)",
     )
 
     model.Map_t_week = Param(
@@ -416,7 +444,7 @@ def define_sets(
     )
     
     model.P_ev = Set(
-            initialize=[p for p in model.P if Map_plant_tech[p] in ["v1g", "v2g"]],
+            initialize=[p for p in model.P if Map_plant_tech[p] in ["v2g"]],
             within=model.P,
             doc="set of EV plants",
         )
@@ -676,12 +704,30 @@ def define_sets(
 # --------------------------------------------------------------------------------------------------------------
 
 
-def define_params_op(model):
+def define_params_op(model, resistive_heater_investment_cap_MW_total):
     """
     Define parameters for the model as attributes (used in both for consumer runs and central runs).
     Inputs:
         model: pyomo model
     """
+    # Import per-constraint scaling factors and expose as a mutable Param
+    try:
+        from model.constraint_scaling import constraint_scaling as _constraint_scaling
+    except Exception:
+        # Fallback for relative import if package layout differs
+        from .constraint_scaling import constraint_scaling as _constraint_scaling
+
+    model.ConstraintNames = pyo.Set(
+        initialize=list(_constraint_scaling.keys()),
+        doc="Names of constraints for row scaling"
+    )
+    model.constraint_scaling = Param(
+        model.ConstraintNames,
+        initialize=_constraint_scaling,
+        mutable=True,
+        within=pyo.PositiveReals,
+        doc="Row scaling factor per constraint (applied symmetrically to both sides)",
+    )
     model.demand = Param(
         model.Consumer,
         model.Consumption_types_inflex,
@@ -689,6 +735,30 @@ def define_params_op(model):
         model.Scenarios,
         initialize=lambda model, consumer, tech, t, scen : Demand_data[(consumer, tech, t, scen)],
         doc="demand time series per consumer and time step",
+    )
+
+    # EV inflexible demand parameter - stored separately for visualization purposes
+    # This represents the portion of EV consumption that follows a fixed charging profile (not optimizable)
+    # Keys are (Node, T, Scenario) tuples
+    model.EV_inflexible_demand = Param(
+        model.Node,
+        model.T,
+        model.Scenarios,
+        initialize=lambda model, node, t, scen: EV_inflexible_demand_data.get((node, t, scen), 0),
+        default=0,
+        doc="Inflexible EV demand time series per node and time step [MWh]. This is the portion of EV consumption that charges according to a fixed profile.",
+    )
+
+    # HP inflexible demand parameter - stored separately for visualization purposes
+    # This represents the portion of household heat pump consumption that operates according to a fixed profile (not participating in flexibility)
+    # Keys are (Node, T, Scenario) tuples
+    model.HP_inflexible_demand = Param(
+        model.Node,
+        model.T,
+        model.Scenarios,
+        initialize=lambda model, node, t, scen: HP_inflexible_demand_data.get((node, t, scen), 0),
+        default=0,
+        doc="Inflexible household heat pump demand time series per node and time step [MWh]. This is the portion of HP consumption that follows a fixed profile.",
     )
 
     model.operation_slp = Param(
@@ -728,6 +798,20 @@ def define_params_op(model):
         initialize={(p,scen): cost_data_opr_qdr[Map_plant_tech[p]] for p in model.P_gen for scen in model.Scenarios},
     )
     # in reading parameter above, scen is not used as it is the same for all scenarios
+
+    # Emission factor per MWh of electricity output (tCO2/MWh_elec)
+    # This accounts for plant efficiency: emission_factor_input / efficiency
+    model.emission_factor_per_MWh = Param(
+        model.P_gen,
+        model.Scenarios,
+        initialize={
+            (p, scen): emission_factor_per_MWh.get((Map_plant_tech[p], scen), 0)
+            for p in model.P_gen
+            for scen in model.Scenarios
+        },
+        default=0,
+        doc="CO2 emission factor per MWh of electricity output (tCO2/MWh_elec), already accounting for efficiency",
+    )
 
     model.storage_charge_eff_in = Param(
         model.P_storage | model.PDH_storage,
@@ -966,7 +1050,12 @@ def define_params_op(model):
         doc="maximum capacity of dsrTh (MWh)",
     )
     
-    # ------------------------------------ district heating modelling -------------------------------------
+    # Resistive heater investment cap per node (MW)
+    model.resistive_heater_cap_MW_total = Param(
+        within=pyo.Any,
+        initialize=resistive_heater_investment_cap_MW_total,
+        doc="Maximum total investment capacity in resistive heaters across all nodes (MW)",
+    )
     model.demandDH = Param(
         model.NodeDH,
         model.T,
@@ -1115,7 +1204,7 @@ def define_params_op(model):
 
     return model
 
-def define_params_inv(model, weight_in_objective_fcn):
+def define_params_inv(model, weight_in_objective_fcn, resistive_heater_investment_cap_MW_total):
     """
     Define investment cost parameters for the model as attributes.
     """
@@ -1555,7 +1644,10 @@ def define_constraints(model):
 
     model.infeedgen_fix = Constraint(
         Plant_to_fix_generation, model.T, model.Scenarios,
-        rule=lambda model, p, t, s: model.gen[p, t, s] == model.gen_max[p, s] * model.avail_plant[p, t, s],
+        rule=lambda model, p, t, s: (
+            model.constraint_scaling['infeedgen_fix'] * model.gen[p, t, s]
+            == model.constraint_scaling['infeedgen_fix'] * (model.gen_max[p, s] * model.avail_plant[p, t, s])
+        ),
         doc="fixing generation from new RES plants to maximum possible generation (gen_max * RES availability), so that curtailment is calculated correctly",
     )
 
@@ -1582,13 +1674,18 @@ def define_constraints(model):
     #subcategory multi-year constraints (they are similar in fixing capacities of plants between subscearios - if later multi-year constraints are added, they should be changed so that capacities of later years are higher than capacities of earlier years)
     # add a constraint to the model that forces gen_max[p,scen] to be equal for all scnes in model.Scenarios, for all plants in set model.P
     model.gen_max_equal = Constraint(
-        model.P_gen, model.Scenarios, rule=lambda model, p, scen: model.gen_max[p, scen] == model.gen_max[p, model.Scenarios.first()]
+        model.P_gen, model.Scenarios,
+        rule=lambda model, p, scen: (
+            model.constraint_scaling['gen_max_equal'] * model.gen_max[p, scen]
+            == model.constraint_scaling['gen_max_equal'] * model.gen_max[p, model.Scenarios.first()]
+        )
     ) 
 
     model.pmp_max_equal = Constraint(
         model.P_pumping, model.Scenarios, 
         rule=lambda model, p, scen: (
-            model.pmp_max[p, scen] == model.pmp_max[p, model.Scenarios.first()]
+            (model.constraint_scaling['pmp_max_equal'] * model.pmp_max[p, scen]
+             == model.constraint_scaling['pmp_max_equal'] * model.pmp_max[p, model.Scenarios.first()])
             if "hydrogen" in p else Constraint.Skip
         )
     )
@@ -1597,25 +1694,45 @@ def define_constraints(model):
     #NOTE :maybe more techs should be added to the list of techs that are equal in all scenarios
     #NOTE: move all multi-year constraints to a separate file
     model.gen_energy_max_equal = Constraint(
-        model.P_storage_noSOC, model.Scenarios, rule=lambda model, p, scen: model.gen_energy_max[p, scen] == model.gen_energy_max[p, model.Scenarios.first()]
+        model.P_storage_noSOC, model.Scenarios,
+        rule=lambda model, p, scen: (
+            model.constraint_scaling['gen_energy_max_equal'] * model.gen_energy_max[p, scen]
+            == model.constraint_scaling['gen_energy_max_equal'] * model.gen_energy_max[p, model.Scenarios.first()]
+        )
     ) 
 
     model.gen_energy_max_equal2 = Constraint(
-        model.P_storage, model.Scenarios, rule=lambda model, p, scen: model.gen_energy_max[p, scen] == model.gen_energy_max[p, model.Scenarios.first()]
+        model.P_storage, model.Scenarios,
+        rule=lambda model, p, scen: (
+            model.constraint_scaling['gen_energy_max_equal2'] * model.gen_energy_max[p, scen]
+            == model.constraint_scaling['gen_energy_max_equal2'] * model.gen_energy_max[p, model.Scenarios.first()]
+        )
     )
 
     model.fuel_storage_capacity_annual_equal = Constraint(
-        model.Fuels_limited, model.Scenarios, rule=lambda model, f, scen: model.fuel_storage_capacity_annual[f, scen] == model.fuel_storage_capacity_annual[f, model.Scenarios.first()]
+        model.Fuels_limited, model.Scenarios,
+        rule=lambda model, f, scen: (
+            model.constraint_scaling['fuel_storage_capacity_annual_equal'] * model.fuel_storage_capacity_annual[f, scen]
+            == model.constraint_scaling['fuel_storage_capacity_annual_equal'] * model.fuel_storage_capacity_annual[f, model.Scenarios.first()]
+        )
     )
 
     # fix genTh_max to be equal for all scenarios
     model.genTh_max_equal = Constraint(
-        model.PDH, model.Scenarios, rule=lambda model, p, scen: model.genTh_max[p, scen] == model.genTh_max[p, model.Scenarios.first()]
+        model.PDH, model.Scenarios,
+        rule=lambda model, p, scen: (
+            model.constraint_scaling['genTh_max_equal'] * model.genTh_max[p, scen]
+            == model.constraint_scaling['genTh_max_equal'] * model.genTh_max[p, model.Scenarios.first()]
+        )
     )
 
     # fix gen_energyTh_max to be equal for all scenarios
     model.gen_energyTh_max_equal = Constraint(
-        model.PDH_TES, model.Scenarios, rule=lambda model, p, scen: model.gen_energyTh_max[p, scen] == model.gen_energyTh_max[p, model.Scenarios.first()]
+        model.PDH_TES, model.Scenarios,
+        rule=lambda model, p, scen: (
+            model.constraint_scaling['gen_energyTh_max_equal'] * model.gen_energyTh_max[p, scen]
+            == model.constraint_scaling['gen_energyTh_max_equal'] * model.gen_energyTh_max[p, model.Scenarios.first()]
+        )
     )
 
     # ----------------------------------- district heating -----------------------------------
@@ -1711,7 +1828,7 @@ def define_constraints(model):
         rule=fix_storage_to_charge_ratio_PTES_Constraint,
     )
     # -------------------------------------------- EV modelling -------------------------------------------
-    # model the charging of EVs
+    # Model the charging of flexible EVs (CH00_EV_flex)
     model.ev_consumption_weekly_sum = Constraint(
         model.Week, model.Scenarios, rule=ev_consumption_weekly_sum_Constraint 
     ) 
@@ -1749,6 +1866,13 @@ def define_constraints(model):
         # model.Scenarios,
     model.fuel_storage_capacity_annual_investment_limit = Constraint(
         model.Fuels_limited, model.Scenarios, rule=fuel_storage_capacity_annual_investment_limit_Constraint
+    )
+    
+    # -------------------------------------------- resistive heater investment cap constraint -------------------------------------------
+    # Limit total investment capacity of resistive heaters per node
+    model.resistive_heater_investment_cap = Constraint(
+        model.Scenarios,
+        rule=resistive_heater_investment_cap_Constraint,
     )
         
 
@@ -1809,6 +1933,7 @@ def fix_storage_to_charge_ratio_PTES_Constraint(model, p, s):
 
 
 def energy_balance_Constraint(model, t, n, s):
+    sf = model.constraint_scaling['energy_balance']
     # generatin from all technologies
     gen = sum(model.gen[p, t, s] for p in model.P_gen & model.Map_node_plant[n])
     # infeed from RES infeed technologies
@@ -1822,6 +1947,10 @@ def energy_balance_Constraint(model, t, n, s):
         for c in model.Consumer & model.Map_node_consumer[n]
         for tech in model.Consumption_types_inflex
     )
+    # inflexible EV demand (added as fixed demand, not as storage_charge)
+    demand_ev_inflexible = model.EV_inflexible_demand[n, t, s]
+    # inflexible household heat pump demand (added as fixed demand, separate from flexible HP)
+    demand_hp_inflexible = model.HP_inflexible_demand[n, t, s]
     # demand from all storage technologies, which includes pumping and charging etc.
     demand_storage = sum(
         model.storage_charge[p, t, s] for p in model.P_pumping & model.Map_node_plant[n]
@@ -1846,8 +1975,8 @@ def energy_balance_Constraint(model, t, n, s):
     )
         
     return (
-        gen + infeed + import_as_ending_node + lostload
-        == demand_fixed + demand_storage + export_as_starting_node + curtailment
+        sf * (gen + infeed + import_as_ending_node + lostload)
+        == sf * (demand_fixed + demand_ev_inflexible + demand_hp_inflexible + demand_storage + export_as_starting_node + curtailment)
     )
 
 
@@ -1855,7 +1984,8 @@ def energy_balance_Constraint(model, t, n, s):
 
 
 def generation_limit_Constraint(model, p, t, s):
-    return model.gen[p, t, s] <= (model.gen_max[p, s] * model.avail_plant[p, t, s])
+    sf = model.constraint_scaling['generation_limit']
+    return sf * model.gen[p, t, s] <= sf * (model.gen_max[p, s] * model.avail_plant[p, t, s])
 
 
 # Storage (battery/closed pump storage/hydrogen)
@@ -1863,6 +1993,7 @@ def generation_limit_Constraint(model, p, t, s):
 
 def storeBalance_Constraint(model, p, t, s):
     if p in model.P: # electricity side of the system
+        sf = model.constraint_scaling['storage_soc']
         # state of charge at t
         soc_t = model.soc[p, t, s]
 
@@ -1900,11 +2031,12 @@ def storeBalance_Constraint(model, p, t, s):
         spill_energy = sum([model.spill_water[p, t, s] if p in model.P_hydro else 0])
         
         return (
-            soc_t + slack_neg
-            == soc_t_1 + charged - discharged + inflow - outflow + slack_pos - spill_energy
+            sf * (soc_t + slack_neg)
+            == sf * (soc_t_1 + charged - discharged + inflow - outflow + slack_pos - spill_energy)
         )
     
     elif p in model.PDH: # thermal side of the system
+        sf = model.constraint_scaling['storageTh_soc']
         soc_t = model.socTh[p, t, s]
         soc_t_1 = model.socTh[p, model.T.prevw(t), s]
         charged = sum([model.storage_chargeTh[p, t, s] * model.storage_charge_eff_in[p, s]])
@@ -1918,26 +2050,27 @@ def storeBalance_Constraint(model, p, t, s):
             slack_neg = 0
 
         return (
-            soc_t + slack_neg
-            == (1-model.TES_decayrate[p])*soc_t_1 + charged - discharged + slack_pos
+            sf * (soc_t + slack_neg)
+            == sf * ((1-model.TES_decayrate[p])*soc_t_1 + charged - discharged + slack_pos)
         )
 
 
 
 
 def storage_start_condition_Constraint(model, p, s):
+    sf = model.constraint_scaling['storage_start_condition']
     # if p in model.P:  # electricity side of the system
         # Generally, initial conditions of storage plants are equality constraints to a percentage of their maximum energy. This ensures, e.g., hydro plants reservior follows actual patterns.
         # Except for EVs: to avoid unnecessary constraints (and infeasilbity), initial condition is defined as inequality.
     if p in model.P_ev:
         return (
-            model.soc[p, model.T.at(1), s]
-            <= model.storage_start_cond[p,s] * model.gen_energy_max[p,s]
+            sf * model.soc[p, model.T.at(1), s]
+            <= sf * (model.storage_start_cond[p,s] * model.gen_energy_max[p,s])
         )
     else:
         return (
-            model.soc[p, model.T.at(1), s]
-            == model.storage_start_cond[p,s] * model.gen_energy_max[p,s]
+            sf * model.soc[p, model.T.at(1), s]
+            == sf * (model.storage_start_cond[p,s] * model.gen_energy_max[p,s])
         )
     # elif p in model.PDH: # thermal side of the system
     #     # do not create a constraint
@@ -1963,16 +2096,18 @@ def storage_start_condition_Constraint(model, p, s):
 
 def storage_charge_Constraint(model, p, t, s):
     if p in model.P: # electricity side of the system
+        sf = model.constraint_scaling['storage_rate_limit']
         if Map_plant_tech[p] in tech_demand_assets_shiftable:
             pmp_max_fixed = Data_plant_flex_d_within_window[p,s]["max_demand"]
-            return model.storage_charge[p, t, s] <= (pmp_max_fixed * model.avail_plant[p, t, s])
+            return sf * model.storage_charge[p, t, s] <= sf * (pmp_max_fixed * model.avail_plant[p, t, s])
         else:
-            return model.storage_charge[p, t, s] <= (
-                model.pmp_max[p, s] * model.avail_plant[p, t, s]
+            return sf * model.storage_charge[p, t, s] <= (
+                sf * (model.pmp_max[p, s] * model.avail_plant[p, t, s])
         )
     elif p in model.PDH: # thermal side of the system
-        return model.storage_chargeTh[p, t, s] <= (
-            model.pumpTh_max[p, s] * model.avail_plant[p, t, s]
+        sf = model.constraint_scaling['storageTh_rate_limit']
+        return sf * model.storage_chargeTh[p, t, s] <= (
+            sf * (model.pumpTh_max[p, s] * model.avail_plant[p, t, s])
         )
 
 
@@ -1980,11 +2115,12 @@ def storage_charge_Constraint(model, p, t, s):
 
 
 def p_max_limit_Constraint(model, p, s):
+    sf = model.constraint_scaling['p_max_limit']
     if p == "CH00_hydrogen":
         # skip the constraint for hydrogen plant, so that electrolyzers and power plants burning hydrogen can have different capacities
         return Constraint.Skip
     else:
-        return model.pmp_max[p, s] <= model.gen_max[p, s]
+        return sf * model.pmp_max[p, s] <= sf * model.gen_max[p, s]
 
 
 # energy limit of a storage plant  --- for limited energy technologies, we have energy_limit_Constraint
@@ -1994,27 +2130,32 @@ def storage_soc_Constraint(model, p, t, s):
     if p in model.P: # electricity side of the system
 
         if p in model.P_evV2G: # V2G EVs are singled out, because their availability for charging is time dependent.
-            return model.soc[p, t, s] <= model.V2G_storage_capacity[p, s]
+            sf = model.constraint_scaling['storage_soc_limit']
+            return sf * model.soc[p, t, s] <= sf * model.V2G_storage_capacity[p, s]
         else:
-            return model.soc[p, t, s] <= model.gen_energy_max[p, s]
+            sf = model.constraint_scaling['storage_soc_limit']
+            return sf * model.soc[p, t, s] <= sf * model.gen_energy_max[p, s]
     
     elif p in model.PDH: # thermal side of the system
-        return model.socTh[p, t, s] <= model.gen_energyTh_max[p, s]
+        sf = model.constraint_scaling['storageTh_soc_limit']
+        return sf * model.socTh[p, t, s] <= sf * model.gen_energyTh_max[p, s]
 
 
 # Generation limit for limited_energy techs --- for storage technologies, we have storage_soc_Constraint
 
 
 def energy_limit_Constraint(model, p, s):
+    sf = model.constraint_scaling['energy_limit']
     return (
-        sum([model.gen[p, t, s] for t in model.T])
-        <= model.sum_generation_plant_energy_limited[p,s] # sacling down is not needed, because it is alrady considered in data import phase * len(model.T) / 8760
+        sf * sum([model.gen[p, t, s] for t in model.T])
+        <= sf * model.sum_generation_plant_energy_limited[p,s]
     )
 
 def storage_total_fuel_limit_Constraint(model, p, s):
+    sf = model.constraint_scaling['storage_total_fuel_limit']
     return (
-        sum([model.gen[p, t, s] for t in model.T])
-        <= model.gen_energy_max[p, s]
+        sf * sum([model.gen[p, t, s] for t in model.T])
+        <= sf * model.gen_energy_max[p, s]
     )
 # NOTE: if multiple periods within a year is to be considered, then len(model.T)/8760 above should be adjusted.
 
@@ -2023,6 +2164,7 @@ def storage_total_fuel_limit_Constraint(model, p, s):
 
 
 def ATCbound_Constraint(model, l, t, s):
+    sf = model.constraint_scaling['lineATClimit']
     # NOTE: rethink if this is ok to simply assume 0, if the line is not in the dictionary
     # check if ATC_exportlimit[l, t] exists, if not, it is 0
 
@@ -2044,20 +2186,24 @@ def ATCbound_Constraint(model, l, t, s):
         lower_bound = ATC_exportlimit.get((l, t, s), 0)
     # lower_bound = ATC_importlimit.get((l, t), 0)
 
-    return (-lower_bound, model.Export[l, t, s], upper_bound)
+    return (sf * -lower_bound, sf * model.Export[l, t, s], sf * upper_bound)
 
 def fuel_consumption_tracking_Constraint(model, f, t, s):
-    return model.fuel_consumption_of_fuel[f, t, s] == sum(
+    sf = model.constraint_scaling['fuel_consumption_tracking']
+    return sf * model.fuel_consumption_of_fuel[f, t, s] == sf * (sum(
         model.fuel_consumption_of_plant[p, t, s] for p in model.P_fuellimCH if model.Map_plant_fuel[p] == f
-    ) + sum(model.fuel_consumption_of_plant[p, t, s] for p in model.P_fuellimCH_DH if model.Map_plant_fuel[p] == f)
+    ) + sum(model.fuel_consumption_of_plant[p, t, s] for p in model.P_fuellimCH_DH if model.Map_plant_fuel[p] == f))
 
 def plant_fuel_consumption_tracking_CH_Constraint(model, p, t, s):
-    return model.fuel_consumption_of_plant[p, t, s] == model.gen[p, t, s] / model.Map_plant_efficiency_gen[p,s]
+    sf = model.constraint_scaling['plant_fuel_consumption_tracking_CH']
+    return sf * model.fuel_consumption_of_plant[p, t, s] == sf * (model.gen[p, t, s] / model.Map_plant_efficiency_gen[p,s])
 
 def plant_fuel_consumption_tracking_CH_DH_Constraint(model, p, t, s):
-    return model.fuel_consumption_of_plant[p, t, s] == model.genTh[p, t, s] / model.Map_plant_efficiency_gen[p,s]
+    sf = model.constraint_scaling['plant_fuel_consumption_tracking_CH_DH']
+    return sf * model.fuel_consumption_of_plant[p, t, s] == sf * (model.genTh[p, t, s] / model.Map_plant_efficiency_gen[p,s])
 
 def fuel_limit_annual_Constraint(model, f, s):
+    sf = model.constraint_scaling['fuel_limit_annual']
     # Check if there are any plants in P_fuellimCH that match the fuel type
     relevant_plants = [p for p in model.P_fuellimCH_plus_P_fuellimCH_DH if model.Map_plant_fuel[p] == f]
 
@@ -2079,25 +2225,29 @@ def fuel_limit_annual_Constraint(model, f, s):
             for t in model.T
         )
 
-        return fuel_consumption <= fuel_consumption_limit
+        return sf * fuel_consumption <= sf * fuel_consumption_limit
 
 
 def consumer_import_Constraint(model, c, t):
-    return model.imported[c, t] <= model.consumer_import_max[c, t]
+    sf = model.constraint_scaling['consumer_import']
+    return sf * model.imported[c, t] <= sf * model.consumer_import_max[c, t]
 
 
 def consumer_export_Constraint(model, c, t):
-    return model.exported[c, t] <= model.consumer_export_max[c, t]
+    sf = model.constraint_scaling['consumer_export']
+    return sf * model.exported[c, t] <= sf * model.consumer_export_max[c, t]
 
 
 def lostload_limit_Constraint(model, c, t, lostload_step, s):
     """
     Lost load is limited by the capacity of each step.
     """
-    return model.lostload[c, t, lostload_step, s] <= model.lostload_capacity_per_step[lostload_step, s]
+    sf = model.constraint_scaling['lostload_limit']
+    return sf * model.lostload[c, t, lostload_step, s] <= sf * model.lostload_capacity_per_step[lostload_step, s]
 
 
 def curtailment_limit_Constraint(model, c, t, s):
+    sf = model.constraint_scaling['curtailment_limit']
     # if sum or RES generation is positive (generating), then curtailment must be less than sum of RES generation.
     # if sum of RES generation is negative (which should not be possible), then max(0,sum(RES generation)) allows crutailment to be 0...
     # ... which is necessary because curtailment is defined as a non-negative variable.
@@ -2105,70 +2255,79 @@ def curtailment_limit_Constraint(model, c, t, s):
     # node is equal to the node of the consumer, that is the key in model.Map_node_consumer that leads to c
     # Define node
     node = [k for k, v in model.Map_node_consumer.items() if c in v][0]
-    return model.curtailment[c, t, s] <= max(
+    return sf * model.curtailment[c, t, s] <= sf * (max(
         0, sum(model.infeed[c, tech, t, s] for tech in model.Tech_infeed)
-        ) + sum(model.gen[p, t, s] for p in model.P_gen if p in Plant_investment_RES_CH_list if p in model.Map_node_plant[node])
+        )) + sf * (sum(model.gen[p, t, s] for p in model.P_gen if p in Plant_investment_RES_CH_list if p in model.Map_node_plant[node]))
 
 
 
 # DSR constraints
 def energy_shift_limit_dsr_daily_Constraint(model, p, d, s):
+    sf = model.constraint_scaling['energy_shift_limit_dsr_daily']
     day_hours = [t for t in model.T if (int(t.split("_")[1]) - 1) // 24 + 1 == d]
     sum_gen = sum(model.gen[p, t, s] for t in day_hours)
     sum_dem = sum(model.storage_charge[p, t, s] for t in day_hours)
-    return sum_gen + sum_dem <= 3 * model.gen_max[p, s]
+    return sf * (sum_gen + sum_dem) <= sf * (3 * model.gen_max[p, s])
 
 
 def dsr_daily_balance_Constraint(model, p, d, s):
+    sf = model.constraint_scaling['dsr_daily_balance']
     day_hours = [t for t in model.T if (int(t.split("_")[1]) - 1) // 24 + 1 == d]
     sum_gen = sum(model.gen[p, t, s] for t in day_hours)
     sum_dem = sum(model.storage_charge[p, t, s] for t in day_hours)
-    return sum_gen == sum_dem
+    return sf * sum_gen == sf * sum_dem
 
 
 def gen_energy_max_limit_Constraint(model, p, scen):
+    sf = model.constraint_scaling['gen_energy_max_limit_constraint']
     if model.energy_max_limit[p] != float('inf'):
-        return model.gen_energy_max[p, scen] <= model.energy_max_limit[p]
+        return sf * model.gen_energy_max[p, scen] <= sf * model.energy_max_limit[p]
     else:
         return Constraint.Skip 
 
 
 def gen_max_limit_Constraint(model, p, scen):
+    sf = model.constraint_scaling['gen_max_limit_constraint']
     if model.gen_max_limit[p] != float('inf'):
         if p in model.P_gen:
-            return model.gen_max[p, scen] <= model.gen_max_limit[p]
+            return sf * model.gen_max[p, scen] <= sf * model.gen_max_limit[p]
         else:
             return Constraint.Skip
     else:
         return Constraint.Skip         
 # ----------------------------------- district heating -----------------------------------
 def generationTh_limit_Constraint(model, p, t, s):
-    return model.genTh[p, t, s] <= model.genTh_max[p, s]
+    sf = model.constraint_scaling['generationTh_limit']
+    return sf * model.genTh[p, t, s] <= sf * model.genTh_max[p, s]
 
 # define the characteristics (the relationship between electric and thermal generation and consumption) of the all types of district heating plants
 def heat_electric_profile_resistiveheater_Constraint(model, p, t, s):
     """
     The heat generation of a resistive heater is equal to the efficiency of the resistive heater times the electric energy consumed (storage_charge).
     """
-    return model.genTh[p, t, s] == PlantDH_data_remaining[p, "efficiency", s]*model.storage_charge[p, t, s]
+    sf = model.constraint_scaling['heat_electric_profile_resistiveheater']
+    return sf * model.genTh[p, t, s] == sf * (PlantDH_data_remaining[p, "efficiency", s]*model.storage_charge[p, t, s])
 
 def heat_electric_profile_heatpump_Constraint(model, p, t, s):
     """
     The heat generation of a heat pump is equal to the efficiency of the heat pump times the electric energy consumed (storage_charge).
     So far, a fixed COP is assumed for heat pumps.
     """
-    return model.genTh[p, t, s] == PlantDH_data_remaining[p, "efficiency", s]*model.storage_charge[p, t, s]
+    sf = model.constraint_scaling['heat_electric_profile_heatpump']
+    return sf * model.genTh[p, t, s] == sf * (PlantDH_data_remaining[p, "efficiency", s]*model.storage_charge[p, t, s])
 
 def heat_electric_profile_CHP_Constraint(model, p, t, s):
     """
     The heat generation of a CHP plant is equal to electricical generation divided by power_to_heat_ratio. 
     Reminder: power_to_heat_ratio = (Electricity produced)/(Thermal energy produced)
     """
-    return model.genTh[p, t, s] == model.gen[p, t, s]/PlantDH_data_remaining[p, "power_to_heat_ratio", s]
+    sf = model.constraint_scaling['heat_electric_profile_CHP']
+    return sf * model.genTh[p, t, s] == sf * (model.gen[p, t, s]/PlantDH_data_remaining[p, "power_to_heat_ratio", s])
 
 
 # thermal energy balance (thermal balance) for district heating systems
 def energy_balancethermal_Constraint(model, n, t, s):
+    sf = model.constraint_scaling['energy_balancethermal']
     # thermal generatin from all technologies -----------------------------------------------------------
     # resistive heaters
     gen_thermal_RH = sum(
@@ -2191,8 +2350,8 @@ def energy_balancethermal_Constraint(model, n, t, s):
         infeedKVA = 0
             
     return (
-        gen_thermal_RH  + infeedKVA # + infeed + lostload
-        == demand_fixed + demand_storage + curtailmentTh  # +  curtailment + demand_storage
+        sf * (gen_thermal_RH  + infeedKVA) # + infeed + lostload
+        == sf * (demand_fixed + demand_storage + curtailmentTh)# +  curtailment + demand_storage
     )
 
 def dsrth_thermal_energy_dev_tracking(model, p, t, s):
@@ -2202,6 +2361,7 @@ def dsrth_thermal_energy_dev_tracking(model, p, t, s):
     The deviation (model.dsrTh_dev[p, t, s]) is equal to sum of the connected dsrTh plant so far in the week, i.e.,
     model.dsrTh_dev[p, t, s] is equal to model.storage_chargeTh[p, t, s] - model.genTh[p, t, s] summed over all hours starting from the beginning of the corresponding week to hour t.
     """
+    sf = model.constraint_scaling['dsrth_thermal_energy_dev_tracking']
     week_of_t = model.Map_t_week[t]
     T_of_corresponding_week = model.Map_week_t[week_of_t]
     # first_hour_week =T_of_corresponding_week[0]
@@ -2210,7 +2370,7 @@ def dsrth_thermal_energy_dev_tracking(model, p, t, s):
     #     return model.dsrThDev[p, t, s] == 0
     # else:
     T_until_now = [t_ for t_ in T_of_corresponding_week if t_ <= t]
-    return model.dsrThDev[p, t, s] == sum(
+    return sf * model.dsrThDev[p, t, s] == sf * sum(
         model.storage_chargeTh[p, t_, s] - model.genTh[p, t_, s] for t_ in T_until_now
     )
     
@@ -2219,7 +2379,8 @@ def dsrTh_dev_limit_Constraint(model, p, t, s):
     The deviation of the thermal energy of the building from the comfortable temperature range should be within the limits of the thermal energy deviation of the building.
     i.e., -5 <= model.dsrTh_dev[p, t, s] <= 5
     """
-    return pyo.inequality(-model.dsrThDev_max[p,s], model.dsrThDev[p, t, s], model.dsrThDev_max[p,s]) 
+    sf = model.constraint_scaling['dsrTh_dev_limit']
+    return pyo.inequality(-sf * model.dsrThDev_max[p,s], sf * model.dsrThDev[p, t, s], sf * model.dsrThDev_max[p,s]) 
 
 
 def dsrTh_dev_week_start_zero_Constraint(model, p, w, s):
@@ -2249,72 +2410,92 @@ def inflexble_demandTh_share_Constraint(model, n, t, s):
     At every time step, at least ...% of the thermal energy demand of the district heating node should be inflxible. 
     In other words, sum of generationTh from all sources in the node, except for dsrTh, should be at least ...% of the demandDH.
     """
-    return sum(
+    sf = model.constraint_scaling['inflexble_demandTh_share']
+    return sf * sum(
         model.genTh[p, t, s] for p in model.PDH & model.Map_nodeDH_plantDH[n] if p not in model.PDH_dsr
-    ) >= (1 - flexible_household_heatpump_share[0]) * model.demandDH[n, t, s]
+    ) >= sf * np.round((1 - flexible_household_heatpump_share[0]) * model.demandDH[n, t, s])
     
 # thermal storage investment -----------------------------------------
 def gen_energyTh_max_limit_Constraint(model, p, scen):
+    sf = model.constraint_scaling['gen_energyTh_max_limit_constraint']
     if model.energyTh_max_limit[p] == float('inf') or math.isnan(model.energyTh_max_limit[p]):
         return Constraint.Skip
     else:
-        return model.gen_energyTh_max[p, scen] <= model.energyTh_max_limit[p]
+        return sf * model.gen_energyTh_max[p, scen] <= sf * model.energyTh_max_limit[p]
     
          
     
 def genTh_max_limit_Constraint(model, p, scen):
+    sf = model.constraint_scaling['genTh_max_limit_constraint']
     if model.genTh_max_limit[p] != float('inf'):
-        return model.genTh_max[p, scen] <= model.genTh_max_limit[p]
+        return sf * model.genTh_max[p, scen] <= sf * model.genTh_max_limit[p]
     else:
         return Constraint.Skip       
 # -------------------------------------------- EV modelling -------------------------------------------
 def ev_consumption_weekly_sum_Constraint(model, w, s):
     """
-    Modelling the EV consumption with one representative EV (EV_CH).
+    Modelling the flexible EV consumption with the representative plant CH00_EV_flex.
     The EV consumption shifting constraint ensures that 
-     - the total energy consumed by EVs is equal to the given weekly sums and 
-     - in every hour the consumption is limitted by the availability of the EVs.
+     - the total energy consumed by flexible EVs equals the given weekly sums and 
+     - in every hour the consumption is limited by the availability of the EVs.
 
-     inputs:
-     - EV_weekly_energy_consumption_data
-     - model.Map_week_t
+    This constraint only covers the FLEXIBLE portion of EV charging (CH00_EV_flex).
+    The inflexible portion is added directly to the energy balance as a fixed demand parameter.
+
+    inputs:
+    - EV_weekly_energy_consumption_data (flexible portion weekly target)
+    - model.Map_week_t
+    
+    Note: When only a partial week is modeled, the weekly target is scaled proportionally
+    to the fraction of hours actually being modeled. This prevents forcing full-week 
+    consumption into a shorter time period.
     """
+    sf = model.constraint_scaling['ev_consumption_weekly_sum']
 
+    # Weekly target for flexible EVs from EV_weekly_energy_consumption_data
     weekly_target_energy = EV_weekly_energy_consumption_data[w,s]
+    
+    # Calculate the fraction of the week that is actually being modeled
+    # Use Map_week_t_full to get the true number of hours in the full week (168 for a normal week)
+    # and Map_week_t to get the hours actually being modeled
+    hours_in_full_week = len(model.Map_week_t_full[w])  # Should be 168 for a full week
+    hours_modeled_in_week = len(model.Map_week_t[w])  # Hours actually in model.T
+    
+    # Scale the weekly target proportionally to hours modeled
+    if weekly_target_energy > 1 and hours_modeled_in_week < hours_in_full_week:
+        fraction_of_week_modeled = hours_modeled_in_week / hours_in_full_week
+        weekly_target_energy *= fraction_of_week_modeled
 
-    # weekly_charging_potential is the maximum energy that can be consumed by the EV if the EV is charging always at max power
-    weekly_charging_potential = sum(EV_charging_power_rate[t,s] for t in model.Map_week_t[w])
+        print(f"Warning: Since {w} is not modeled entirely, the EV demand has been adjusted from {EV_weekly_energy_consumption_data[w,s]:.2f} MWh to {weekly_target_energy:.2f} MWh.")
 
-    if weekly_target_energy > weekly_charging_potential:
-        print(f"Warning: The weekly target energy for EVs in week {w} is higher than the weekly charging potential of the EVs. The weekly target energy is set to the weekly charging potential (from {weekly_target_energy} MWh to {weekly_charging_potential} MWh).")
-        weekly_target_energy = weekly_charging_potential
-
-
-    # total energy consumed by EVs in a week
+    # total energy consumed by flexible EVs in a week
     total_energy_consumed = sum(
-        model.storage_charge["EV_CH", t, s] for t in model.T if t in model.Map_week_t[w]
+        model.storage_charge["CH00_EV_flex", t, s] for t in model.Map_week_t[w]
     )
-    return total_energy_consumed == weekly_target_energy
+    return sf * total_energy_consumed == sf * weekly_target_energy
 
 def ev_consumption_hourly_rate_Constraint(model, t, s):
     """
-    The hourly rate of EV consumption is limitted by the charging power rate of the EV.
+    The hourly rate of flexible EV consumption (CH00_EV_flex) is limited by the charging power rate.
     input:
     - EV_charging_power_rate
     """
-    return model.storage_charge["EV_CH", t, s] <= EV_charging_power_rate[t,s]
+    sf = model.constraint_scaling['ev_consumption_hourly_rate']
+    return sf * model.storage_charge["CH00_EV_flex", t, s] <= sf * EV_charging_power_rate[t,s]
 
 # V2G
 def v2g_consumption_hourly_rate_Constraint(model, p, t, s):
     """
     The hourly rate of V2G consumption is limitted by the discharging power rate of the V2G.
     """
-    return model.storage_charge[p, t, s] <= model.V2G_charging_power_rate[p,t, s]
+    sf = model.constraint_scaling['v2g_consumption_hourly_rate']
+    return sf * model.storage_charge[p, t, s] <= sf * model.V2G_charging_power_rate[p,t, s]
 def v2g_generation_hourly_rate_Constraint(model, p, t, s):
     """
     The hourly rate of V2G generation is limitted by the charging power rate of the V2G.
     """
-    return model.gen[p, t, s] <= model.V2G_charging_power_rate[p,t, s]
+    sf = model.constraint_scaling['v2g_generation_hourly_rate']
+    return sf * model.gen[p, t, s] <= sf * model.V2G_charging_power_rate[p,t, s]
 
 # -------------------------------------------- heat pump modeling -------------------------------------------
 
@@ -2322,12 +2503,12 @@ def building_heat_demand_Constraint(model, t, ba, s):
     """
     Ensures that the thermal energy level (i.e. the temperature) in the building is maintained within the comfortable range.
     """
-    
+    sf = model.constraint_scaling['building_heat_demand']
     # Regular thermal storage equation for any hour that is neither the first nor the last hour
     if t != model.T.first():
-        return model.th_sl[t, ba, s] == model.th_sl[model.T.prev(t), ba, s] - model.BA_th_con[t, ba, s] + model.storage_charge[ba, t, s] * model.COP[t, ba, s]
+        return sf * model.th_sl[t, ba, s] == sf * (model.th_sl[model.T.prev(t), ba, s] - model.BA_th_con[t, ba, s] + model.storage_charge[ba, t, s] * model.COP[t, ba, s])
     else:
-        return model.th_sl[t, ba, s] == 0
+        return sf * model.th_sl[t, ba, s] == 0
 
 
 def building_weekly_average_Constraint(model, w, ba, s):
@@ -2342,13 +2523,32 @@ def max_heating_capacity_Constraint(model, t, ba, s):
     """
     Ensures that the heating capacity of the heat pump is not exceeded.
     """
-    return model.storage_charge[ba, t, s] <= model.BA_max_heating_capacity[ba, s] # Please note that the maximum heating capacity in the script from Sarah refers to the electric demand (not the thermal!)
+    sf = model.constraint_scaling['max_heating_capacity']
+    return sf * model.storage_charge[ba, t, s] <= sf * model.BA_max_heating_capacity[ba, s]
 
 def fuel_storage_capacity_annual_investment_limit_Constraint(model, f, s):
     """
     Ensures that the investment in investment  fuel storage is limited to the fuel storage capacity potential of CH.
     """
-    return model.fuel_storage_capacity_annual[f, s] <= model.fuel_storage_investment_annual_limit[f, s]
+    sf = model.constraint_scaling['fuel_storage_capacity_annual_investment_limit']
+    return sf * model.fuel_storage_capacity_annual[f, s] <= sf * model.fuel_storage_investment_annual_limit[f, s]
+
+def resistive_heater_investment_cap_Constraint(model, s):
+    """
+    Limits the total investment capacity of resistive heaters across all district heating nodes.
+    Sums the investment capacity across all resistive heater plants globally.
+    """
+    sf = model.constraint_scaling['resistive_heater_investment_cap']
+    # Skip if no limit is provided
+    if model.resistive_heater_cap_MW_total.value is False:
+        return pyo.Constraint.Skip
+    
+    resistive_plants = [pdh for pdh in model.PDH_resistive if pdh in model.PDH_allinvTh]
+    
+    if not resistive_plants:
+        return pyo.Constraint.Skip
+    
+    return sf * sum(model.genTh_max[pdh, s] for pdh in resistive_plants) <= sf * model.resistive_heater_cap_MW_total
 
 def pump_less_than_gen_constraint(model, pdh, scenario):
     if model.Map_plantDH_tech[pdh] in ['PTES_large', 'TTES_medium']:
@@ -2421,12 +2621,8 @@ def fixing_capacities_central(model, sub_scenarios_list):
         not in [
             "pvrf",
             "windon",
-            "windof",
-            "v1g",
             "ev_flex",
             "v2g",
-            "bt",
-            "hp",
             "electrolyzer",
             "resistive_heater", # district heating
             "heat_pump", # district heating

@@ -1,9 +1,9 @@
-# This file defines the multi-step lost load costs.
-# It is only read if 'lost_load_cost_mode' is set to 'multi_step_v1' in the settings.
-# capacity_MWh: The amount of lost load available at this cost step.
-# cost_EUR_per_MWh: The cost for each MWh of lost load in this step.
-# The last step should have a very large capacity to represent an 'unlimited' amount.
+# This file defines the multi-step lost load costs.,
+# It is only read if 'lost_load_cost_mode' is set to 'multi_step_v1' in the settings.,
+# capacity_MWh: The amount of lost load available at this cost step.,
+# cost_EUR_per_MWh: The cost for each MWh of lost load in this step.,
+# The last step should have a very large capacity to represent an 'unlimited' amount.,
 capacity_MWh,cost_EUR_per_MWh
 100,5000
 200,0
-999999999,10000
+inf,10000

@@ -23,7 +23,6 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
-output/
 .installed.cfg
 *.egg
 
@@ -150,3 +149,12 @@ input/neighbour_prices_for_CH_only_mode/*.html
 
 # Ignore optimizer file
 *.ilp
+
+# Aiding files for AI
+detailed_reporting/details_on_*
+detailed_reporting/to_consider_from_*
+
+# Outputs
+output/
+# plot_creators/daily_electricity_costs_*
+# plot_creators/nuclear_breakeven_*

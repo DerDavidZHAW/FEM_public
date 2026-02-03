@@ -1,6 +1,7 @@
 from pyomo.environ import Constraint, Set
 from model.components_common import intersection
 from data_prep.definitions_common import Plant_investment_RES_CH_list
+from model.constraint_scaling import constraint_scaling
 
 
 def define_constraints_central(
@@ -26,14 +27,15 @@ def define_constraints_central(
                     # if the time window passes over the end of the year, we need to consider the range from start to 8760 and from 1 to end
                     # range_T is equal to sum of range(start, 8760) and range(1, end + 1)
                     range_T = list(range(start, 8760 + 1)) + list(range(1, end + 1))
+                sf = constraint_scaling['consume_tot_limit']
                 model.add_component(
                     f"consume_tot_limit_{p}_{n}_{s}",
                     Constraint(
-                        expr=sum(
+                        expr=sf * sum(
                             model.storage_charge[p, "t_" + str(t), s]
                             for t in range_T
                         )
-                        == energy_limit
+                        == sf * energy_limit
                     ),
                 )
     for scen in model.Scenarios:

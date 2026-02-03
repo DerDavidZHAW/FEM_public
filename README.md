@@ -40,8 +40,8 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/DerDavidZHAW/FEM_public.git
-   cd FEM_public
+   git clone <link>
+   cd Future_Markets
    ```
 
 2. **Install dependencies with Poetry:**
@@ -65,8 +65,8 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/DerDavidZHAW/FEM_public.git
-   cd FEM_public
+   git clone https://github.com/alidrd/Future_Markets.git
+   cd Future_Markets
    ```
 
 2. **Check if Poetry is available, install if needed:**
@@ -195,7 +195,7 @@ For running multiple scenarios in parallel on HPC clusters (Euler/SciCORE):
    Edit `cluster_runs/parallel_runs.sh` and update the project path:
 
    ```bash
-   cd ~/Models/FEM_public  # Change this to your actual project location
+   cd ~/Models/Future_Markets  # Change this to your actual project location
    ```
 
 3. **Update SLURM array bounds:**
@@ -225,8 +225,6 @@ Results are saved in the `output/` directory:
 - **Energy balances** and dispatch schedules
 - **Economic indicators** (costs, prices, revenues)
 - **Interactive HTML plots** for visualization
-
-> An extensive documentation for model *settings* and *output* files can be found in `FEM_settings_and_output_documentation.pdf`. The model also exports `settings.csv` to the `output/<scenario>/` folder to help track scenario inputs.
 
 ## Project Structure
 
@@ -304,10 +302,10 @@ The model includes comprehensive visualization capabilities:
 
 ## Citation
 
-If you use this model or its description, please cite as follows:
+If you use this model in your research, please cite:
 
 ```
-Holmer, D., & Darudi, A. (2025). The Future Energy Market Model (FEM): A Mathematical Description (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.17722336
+[Add appropriate citation information]
 ```
 
 ## License

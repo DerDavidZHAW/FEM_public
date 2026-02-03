@@ -985,9 +985,14 @@ def op_inv_exp_imp_cost_plot(scenarios_to_agg, map_scen_subscen, output_dir, fil
     fig.write_html(output_dir + file_name + "OPEX_CAPEX.html")
 
 
-def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
+def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen, region="CH00"):
     """
-    This function merges the generation and demand for CH00, and saves the merged results in a csv file.
+    This function merges the generation and demand for a specified region, and saves the merged results in a csv file.
+    
+    Parameters:
+    -----------
+    region : str, default="CH00"
+        The region code to aggregate for (e.g., "CH00", "DE00", "FR00", "IT00", "AT00").
     """
     subcescen_list = [subscen for scen in map_scen_subscen.values() for subscen in scen]
 
@@ -1026,9 +1031,12 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
 
 
     # preparation for the merge ----------------------------------------------------------------------
+    # Extract region prefix (e.g., "CH" from "CH00", "DE" from "DE00")
+    region_prefix = ''.join([c for c in region if not c.isdigit()])
+    
     # read csvs ----------------------------
     gen_df = pd.read_csv(output_dir + "gen_year_sum_temporal.csv", index_col=0)
-    gen_ch_df = gen_df.loc[gen_df.index.isin(Map_node_plant.loc["CH00", :])]
+    gen_ch_df = gen_df.loc[gen_df.index.isin(Map_node_plant.loc[region, :])]
     infeed_df = pd.read_csv(output_dir + "infeed_year_sum_temporal.csv", index_col=0)
 
     # preparing list of techs to report ----
@@ -1045,8 +1053,8 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     #
     pv_invested = gen_ch_df.loc[gen_ch_df.index.isin(Map_plant_tech.loc[Map_plant_tech["0"].isin(tech_pv)].index)][subcescen_list].sum()
 
-    # pv_infeed is equal to all values in infeed_df that have tech_infeed in tech_pv and index includes either CH0 or ID
-    pv_infeed = infeed_df.loc[infeed_df['Tech_infeed'].isin(tech_pv) & (infeed_df.index.str.contains("CH0") | infeed_df.index.str.contains("ID"))][subcescen_list].sum()
+    # pv_infeed is equal to all values in infeed_df that have tech_infeed in tech_pv and index includes region prefix or ID
+    pv_infeed = infeed_df.loc[infeed_df['Tech_infeed'].isin(tech_pv) & (infeed_df.index.str.contains(region_prefix) | infeed_df.index.str.contains("ID"))][subcescen_list].sum()
 
     pv_total = pv_invested + pv_infeed
 
@@ -1055,16 +1063,16 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     # read wind values (gen and infeed) --------------------------------------------------------
     wind_invested = gen_ch_df.loc[gen_ch_df.index.isin(Map_plant_tech.loc[Map_plant_tech["0"].isin(tech_wind)].index)][subcescen_list].sum()
 
-    # wind_infeed is equal to all values in infeed_df that have tech_infeed in tech_wind and index includes either CH0 or ID
-    wind_infeed = infeed_df.loc[infeed_df['Tech_infeed'].isin(tech_wind) & (infeed_df.index.str.contains("CH0") | infeed_df.index.str.contains("ID"))][subcescen_list].sum()
+    # wind_infeed is equal to all values in infeed_df that have tech_infeed in tech_wind and index includes region prefix or ID
+    wind_infeed = infeed_df.loc[infeed_df['Tech_infeed'].isin(tech_wind) & (infeed_df.index.str.contains(region_prefix) | infeed_df.index.str.contains("ID"))][subcescen_list].sum()
 
     wind_total = wind_invested + wind_infeed
 
     annual_values_region.loc[("infeed", "wind_all"), :] = wind_total
 
     # read infeed values (except pv and wind, i.e., ror)  ------------------
-    # keep values for plants in CH00, that is if index includes CH0 or ID
-    infeed_df = infeed_df.loc[infeed_df.index.str.contains("CH0") | infeed_df.index.str.contains("ID")]
+    # keep values for plants in the target region, that is if index includes region prefix or ID
+    infeed_df = infeed_df.loc[infeed_df.index.str.contains(region_prefix) | infeed_df.index.str.contains("ID")]
 
     # sum values for ID and CH0 separately
     for tech in tech_infeed_report:
@@ -1091,8 +1099,8 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     # read lostload values --------------------------------------------------------
     lostload_df = pd.read_csv(output_dir + "lostload_year_sum_temporal.csv", index_col=0)
 
-    # keep values if index includes CH0 or ID
-    lostload_ch0 = lostload_df.loc[lostload_df.index.str.contains("CH0")][subcescen_list].sum()
+    # keep values if index includes region prefix or ID
+    lostload_ch0 = lostload_df.loc[lostload_df.index.str.contains(region_prefix)][subcescen_list].sum()
     lostload_ID = lostload_df.loc[lostload_df.index.str.contains("ID")][subcescen_list].sum()
 
     lostload_all = lostload_ch0 + lostload_ID
@@ -1102,15 +1110,28 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     # read imports --------------------------------------------------------
     export_df = pd.read_csv(output_dir + "Export_year_sum_temporal.csv", index_col=0) 
 
-    # only keep values for CH0
-    export_ch0 = export_df.loc[export_df.index.str.contains("CH0")][subcescen_list]
+    # only keep values for target region
+    export_ch0 = export_df.loc[export_df.index.str.contains(region_prefix)][subcescen_list]
 
-    for country in ["AT", "DE", "FR", "IT"]:
+    # Define neighbor countries for each region
+    neighbor_countries = {
+        "CH": ["AT", "DE", "FR", "IT"],
+        "DE": ["AT", "BE", "CH", "CZ", "DK", "FR", "LU", "NL", "PL"],
+        "FR": ["BE", "CH", "DE", "LU", "IT", "ES"],
+        "IT": ["AT", "CH", "FR", "SI"],
+        "AT": ["CH", "CZ", "DE", "HU", "IT", "SI"],
+    }
+    countries_to_report = neighbor_countries.get(region_prefix, [])
+    
+    for country in countries_to_report:
         # find the index that has the country in the name
-        index_with_country = export_ch0.index[export_ch0.index.str.contains(country)][0]
+        matching_indices = export_ch0.index[export_ch0.index.str.contains(country)]
+        if len(matching_indices) == 0:
+            continue
+        index_with_country = matching_indices[0]
 
-        # check if country is before CH0 in the index, that is, if CH is exporting to the country
-        if index_with_country.find(country) > index_with_country.find("CH0"):
+        # check if country is before region prefix in the index, that is, if region is exporting to the country
+        if index_with_country.find(country) > index_with_country.find(region_prefix):
             annual_values_region.loc[("gen", f"import_{country}"), :] = - export_ch0.loc[index_with_country]
         else:
             annual_values_region.loc[("gen", f"import_{country}"), :] = export_ch0.loc[index_with_country]
@@ -1118,14 +1139,18 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     # fixed demand --------------------------------------------------------
     demand_df = pd.read_csv(output_dir + "demand_year_sum_Map_type_consumer.csv", index_col=1)
 
-    annual_values_region.loc[("demand", "fixed modelled household"), :] = demand_df.loc[demand_df.index.str.contains("ID")][subcescen_list].sum()
-    annual_values_region.loc[("demand", "fixed modelled commercial"), :] = demand_df.loc[demand_df.index.str.contains("CH0")][subcescen_list].sum()
+    # For CH00, split demand into household (ID) and commercial (CH0); for other regions, sum all
+    if region == "CH00":
+        annual_values_region.loc[("demand", "fixed modelled household"), :] = demand_df.loc[demand_df.index.str.contains("ID")][subcescen_list].sum()
+        annual_values_region.loc[("demand", "fixed modelled commercial"), :] = demand_df.loc[demand_df.index.str.contains("CH0")][subcescen_list].sum()
+    else:
+        annual_values_region.loc[("demand", "fixed modelled"), :] = demand_df.loc[demand_df.index.str.contains(region_prefix)][subcescen_list].sum()
 
     # storage charge --------------------------------------------------------
     storage_charge_df = pd.read_csv(output_dir + "storage_charge_year_sum_temporal.csv", index_col=0)
 
-    # keep values for plants in CH00
-    storage_charge_ch_df = storage_charge_df.loc[storage_charge_df.index.isin(Map_node_plant.loc["CH00", :])]
+    # keep values for plants in target region
+    storage_charge_ch_df = storage_charge_df.loc[storage_charge_df.index.isin(Map_node_plant.loc[region, :])]
 
     # sum values for each tech in tech_gen_report
     for tech in tech_gen_report: 
@@ -1141,7 +1166,7 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     # curtailment --------------------------------------------------------
     curtailment_df = pd.read_csv(output_dir + "curtailment_year_sum_temporal.csv", index_col=0)
 
-    curtailment_ch0 = curtailment_df.loc[curtailment_df.index.str.contains("CH0")][subcescen_list].sum()
+    curtailment_ch0 = curtailment_df.loc[curtailment_df.index.str.contains(region_prefix)][subcescen_list].sum()
     curtailment_ID = curtailment_df.loc[curtailment_df.index.str.contains("ID")][subcescen_list].sum()
 
     curtailment_all = curtailment_ch0 + curtailment_ID
@@ -1149,7 +1174,8 @@ def merge_gen_dem_ch(scenarios_to_agg, output_dir, map_scen_subscen):
     annual_values_region.loc[("demand", "curtailment"), :] = curtailment_all
 
     # export to csv file --------------------------------------------------------
-    annual_values_region.to_csv(output_dir + "Annual_balance_ch.csv")
+    region_lower = region.lower().replace("00", "")
+    annual_values_region.to_csv(output_dir + f"Annual_balance_{region_lower}.csv")
 
     return
 

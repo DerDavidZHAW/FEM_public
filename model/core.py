@@ -1,7 +1,8 @@
 from pathlib import Path
 
-# Model version - do not modify
-_MODEL_VERSION = "1.0.0"  # 18 November 2025
+# Model version - imported from shared module
+from model.version import MODEL_VERSION
+_MODEL_VERSION = MODEL_VERSION  # Alias for backwards compatibility
 
 #%% import data definitions and vlues -----------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ from utils.utilities_model import export_model_to_txt, export_model_obj
 #from utils.dict_to_csv import dict_3dim_to_csv
 import aggregation.results_export as res_export
 import utils.settings_to_csv as set_to_df
+from detailed_reporting.reporting_main import generate_detailed_reports
 from model.structural_parameters import (
     tech_demand_with_timeseries_netflex_model_list,
     tech_infeed_consumers_list,
@@ -35,6 +37,7 @@ import utils.export_solve_statistics as export_model_stats
 import model.price_setting_tech as price_setting_tech
 
 import model.investment_summary as investment_summary
+from model.variable_presets import apply_variable_presets, read_variable_presets
 
 # %% import packages ---------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------
@@ -49,6 +52,9 @@ import os
 # ----------------------------------------------------------------------------------------------------
 
 def core_main(scenario_name, sub_scenarios_list, model_version=None):
+    # Start timer for total runtime tracking
+    total_timer_start = time.time()
+    
     # create output folder --------------------
     output_dir = Path("output") / scenario_name
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -93,6 +99,16 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
             Node_list = settings_scen["Node_list_setting"]
         slack_soc = settings_scen["slack_soc"]
         NodeDH_list = settings_scen["NodeDH_list"]
+        resistive_heater_cap = settings_scen["resistive_heater_investment_cap_MW_total"]
+    
+    # Validate that resistive heater investment caps are identical across all subscenarios
+    for sub_scen in sub_scenarios_list[1:]:  # Check all except the first one
+        settings_scen_check = read_scenario_settings(sub_scen)
+        if settings_scen_check["resistive_heater_investment_cap_MW_total"] != resistive_heater_cap:
+            raise ValueError(
+                f"ERROR: Resistive heater investment cap must be identical for all subscenarios in stochastic optimization. "
+                f"Found different values: {resistive_heater_cap} vs {settings_scen_check['resistive_heater_investment_cap_MW_total']}"
+            )
 
     merged_settings_df = pd.DataFrame(settings_dict)
     
@@ -131,8 +147,8 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         PlantDH_list, # district heating plants
     )
     # %% Parameters ------------------------------------------------------------------------------------
-    model = define_params_inv(model, weight_in_objective_fcn)
-    model = define_params_op(model)
+    model = define_params_inv(model, weight_in_objective_fcn, resistive_heater_cap)
+    model = define_params_op(model, resistive_heater_cap)
     model = define_vars_op(model)
     model = define_vars_inv(model)
     # %% Objective function ------------------------------------------------------------------------------
@@ -151,6 +167,17 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     print("time to define constraints: ", time.time() - start_ct)
     # %% fixing values  (pre-existing capacities etc.)----------------------------------------------------
     fixing_capacities_central(model, sub_scenarios_list)
+    
+    # Apply variable presets from CSV file (if it exists)
+    print("Applying variable presets from model_variable_presets.csv...")
+    preset_summary = apply_variable_presets(model, scenario_name, preset_file_path="input/model_variable_presets.csv", verbose=True)
+    applicable_count = len([p for p in read_variable_presets('input/model_variable_presets.csv') if p['scenario_name'] == '' or p['scenario_name'] == scenario_name])
+    print(f"Presets applied: {preset_summary['applied']}, Failed: {preset_summary['failed']}, Total applicable: {applicable_count}")
+    if preset_summary['details']:
+        print("Preset details:")
+        for preset, status, message in preset_summary['details']:
+            print(f"  - {status}: {preset.get('variable_name')} | indices={preset.get('indices')} | scen={preset.get('scenario_name')} -> {message}")
+    
     # %% solve model -------------------------------------------------------------------------------------
     # export_model_to_txt("before_solve" + scenario_name, model, scenario_name) # Exporting the model (debugging purposes)
     # export_model_obj("OBJbefore_solve" + scenario_name, model, scenario_name) # Exporting the model (debugging purposes)
@@ -163,9 +190,26 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     opt.options["LogFile"] = str(log_path)  # Convert Path object to string if needed
     
     model.dual = pyo.Suffix(direction=pyo.Suffix.IMPORT)     # so that dual values are reported back from the solve
-    solver_parameters = (         # Method=1 SimplexPricing=2 Presolve=1 ScaleFlag=1
-        "ResultFile=model.ilp ScaleFlag=1  threads=8 NumericFocus=3"
-    )
+    model.rc = pyo.Suffix(direction=pyo.Suffix.IMPORT)       # so that reduced costs are reported back from the solve
+    
+    # Diagnostic: Check for large objective coefficients BEFORE solving
+    print("Checking objective function coefficients...")
+    large_coef_data = export_model_stats._check_objective_coefficients(model, output_dir, threshold=1e6)
+    if large_coef_data:
+        print(f"  WARNING: Found {len(large_coef_data)} variables with objective coefficients > 1e6")
+        print(f"  Details saved to: {output_dir}/large_objective_coefficients.csv")
+    else:
+        print("  OK: No unusually large objective coefficients found.")
+    
+    # Solver settings optimized for reliable reduced costs
+    # - Crossover=0 disabled: Gurobi will use default crossover (important for basis/reduced costs)
+    # - Method=2: Barrier method (good for large LPs)
+    # - BarConvTol=1e-10: Tighter barrier convergence for better numerical precision
+    # - OptimalityTol=1e-8: Slightly tighter than default (1e-6) for better reduced costs
+    # - FeasibilityTol=1e-7: Slightly tighter than default for constraint satisfaction
+    # - NumericFocus=1: Mild numeric focus (0=off, 1=mild, 2=moderate, 3=aggressive)
+    # Note: We do NOT use ScaleFlag or extreme NumericFocus to avoid slowing down too much
+    solver_parameters = "threads=8 Method=2 BarConvTol=1e-10 OptimalityTol=1e-8 FeasibilityTol=1e-7 NumericFocus=1"
     
     result = opt.solve(
         model,
@@ -189,8 +233,8 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     res_export.par_var(var_list, scenario_name)
 
     # Parameters ---------------------------------------------------
-    # create a list of all parameters in the model
-    par_list = [v for v in model.component_objects(ctype=Param, active=True, descend_into=True)]
+    # create a list of all indexed parameters in the model (exclude scalars)
+    par_list = [v for v in model.component_objects(ctype=Param, active=True, descend_into=True) if v.is_indexed()]
 
     # export all parameters in par_list
     res_export.par_var(par_list, scenario_name)
@@ -204,7 +248,8 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         'cost_op_thermal_dict',
         'cost_inv_thermal_dict',
         'cost_inv_fuel_storage_dict',
-        'trade_cost_dict'
+        'trade_cost_dict',
+        'emissions_dict'
     ]
     
     for cost_name in cost_dict_names:
@@ -227,15 +272,24 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
                 if data and isinstance(list(cost_dict.keys())[0], tuple):
                     key_length = len(list(cost_dict.keys())[0])
                     if key_length == 2:
-                        columns = ['plant', 'scenario', 'cost_CHF']
+                        if cost_name == 'emissions_dict':
+                            columns = ['plant', 'scenario', 'emissions_tCO2']
+                        else:
+                            columns = ['plant', 'scenario', 'cost_CHF']
                     else:
-                        columns = [f'key_{i}' for i in range(key_length)] + ['cost_CHF']
+                        if cost_name == 'emissions_dict':
+                            columns = [f'key_{i}' for i in range(key_length)] + ['emissions_tCO2']
+                        else:
+                            columns = [f'key_{i}' for i in range(key_length)] + ['cost_CHF']
                 else:
-                    columns = ['scenario', 'cost_CHF']
+                    if cost_name == 'emissions_dict':
+                        columns = ['scenario', 'emissions_tCO2']
+                    else:
+                        columns = ['scenario', 'cost_CHF']
                 
                 df = pd.DataFrame(data, columns=columns)
                 df.to_csv(output_path, index=False)
-                print(f"  Exported {cost_name}")
+                # print(f"  Exported {cost_name}")
     
     # Sets ---------------------------------------------------------
     set_names_to_export = ["P_allinv", ]
@@ -285,14 +339,28 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     # export all dual values of constraints in constraint_list
     dual_values_dict = res_export.constraints(constraint_list, scenario_name, model, write_csv=True)
 
+    # Reduced costs for investment variables --------------------------------
+    # These tell you how much cheaper a technology would need to be to become competitive
+    investment_var_names = [
+        "gen_max",           # generation capacity (MW)
+        "genTh_max",         # thermal generation capacity (MW thermal)
+        "gen_energy_max",    # storage energy capacity (MWh)
+        "gen_energyTh_max",  # thermal storage energy capacity (MWh thermal)
+    ]
+    reduced_costs_dict = res_export.reduced_costs(
+        investment_var_names, 
+        scenario_name, 
+        model, 
+        weight_in_objective_fcn, 
+        write_csv=True
+    )
 
-    if False:
-        df_plants, df_counts = price_setting_tech.aggregate_price_setting_data(
-            scenario_name,
-            sub_scenarios_list,
-            model,
-            dual_values_dict,
-        )
+    # df_plants, df_counts = price_setting_tech.aggregate_price_setting_data(
+    #     scenario_name,
+    #     sub_scenarios_list,
+    #     model,
+    #     dual_values_dict,
+    # )
 
     list_of_lists_common, list_of_dicts_common = get_lists_and_dicts(
         data_prep.definitions_common, []
@@ -302,3 +370,12 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     )
 
     investment_summary.investment_summary(r"output/" + scenario_name + "/")
+    
+    # Calculate total runtime
+    total_time_seconds = time.time() - total_timer_start
+    
+    # Generate detailed reports for Swiss model intercomparison (only for single subscenario runs)
+    if len(sub_scenarios_list) == 1:
+        generate_detailed_reports(model, scenario_name, total_time_seconds=total_time_seconds)
+    else:
+        print(f"Skipping detailed reporting: only supported for single subscenario runs (found {len(sub_scenarios_list)} subscenarios)")

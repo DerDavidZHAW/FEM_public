@@ -224,6 +224,9 @@ cost_data_opr_int = {}
 # dictionary that include the slope value of operation cost (EU/MWh),  for each technology
 cost_data_opr_slp = {}
 
+# dictionary that includes the emission factor (tCO2/MWh_output) for each technology, accounting for efficiency
+# This is emission_factor_input / efficiency, so it represents emissions per MWh of electricity generated
+emission_factor_per_MWh = {}
 
 # dictionary that assigns a maximum import limit to each consumer (e.g. {'ID300': 20})
 # a dictionary defined over nodes and techs (op_cost_n_tech_calibration[(node, tech)]) 
@@ -309,6 +312,18 @@ EV_weekly_energy_consumption_data = {}
 # dictionary that allocates to each hour of the year the maximum possible charging power of all EVs in MW
 # I.e. the power with which all EVs could charge that are plugged in (not driving) and not fully charged
 EV_charging_power_rate = {}
+
+# dictionary that stores the inflexible EV demand timeseries (hourly consumption in MWh)
+# This is the portion of EV consumption that charges according to a fixed profile (not optimizable)
+# Keys are (node, timestep, scenario) tuples, values are demand in MWh
+# This allows separate tracking and visualization of inflexible EV consumption apart from other inflexible demand
+EV_inflexible_demand_data = {}
+
+# dictionary that stores the inflexible household heat pump demand timeseries (hourly consumption in MWh)
+# This is the portion of household HP consumption that operates according to a fixed profile (not participating in flexibility)
+# Keys are (node, timestep, scenario) tuples, values are demand in MWh
+# This allows separate tracking and visualization of inflexible HP consumption apart from other inflexible demand
+HP_inflexible_demand_data = {}
 
 # dictionary that allocates to each hour of the year the maximum possible charging and discharging rate for the representative V2G in MW
 V2G_charging_power_rate = {}  

@@ -5,6 +5,11 @@ The output CSV file is saved as 'output/echnology_costs_reconstructed_from_model
 
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to Python path to enable imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pandas as pd
 from input.cost_operation_invest_data import cost_component, amortization_years_all
@@ -37,19 +42,30 @@ cost_data = []
 for cost_type, technologies in cost_component.items():
     for tech, years in technologies.items():
         try:
+            # This is a nested dict with years
             for year, value in years.items():
                 cost_data.append([tech, cost_type, year, value])
         except AttributeError:
-            cost_data.append([tech, cost_type, None, years])
+            # This is a simple dict without year dimension - add for both 2035 and 2050
+            cost_data.append([tech, cost_type, 2035, years])
+            cost_data.append([tech, cost_type, 2050, years])
 
 # Convert to dataframe
 cost_df = pd.DataFrame(cost_data, columns=['technology', 'cost_type', 'year', 'value'])
 
-# Keep only relevant years (2035 and 2050) or empty years
-cost_df = cost_df[cost_df['year'].isnull() | cost_df['year'].isin([2035, 2050])]
+# Keep only relevant years (2035 and 2050)
+cost_df = cost_df[cost_df['year'].isin([2035, 2050])]
 
 # Pivot table to have separate columns for each cost type
 cost_df = cost_df.pivot(index=['technology', 'year'], columns='cost_type', values='value').reset_index()
+
+# Reorder columns: swap investment_cost_charge_chfMW and investment_cost_chfMW
+cols = list(cost_df.columns)
+if 'investment_cost_charge_chfMW' in cols and 'investment_cost_chfMW' in cols:
+    charge_idx = cols.index('investment_cost_charge_chfMW')
+    cost_idx = cols.index('investment_cost_chfMW')
+    cols[charge_idx], cols[cost_idx] = cols[cost_idx], cols[charge_idx]
+    cost_df = cost_df[cols]
 
 # Merge with amortization years
 final_df = cost_df.merge(amortization_df, left_on='technology', right_index=True, how='left')

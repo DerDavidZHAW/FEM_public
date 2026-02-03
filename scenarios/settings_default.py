@@ -3,6 +3,7 @@ seetings_default_param = {
     "consumer_connection_limit": False,
     "solver_name": "gurobi",
     "flex_dem_active_for_consumer": True,
+    "share_of_flexibly_charging_EV": 0.5,  # Share of total EV consumption that is flexible (0-1). The remaining (1-share) is inflexible.
     "V2G_share_of_flexibly_charging_EV": 0.5,
     "reduce_DH_demand_by_[MWh]": 0,
     "CH_only": False,
@@ -43,6 +44,7 @@ seetings_default_param = {
     "battery_cost_factor": 1,
     "battery_investment_nodes_in_addition_to_CH": "",
     "reduce_BE_FR_day_nine_and_ten_demand_to_percent": 1.0,
+    "resistive_heater_investment_cap_MW_total": False,  # MW limit for total resistive heater investment across all nodes
     "electrolyzer_demand_reduction_coefficient": 1,
     "NTC_CH_ratio": 1,
     "RES_EU_coefficient": 1.1,
@@ -50,7 +52,6 @@ seetings_default_param = {
     "run_year": 2050,
     "eu_policy": "GA",
     "ch_policy": "ZBA",
-    "V2G_share_of_flexibly_charging_EV": 0.5,
     "Node_list_setting": [
         "CH00",
         "IT00",

@@ -372,6 +372,12 @@ dispatch_color_mapping = {
 
     'ev_flex demand': '#ffa733',
 
+    # EV inflexible demand - orange shade similar to EV flex but darker
+    'ev_inflex demand': '#cc6600',
+
+    # HP inflexible demand - purple shade to distinguish from EV
+    'hp_inflex demand': '#9467bd',
+
     # Curtailment and net flows
     'Curtailment Market': '#d95f5f',         # Muted red
     'Net_Export': '#888888',                 # Light gray
@@ -424,6 +430,7 @@ dispatch_legend_labels = {
     "resistive_heater demand": {"en": "Resistive Heater Demand", "de": "Widerstandsheizungsverbrauch"},
     "v2g demand": {"en": "V2G Charging Demand", "de": "V2G-Ladeverbrauch"},
     "ev_flex demand": {"en": "EV Flex Demand", "de": "EV-Flexverbrauch"},
+    "EV Inflexible demand": {"en": "EV Inflexible Demand", "de": "EV-Unflexibler Verbrauch"},
     "Curtailment Market": {"en": "Curtailment", "de": "Abregelung"},
     "Net_Export": {"en": "Net Export", "de": "Nettoexport"},
     "CCGTCCS gen": {"en": "CCGT with CCS", "de": "GuD mit CCS"},

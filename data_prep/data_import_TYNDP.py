@@ -56,6 +56,7 @@ from data_prep.definitions_common import (
     cost_data_inv_discharge_slp,
     flexible_household_heatpump_share,
     KVAinfeed,
+    emission_factor_per_MWh,
 )
 
 from data_prep.definitions_common import (
@@ -78,6 +79,8 @@ from data_prep.definitions_common import (
     DemandDH_data,
     lost_load_cost,
     Line_trade_price,
+    EV_inflexible_demand_data,
+    HP_inflexible_demand_data,
 )
 from model.mappings import (
     Map_TYNDPscenario_short_longspaced,
@@ -133,6 +136,7 @@ def data_import_TYNDP_fcn(scenario_name):
     limited_fuels_import_CH_list = settings_scen["limited_fuels_import_CH_list"]
     NodeDH_list = settings_scen["NodeDH_list"]
     flexible_household_heatpump_share_raw = settings_scen["flexible_household_heatpump_share"]
+    share_of_flexibly_charging_EV = settings_scen["share_of_flexibly_charging_EV"]
     V2G_share_of_flexibly_charging_EV = settings_scen["V2G_share_of_flexibly_charging_EV"]
     reduce_inflex_demand_by = settings_scen["reduce_inflex_demand_by_[MWh]"]
     reduce_DH_demand_by = settings_scen["reduce_DH_demand_by_[MWh]"]
@@ -168,17 +172,15 @@ def data_import_TYNDP_fcn(scenario_name):
     Map_consumer_node.update(Map_consumer_node_TYNDP)
 
     print("Importing investment and operation costs...") 
-    (cost_data_inv_gen_int_EP2050, 
-    cost_data_inv_gen_slp_EP2050,
+    (cost_data_inv_gen_slp_EP2050,
     cost_data_opr_int_EP2050, 
     cost_data_opr_slp_EP2050, 
     op_cost_n_tech_calibration_EP2050,
     cost_data_inv_e_slp_scne,
     cost_data_inv_fuel_storage_slp_scne,
-    cost_data_inv_discharge_slp_scne) = data_costs.data_import_costs_fcn(scenario_name)
+    cost_data_inv_discharge_slp_scne,
+    emission_factor_per_MWh_scne) = data_costs.data_import_costs_fcn(scenario_name)
 
-    dle.update_dict_with_add_dim(cost_data_inv_gen_int_EP2050, cost_data_inv_gen_int, scenario_name)
-    # cost_data_inv_gen_int.update(cost_data_inv_gen_int_EP2050)
     dle.update_dict_with_add_dim(cost_data_inv_gen_slp_EP2050, cost_data_inv_gen_slp, scenario_name)
     # cost_data_inv_gen_slp.update(cost_data_inv_gen_slp_EP2050)
     dle.update_dict_with_add_dim(cost_data_opr_int_EP2050, cost_data_opr_int, scenario_name)
@@ -190,6 +192,7 @@ def data_import_TYNDP_fcn(scenario_name):
     dle.update_dict_with_add_dim(cost_data_inv_e_slp_scne, cost_data_inv_e_slp, scenario_name)
     dle.update_dict_with_add_dim(cost_data_inv_fuel_storage_slp_scne, cost_data_inv_fuel_storage_slp, scenario_name)
     dle.update_dict_with_add_dim(cost_data_inv_discharge_slp_scne, cost_data_inv_discharge_slp, scenario_name)
+    dle.update_dict_with_add_dim(emission_factor_per_MWh_scne, emission_factor_per_MWh, scenario_name)
 
     # RES availability data
     print("Reading RES availability and capacity data and calculate infeed...")
@@ -420,23 +423,34 @@ def data_import_TYNDP_fcn(scenario_name):
     rep_plant_name = "V2G_CH"
 
     # Read the EV data
-    EV_weekly_energy_consumption_data_TYNDP = read_EV_weekly_energy_consumption_data(run_year, V2G_share_of_flexibly_charging_EV)
-    EV_charging_power_rate_TYNDP, V2G_charge_power_rate_TYNDP = read_EV_and_V2G_charging_power_rate(run_year, rep_plant_name, V2G_share_of_flexibly_charging_EV, share_of_available_charging_capacity_for_V2G)
-    # add "EV_rep_CH" to Plant_list
-    Plant_list_TYNDP.extend(["EV_CH"])
-    Map_plant_node.update({"EV_CH": "CH00"})
-    Map_plant_tech.update({"EV_CH": "ev_flex"})
+    # The new data structure: EV_demand_weekly contains 100% of EV consumption
+    # share_of_flexibly_charging_EV determines inflexible vs flexible split
+    # V2G_share_of_flexibly_charging_EV determines V2G vs non-V2G split within flexible
+    EV_weekly_energy_consumption_data_TYNDP = read_EV_weekly_energy_consumption_data(run_year, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV)
+    EV_charging_power_rate_TYNDP, V2G_charge_power_rate_TYNDP = read_EV_and_V2G_charging_power_rate(run_year, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV, share_of_available_charging_capacity_for_V2G)
+    
+    # Read inflexible EV demand (portion of EVs that charge according to fixed profile)
+    # This is added to the energy balance as a fixed demand, not as a storage_charge plant
+    EV_inflexible_demand_TYNDP = read_EV_inflexible_demand_data(run_year, share_of_flexibly_charging_EV, node="CH00")
+    
+    # Add flexible EV plant (optimizable within weekly sum constraint)
+    # Inflexible EV is handled as a parameter in the energy balance, not as a plant
+    Plant_list_TYNDP.append("CH00_EV_flex")
+    Map_plant_node.update({"CH00_EV_flex": "CH00"})
+    Map_plant_tech.update({"CH00_EV_flex": "ev_flex"})
 
     # Add the raw imported data to the global dictionaries
     dle.update_dict_with_add_dim(EV_weekly_energy_consumption_data_TYNDP, EV_weekly_energy_consumption_data, scenario_name)
     dle.update_dict_with_add_dim(EV_charging_power_rate_TYNDP, EV_charging_power_rate, scenario_name)
+    dle.update_dict_with_add_dim(EV_inflexible_demand_TYNDP, EV_inflexible_demand_data, scenario_name)
     
     # -----------------------------------  V2G data ------------------------------------------------
 
     # Read the V2G data
-    V2G_outflow_TYNDP = read_V2G_data_outflow(run_year, rep_plant_name, V2G_share_of_flexibly_charging_EV)
+    # V2G_outflow represents the consumption pattern of V2G fleet (scaled to V2G portion only)
+    V2G_outflow_TYNDP = read_V2G_data_outflow(run_year, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV)
     # V2G_charge_power_rate_TYNDP = read_V2G_charge_power_rate(run_year, rep_plant_name)
-    V2G_storage_capacity_scen = read_V2G_storage_capacity(run_year, ch_policy, rep_plant_name)
+    V2G_storage_capacity_scen = read_V2G_storage_capacity(run_year, ch_policy, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV)
     # add "V2G_CH" to Plant_list
     Plant_list_TYNDP.extend([rep_plant_name,])
     Map_plant_node.update({rep_plant_name: "CH00"})
@@ -476,8 +490,17 @@ def data_import_TYNDP_fcn(scenario_name):
     Map_plant_node.update({name: "CH00" for name in BA_names})
     Map_plant_tech.update({name: "heat_pump_households" for name in BA_names})
 
+    # Read inflexible household heat pump demand (portion of HPs that operate according to fixed profile)
+    # This is added to the energy balance as a fixed demand, separate from flexible HP consumption
+    HP_inflexible_demand_TYNDP = read_HP_inflexible_demand_data(BA_el_con, flexible_household_heatpump_share_raw, node="CH00")
+    dle.update_dict_with_add_dim(HP_inflexible_demand_TYNDP, HP_inflexible_demand_data, scenario_name)
+
     # ----------------------------------- demand data ----------------------------------------------
     print("Reading demand data...")
+    # Note: We now subtract both the flexible HP demand AND the inflexible HP demand from the general demand
+    # The flexible HP demand is modeled separately as optimizable plants
+    # The inflexible HP demand is added to the energy balance as a fixed demand parameter (HP_inflexible_demand)
+    # This allows distinguishing between: (1) general inflexible demand, (2) inflexible HP demand, (3) flexible HP demand
     Demand_data_year_scenario = read_demand_data(
         Map_TYNDPscenario_short_long[eu_policy],
         ch_policy,
@@ -485,7 +508,7 @@ def data_import_TYNDP_fcn(scenario_name):
         run_year,
         weather_year,
         reduce_inflex_demand_by,
-        BA_el_con*flexible_household_heatpump_share_raw,
+        BA_el_con,  # Now we subtract the ENTIRE HP consumption, not just the flexible portion
         float(reduce_BE_FR_day_nine_and_ten_demand_to_percent),
     )
 
@@ -604,14 +627,29 @@ def data_import_TYNDP_fcn(scenario_name):
 
     # part 2: maapings that do not have duplicates, because of using map_tech_to_plant function 
     # Updating Map_eff_in_plant and Map_eff_out_plant
+    # Extract year-specific values from efficiency dicts (they now include both 2035 and 2050)
+    efficiency_into_storage_for_year = {}
+    efficiency_for_year = {}
+    for tech, val in operation_data.cost_component["efficiency_into_storage"].items():
+        if isinstance(val, dict):
+            efficiency_into_storage_for_year[tech] = val.get(run_year, 0)
+        else:
+            efficiency_into_storage_for_year[tech] = val
+    
+    for tech, val in operation_data.cost_component["efficiency"].items():
+        if isinstance(val, dict):
+            efficiency_for_year[tech] = val.get(run_year, 1)
+        else:
+            efficiency_for_year[tech] = val
+    
     Map_eff_in_plant_TYNDP = map_tech_to_plant(
-        Plant_list_TYNDP, {}, operation_data.cost_component["efficiency_into_storage"], Map_plant_tech
+        Plant_list_TYNDP, {}, efficiency_into_storage_for_year, Map_plant_tech
     )
 
     Map_eff_in_plant.update(Map_eff_in_plant_TYNDP)
 
     Map_eff_out_plant_TYNDP = map_tech_to_plant(
-        Plant_list_TYNDP, {}, operation_data.cost_component["efficiency"], Map_plant_tech
+        Plant_list_TYNDP, {}, efficiency_for_year, Map_plant_tech
     )
 
     Map_eff_out_plant.update(Map_eff_out_plant_TYNDP)

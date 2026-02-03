@@ -1,10 +1,10 @@
-# This file defines the steps and costs for the single-step lost load cost mode.
-# The model will use these values to create a piecewise linear cost function for lost load.
-#
-# Columns:
+# This file defines the steps and costs for the single-step lost load cost mode.,
+# The model will use these values to create a piecewise linear cost function for lost load.,
+#,
+# Columns:,
 #   - capacity_MWh: The size of the capacity block for this cost step, in MWh.
 #   - cost_EUR_per_MWh: The cost of not serving this capacity block, in EUR/MWh.
-#
-# The last step should have a very large capacity_MWh to represent the final cost level.
+#,
+# The last step should have a very large capacity_MWh to represent the final cost level.,
 capacity_MWh,cost_EUR_per_MWh
-999999999,10000
+inf,10000

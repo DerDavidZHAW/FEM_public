@@ -2,59 +2,48 @@ import numpy as np
 import math
 
 Map_plant_tech_cost_component = {  # cap_op (only generation capacity and operation costs) or cap_op_energy (additional energy capacity)
-    "pv": "cap_op",
+    
+    # non-district heating technologies - investment and operation
     "pvrf": "cap_op",
     "windon": "cap_op",
-    "windof": "cap_op",
-    "gas": "cap_op",
-    "biomass": "cap_op_energy",
     "battery": "cap_op_energy",
-    # at this point, bt is for household consumers and battery utility scale
-    "bt": "cap_op_energy",
-    "dam": "cap_op_energy",
-    "psp_open": "cap_op_energy",
-    "psp_close": "cap_op_energy",
-    # for EVs, it should not matter, because gen and energy capacities are fixed later (not optimized)
-    "v1g": "cap_op_energy",
-    "ev_flex": "cap_op", # for EVs, when we model them as flexible demand but without following the battery SOC
-    # for EVs, it should not matter, because gen and energy capacities are fixed later (not optimized)
-    "v2g": "cap_op_energy",
-    # for flexible demands (e.g. heat pumps), it should not matter, because gen and energy capacities are fixed later (not optimized)
-    "hp": "cap_op_energy",
-    "chp": "cap_op",
     "oil": "cap_op",
-    "dsr": "cap_op",
-    "hardcoal": "cap_op",
     "nuclear": "cap_op",
-    "lignite": "cap_op",
-    "other": "cap_op",
-    "electrolyzer" : "cap_op",
 
-    # CH specific technologies, so far
     "CCGTresmethane": "cap_op",
     "SCGTresmethane": "cap_op",
     "CCGTCCS": "cap_op",
     "SCGTfossil": "cap_op",
-    # "liquidfuel": "cap_op",
     "hydrogen": "cap_op_energy",
 
-    # district heating technologies
+    # non-district heating technologies - only operation
+    "dsr": "cap_op",
+    "other": "cap_op",
+    "dam": "cap_op_energy",
+    "windof": "cap_op",
+    "ev_flex": "cap_op",
+    "gas": "cap_op",
+    "electrolyzer" : "cap_op",
+    "psp_open": "cap_op_energy",
+    "biomass": "cap_op_energy",
+    "psp_close": "cap_op_energy",
+    "hardcoal": "cap_op",
+    "heat_pump_households": "cap_op",
+    "v2g": "cap_op_energy",
+
+    # district heating technologies - investment and operation
     "resistive_heater": "cap_op",
     "heat_pump": "cap_op",
-    "heat_pump_households": "cap_op",
-    "TES": "cap_op_energy",
-    "TTES_small": "cap_op_energy",
     "TTES_medium": "cap_op_energy",
-    "TTES_large": "cap_op_energy",
-    "PTES_small": "cap_op_energy",
-    "PTES_medium": "cap_op_energy",
     "PTES_large": "cap_op_energy",
-    "dsrTh": "cap_op",
     "gas_boiler": "cap_op",
+
+    # district heating technologies - only operation
+    "dsrTh": "cap_op",
 }
 tech_list = list(dict.keys(Map_plant_tech_cost_component))
 
-TES_techs_list = ["TES", "TTES_small", "TTES_medium", "TTES_large", "PTES_small", "PTES_medium", "PTES_large"]
+TES_techs_list = ["TES", "TTES_medium", "PTES_large"]
 
 Map_fuel_tech = {
     "resdiesel": ["resdiesel",],
@@ -74,19 +63,13 @@ for fuel, tech_list in Map_fuel_tech.items():
 # if a technology needs to track state of the storage 
 tech_store_list = [
     "battery",
-    "bt",
     "hydrogen",
     "psp_open",
     "psp_close",
-    "v1g",
     "v2g",
     "dam",
     "TES",
-    "TTES_small",
     "TTES_medium",
-    "TTES_large",
-    "PTES_small",
-    "PTES_medium",
     "PTES_large",
 ]
 #NOTE: if a tech is mentioned here, it should also be in Map_eff_in_tech, Map_eff_out_tech, Map_decaycoef_tech, Map_tech_startcondition, Map_plant_tech_cost_component
@@ -95,34 +78,26 @@ tech_store_list = [
 # distrcit heating technologies that are connected to the electric grid
 techDH_connected_to_electric_grid_list = ["resistive_heater", "heat_pump", "combined_heatpower"]
 
-# if a technology has pumping capability, i.e., if energy can be added/consumed (v1g is included)
+# if a technology has pumping capability, i.e., if energy can be added/consumed
 tech_store_pump_list = [
     "battery",
-    "bt",
     "hydrogen",
     "psp_open",
     "psp_close",
-    "v1g",
     "ev_flex",
     "v2g",
-    "hp",
     "dsr",
     "electrolyzer",
     "resistive_heater",
     "heat_pump",
     "heat_pump_households",
-    "TES", # this is just thermal consumption/storage (while previous ones are electrical consumption/storage)
-    "TTES_small",
     "TTES_medium",
-    "TTES_large",
-    "PTES_small",
-    "PTES_medium",
     "PTES_large",
 ]
 # if one wants to force pump capacity= gen capacity (mostly simplifying investment decisions)
-tech_store_equal_pump_max_gen_max_list = ["battery", "bt", "v2g", "hydrogen", "TES", "TTES_small", "TTES_medium", "TTES_large", "PTES_small", "PTES_medium", "PTES_large",]
+tech_store_equal_pump_max_gen_max_list = ["battery", "v2g", "hydrogen", "TES", "TTES_medium", "PTES_large",]
 # if a technology has no electric generation capability (e.g. EVs)]
-tech_p_no_gen = ["hp", "v1g", "ev_flex", "electrolyzer", "resistive_heater", "heat_pump", "TES", "TTES_medium", "TTES_large", "PTES_small", "PTES_medium", "PTES_large", "heat_pump_households", "dsrTh", "gas_boiler"]
+tech_p_no_gen = ["ev_flex", "electrolyzer", "resistive_heater", "heat_pump", "TES", "TTES_medium", "PTES_large", "heat_pump_households", "dsrTh", "gas_boiler"]
 # if a technology has an infeed for utility scale plants (e.g. pvrf) #NOTE: add technologies here, if needed, eg. pvap (PV Alpine ...)
 tech_infeed_all_list = ["pvrf", "windon", "windof", "ror", "pv"]
 # if a technology has an infeed only for consumers  (e.g. pv)
@@ -139,24 +114,24 @@ tech_hydro_list = ["dam", "psp_open", "psp_close"]
 # if a store technology has inflow or outflow
 tech_inflow_list = ["dam", "psp_open"]
 # if a store technology has inflow or outflow
-tech_outflow_list = ["psp_open", "v1g", "v2g"]
-tech_limited_energy_list = ["biomass", "chp", "other", "CCGTresmethane", "SCGTresmethane", "CCGTCCS", "SCGTfossil"]
-tech_limited_energy_CH_list = ["chp", "other", ] #NOTE: update the list, maybe list can be empty # list of technologies which will have limitted energy in CH, but their fuel consumption is not directly limitted (fuel_limited_CH_list tracks the fuel limited technologies)
+tech_outflow_list = ["psp_open", "v2g"]
+tech_limited_energy_list = ["biomass", "other", "CCGTresmethane", "SCGTresmethane", "CCGTCCS", "SCGTfossil"]
+tech_limited_energy_CH_list = ["other", ] #NOTE: update the list, maybe list can be empty # list of technologies which will have limitted energy in CH, but their fuel consumption is not directly limitted (fuel_limited_CH_list tracks the fuel limited technologies)
 fuel_limited_CH_list = ["biomass", "resmethane", "fossilmethane", "oil"]
 tech_limited_energy_and_require_storage_inv_no_soc = [] #NOTE: removed "liquidfuel", because now the fuel tracking is taking care of this. technologies that have limited energy and require storage investment (excluding biomass), 
                                                                        # but do not need to keep track of the state of charge (excl. batteries)
 
 # list of asset technolgies owned by the consuemrs in NETFLEX that are to be imported to  demand time series.
 # Note that batteries are not included here, because they have no consumption time series.
-tech_demand_with_timeseries_netflex_list = ["fixed", "hp", "v1g"]
+tech_demand_with_timeseries_netflex_list = ["fixed"]
 
 # allowing v2g to exist, for later expansions
-tech_demand_with_timeseries_netflex_model_list = ["fixed", "hp", "v1g", "v2g"]
+tech_demand_with_timeseries_netflex_model_list = ["fixed", "v2g"]
 
 # all consuming technologies that are owned by the consumers in NETFLEX.
-tech_demand_assets_netflex_list = ["fixed", "hp", "bt", "v1g", "v2g"]
+tech_demand_assets_netflex_list = ["fixed", "v2g"]
 
-tech_demand_assets_shiftable_netflex_list = ["hp", "v1g"] # v2g is not flexible in the way that EVs are (EVs are flexible within some time window, v2g is modelled more like a battery now)
+tech_demand_assets_shiftable_netflex_list = [] # v2g is not flexible in the way that EVs are (EVs are flexible within some time window, v2g is modelled more like a battery now)
 
 tech_demand_assets_shiftable = tech_demand_assets_shiftable_netflex_list + ["electrolyzer"] # we didn't add ev_flex here, because its equations are defined separately
 
@@ -350,23 +325,17 @@ cost_data_opr_qdr = {
     "pvrf": 0,  # 2 * 0
     "gas": 2 * 0.001,  # 2 * 0.002
     "biomass": 0,  # 2 * 0.00004
-    "chp": 0,  # 2 * 0.00004
     "battery": 0,  # 2 * 0
-    "bt": 0,  # 2 * 0
     "dam": 0,  # 2 * 0
     "psp_open": 0,  # 2 * 0
     "psp_close": 0,  # 2 * 0
-    "v1g": 0,  # 2 * 0
     "v2g": 0,  # 2 * 0
-    "hp": 0,  # 2 * 0
-    "chp": 0,  # 2 * 0
     "oil": 2 * 0.04,  # 2 * 0.04
     "dsr": 0,  # 2 * 0
     "hardcoal": 2 * 0.001,  # 2 * 0.002
     "nuclear": 0,  # 2 * 0.00004
     "lignite": 0,  # 2 * 0.00004
     "windon": 0,  # 2 * 0
-    "windof": 0,  # 2 * 0
     "other": 0,  # 2 * 0
     "electrolyzer": 0,  # 2 * 0
 
@@ -379,62 +348,15 @@ cost_data_opr_qdr = {
 }
 # defining the start condtion of storage technologies (to be assigned to all plants of this type of technology, not alreay having a value)
 Map_tech_startcondition = {
-    "v1g": 0.8,
     "v2g": 0.5,
     "dam": 0.95,
     "psp_open": 0.95,
     "psp_close": 0.95,
     "battery": 0.95,
-    "bt": 0.95,
     "hydrogen": 0.95, 
-    "TES": 0.99, # NOTE: This number is not used as in the model we only specify that the start and end conditions are the same, but starting point is free.
-    "TTES_small": 0.99, # NOTE: This number is not used as in the model 
     "TTES_medium": 0.99, # NOTE: This number is not used as in the model 
-    "TTES_large": 0.99, # NOTE: This number is not used as in the model 
-    "PTES_small": 0.99, # NOTE: This number is not used as in the model 
-    "PTES_medium": 0.99, # NOTE: This number is not used as in the model 
     "PTES_large": 0.99, # NOTE: This number is not used as in the model 
 }
-
-# # defining the end condtion of storage technologies (to be assigned to all plants of this type of technology, not alreay having a value)
-# End_condition_tech = {
-#     "v1g": 0.8,
-#     "v2g": 0.8,
-#     "dam": 0.95,
-#     "psp_open": 0.95,
-#     "psp_close": 0.95,
-#     "battery": 0.95,
-#     "bt": 0.95,
-# }
-
-
-# # for every storage plant ----------------------------------------------------
-# Map_eff_in_tech = {
-#     "v1g": 1,  # NOTE:adjust later
-#     "v2g": 0.90,
-#     "dam": 1,  # NOTE: maybe remove this
-#     "psp_open": 0.87,
-#     "psp_close": 0.87,
-#     "battery": 0.90,
-#     # NOTE: Important to make sure for the central runs, the correct value is used (for consumers that have "bt", the efficiency may be different from this)
-#     "bt": 0.90,
-#     "hydrogen": 0.632, # to get round trip efficiency of 0.4, as in Moretti table 5S
-#     "TES": 0.9, #  efficiency of TES charging
-    
-# }
-
-# Map_eff_out_tech = {
-#     "v1g": 1,  # NOTE:adjust later
-#     "v2g": 0.90,
-#     "dam": 1,  # NOTE: maybe remove this
-#     "psp_open": 0.87,
-#     "psp_close": 0.87,
-#     "battery": 0.90,
-#     # NOTE: Important to make sure for the central runs, the correct value is used (for consumers that have "bt", the efficiency may be different from this)
-#     "bt": 0.90,
-#     "hydrogen": 0.632, # to get round trip efficiency of 0.4, as in Moretti table 5S
-#     "TES": 0.9, #  efficiency of TES charging. 
-# }
 
 # cost of lost load [$/MWh], will be used as default value for all consumers that have no lost load cost defined
 lostlost_cost = 10000
@@ -442,31 +364,63 @@ lostlost_cost = 10000
 ch_subnode_list  = ["CH0" + str(i) for i in range(1, 8)]	 # list of the subnodes/subregions of Switzerland (all to be aggregated to CH00)
 
 def add_additional_batteries(
-    additional_battery_notes,
+    additional_battery_nodes,
     Plant_list,
     Plant_investment_non_RES_CH_list,
-    Plant_investment_data,
+    Plant_investment_RES_CH_data,
     Map_plant_node,
     Map_plant_tech,
     Map_consumer_plant
 ):
-    for node in additional_battery_notes:
-        plant_name = f"{node}01_battery"
-
-        # 1 & 2: Add plant to lists
+    """
+    Add battery investment candidates for additional nodes.
+    Adds entries to Plant_investment_RES_CH_data DataFrame with proper formatting.
+    """
+    import pandas as pd
+    
+    for node in additional_battery_nodes:
+        # Extract the base node code (e.g., "IT01" -> "IT00", "FR01" -> "FR00")
+        base_node = node[:2] + "00"
+        plant_name = f"{node}_battery"
+        
+        # Check if this plant already exists
+        if plant_name in Plant_investment_RES_CH_data.index:
+            print(f"Battery {plant_name} already exists in investment candidates. Skipping.")
+            continue
+        
+        # Create new row for the battery following the CSV format
+        new_battery = pd.DataFrame({
+            'node': [base_node],
+            'market': [base_node],
+            'plant_type': ['cap_op_energy'],
+            'tech': ['battery'],
+            'upperwn': [''],
+            'lowerwn': [''],
+            'eta': [''],
+            'eta_pump': [''],
+            'n_redispatch': [base_node],
+            'gen_max_limit': [100000.0],
+            'energy_max_limit': [float('inf')],
+            'fuel_switching': ['']
+        }, index=[plant_name])
+        
+        # Add to the dataframe
+        Plant_investment_RES_CH_data = pd.concat([Plant_investment_RES_CH_data, new_battery])
+        
+        # Update lists
         Plant_list.append(plant_name)
         Plant_investment_non_RES_CH_list.append(plant_name)
-
-        # 3 & 4: Update Plant_investment_data
-        Plant_investment_data.setdefault('gen_max_limit', {})[plant_name] = 9999999999.0
-        Plant_investment_data.setdefault('energy_max_limit', {})[plant_name] = math.inf
-
-        # 5 & 6: Update maps
-        Map_plant_node[plant_name] = f"{node}00"
+        
+        # Update maps
+        Map_plant_node[plant_name] = base_node
         Map_plant_tech[plant_name] = "battery"
-
-        # 7: Append to consumer plant list
-        Map_consumer_plant.setdefault(f"{node}00", []).append(plant_name)
+        
+        # Append to consumer plant list
+        Map_consumer_plant.setdefault(base_node, []).append(plant_name)
+        
+        print(f"Added battery investment candidate: {plant_name} at node {base_node}")
+    
+    return Plant_investment_RES_CH_data
 
 def reduce_fr_be_demand(Demand_data, reduce_BE_FR_day_nine_and_ten_demand_to_percent):
     # Loop over target nodes

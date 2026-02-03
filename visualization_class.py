@@ -13,8 +13,32 @@ target_node = "CH00"  # a node name ("CH_00"), or "all"
 
 
 scenarios_to_plot =[
-    "2050_all_wy_sensitivity_0,33",
+    "20260119/2035_sens_100",
+    "20260119/2035_sens_30",
 ]
+
+# ========== PLOT SWITCHES ==========
+# Set to True to enable each plot, False to disable
+PLOT_PRICE = False
+PLOT_DISPATCH = True
+PLOT_MERGED_DISPATCH = False  # Merged dispatch figure (combines similar technologies)
+PLOT_THERMAL_DISPATCH = False  # Plot thermal dispatch for each NodeDH individually
+PLOT_INVESTMENTS = False
+PLOT_EXPORT_IMPORT = False
+PLOT_SOC = False  # State of charge (electrical storage)
+PLOT_SOC_THERMAL = False  # State of charge for thermal storage
+PLOT_SOC_DUAL = False  # Opportunity cost of storage
+PLOT_THERMAL_STORAGE_LEVEL = False  # Thermal storage level
+PLOT_THERMAL_STORAGE_LEVEL_REL = False  # Thermal storage level (relative)
+PLOT_V2G = False  # Vehicle-to-grid
+PLOT_SUM_GEN = False  # Total generation
+PLOT_SUM_DEM = False  # Total demand
+PLOT_AGG_GEN = False  # Aggregated generation per technology
+PLOT_AGG_DEM = False  # Aggregated demand per technology
+PLOT_IND_GEN = False  # Individual generation
+PLOT_IND_DEM = False  # Individual demand
+# ===================================
+
 # output_dir = "output/" + scenario_name + "/"
 
 # main code ------------------------------------------------------------------------------------------------
@@ -62,10 +86,6 @@ class DemandTimeSeriesPlotter:
         self.dispatchDH_legend_labels = util_vis.dispatchDH_legend_labels
         self.dispatchDH_color_mapping = util_vis.dispatchDH_color_mapping
 
-        # Plot selections --------------------------------
-        self.plot_thermal_dispatch = False  # Set to False to skip plotting each NodeDH individually
-        self.plot_merged_dispatch = False  # Set to False to skip plotting the merged dispatch figure (that merged several similar technologies and rename to more user freindly names)
-
     # NOTE: add a graph for state of charge. possibly copy the code from visualization.py
 
     def load_data(self):
@@ -93,6 +113,8 @@ class DemandTimeSeriesPlotter:
             self.BA_th_lim,
             self.v2g_outflow_all,
             self.priceTh_all,
+            self.EV_inflexible_demand_all,
+            self.HP_inflexible_demand_all,
         ) = import_gen_demand_timeseries(self.output_dir, self.scenario_name)
         
         start_date = self.generation_all.columns[self.plot_range_int_list[0]]
@@ -176,10 +198,50 @@ class DemandTimeSeriesPlotter:
                 data.name = trace_name
                 trace_dataframes = pd.concat([trace_dataframes, data.to_frame().T], axis=0)
         
+        # Plot inflexible EV demand (not in storage_charge, tracked separately as a parameter)
+        if hasattr(self, 'EV_inflexible_demand_all') and not self.EV_inflexible_demand_all.empty:
+            # Check if target node has inflexible EV demand
+            if self.target_node in self.EV_inflexible_demand_all.index:
+                ev_inflex_data = self.EV_inflexible_demand_all.loc[self.target_node, :]
+                if ev_inflex_data.sum() > 0.5: # type: ignore
+                    trace_name = "ev_inflex demand"
+                    self.fig_dispatch.add_trace(
+                        go.Scatter(
+                            x=ev_inflex_data.index,
+                            y=-ev_inflex_data,
+                            mode=mode,
+                            stackgroup='two',  # this line enables stacking
+                            name=trace_name,
+                        )
+                    )
+                    # Add data to the trace_dataframes dataframe
+                    ev_inflex_data.name = trace_name
+                    trace_dataframes = pd.concat([trace_dataframes, ev_inflex_data.to_frame().T], axis=0) # type: ignore
+
+        # Plot inflexible household heat pump demand (not in flexible HP, tracked separately as a parameter)
+        if hasattr(self, 'HP_inflexible_demand_all') and not self.HP_inflexible_demand_all.empty:
+            # Check if target node has inflexible HP demand
+            if self.target_node in self.HP_inflexible_demand_all.index:
+                hp_inflex_data = self.HP_inflexible_demand_all.loc[self.target_node, :]
+                if hp_inflex_data.sum() > 0.5: # type: ignore
+                    trace_name = "hp_household_inflex demand"
+                    self.fig_dispatch.add_trace(
+                        go.Scatter(
+                            x=hp_inflex_data.index,
+                            y=-hp_inflex_data,
+                            mode=mode,
+                            stackgroup='two',  # this line enables stacking
+                            name=trace_name,
+                        )
+                    )
+                    # Add data to the trace_dataframes dataframe
+                    hp_inflex_data.name = trace_name
+                    trace_dataframes = pd.concat([trace_dataframes, hp_inflex_data.to_frame().T], axis=0) # type: ignore
+
         # Plot curtailement aggregated --------------------------------------------------------------------------------
         # curtailment of households ----------------------------------
         if "CH0" in self.target_node: #TODO: mannually defined
-            if self.curtailment_all.loc["IDs",:].sum(): # TODO: currently, in the case of tariff based dispatch, curtailment is not reported in curtialment.csv (not allowed in the model)
+            if self.curtailment_all.loc["IDs",:].sum(): # TODO: currently, in the case of tariff based dispatch, curtailment is not reported in curtialment.csv (not allowed in the model) # type: ignore
                 trace_name = "Curtailment Households"
                 self.fig_dispatch.add_trace(
                     go.Scatter(
@@ -282,7 +344,7 @@ class DemandTimeSeriesPlotter:
         # Plot lost load -----------------------------------------------------------------------------------------------
         # lost load of households ----------------------------------
         if "CH0" in self.target_node: #TODO: mannually defined
-            if self.lostload_all.loc["IDs",:].sum():
+            if self.lostload_all.loc["IDs",:].sum(): # type: ignore
                 trace_name = "Lost Load households"
                 self.fig_dispatch.add_trace(
                     go.Scatter(
@@ -295,7 +357,7 @@ class DemandTimeSeriesPlotter:
                 )
                 # Add data to the trace_dataframes dataframe, first rename the column to trace_name
                 self.lostload_all.loc["IDs",:].name = trace_name
-                trace_dataframes = pd.concat([trace_dataframes, self.lostload_all.loc["IDs",:].to_frame().T], axis=0)
+                trace_dataframes = pd.concat([trace_dataframes, self.lostload_all.loc["IDs",:].to_frame().T], axis=0) # type: ignore
 
         # lost load of fixed conumers ----------------------------------
         if sum(self.lostload_all.loc[self.target_node + "_fixedconsumer"]) > 0.5:        
@@ -338,7 +400,7 @@ class DemandTimeSeriesPlotter:
                         item_list = [item for item in item_list if "ID" in item and item != "IDs"]
                         infeed_sub_df = infeed_sub_df + self.infeed_all.loc[(item_list, "pv"), :].sum() # type: ignore
             trace_name = f"Infeed preexisting {tech}"
-            if (infeed_sub_df != 0).any():
+            if (infeed_sub_df != 0).any(): # type: ignore
                 self.fig_dispatch.add_trace(
                     go.Scatter(
                         x=infeed_sub_df.index,
@@ -350,7 +412,7 @@ class DemandTimeSeriesPlotter:
                 )
                 # Add data to the trace_dataframes dataframe, first rename the column to trace_name
                 infeed_sub_df.name = trace_name
-                trace_dataframes = pd.concat([trace_dataframes, infeed_sub_df.to_frame().T], axis=0)
+                trace_dataframes = pd.concat([trace_dataframes, infeed_sub_df.to_frame().T], axis=0) # type: ignore
 
         # Plot export and import ---------------------------------------------------------------------------------------
         self.fig_dispatch.add_trace(
@@ -379,12 +441,25 @@ class DemandTimeSeriesPlotter:
             )
         )
 
+        # Add price on secondary y-axis (right side)
         self.fig_dispatch.add_trace(
             go.Scatter(
                 x=self.price_all.loc[self.target_node, :].index,
-                y=self.price_all.loc[self.target_node, :]*1000,
+                y=self.price_all.loc[self.target_node, :],
                 mode=mode,
-                name="Price (CHF/GWh)",
+                name="Price (CHF/MWh)",
+                yaxis="y2",
+                line=dict(color="black", width=1.5),
+            )
+        )
+        
+        # Configure secondary y-axis for price
+        self.fig_dispatch.update_layout(
+            yaxis2=dict(
+                title="Price [CHF/MWh]",
+                overlaying="y",
+                side="right",
+                showgrid=False,
             )
         )
 
@@ -431,7 +506,7 @@ class DemandTimeSeriesPlotter:
         # new_fig_4 = util_vis.aggregate_figure_by_time(self.fig_dispatch, mode_agg="weekly", agg_func="mean", weekly_anchor="W-SUN", scenario_name = self.scenario_name)
         # new_fig_4.show()
 
-        if self.plot_merged_dispatch:
+        if PLOT_MERGED_DISPATCH:
             # ------------------------------------------------------------------------------------------------------------------------
             # combining several technologies, for smaller figures ---------------------------------------------------------------------
             # ------------------------------------------------------------------------------------------------------------------------
@@ -508,6 +583,12 @@ class DemandTimeSeriesPlotter:
             xaxis_tickangle=-45,
             height=800,
             width=1200,
+            legend=dict(
+                x=1.15,  # Move legend further to the right
+                y=1,
+                xanchor='left',
+                yanchor='top'
+            ),
         )
         self.fig_dispatch.show()
         # save to html
@@ -544,7 +625,7 @@ class DemandTimeSeriesPlotter:
         # plot all values in supplyTH in a stacked line plot
         for plant in supplyTH.index:
             # if the sum of the values is greater than 0.5
-            if supplyTH.loc[plant, :].sum() > 0.5:                
+            if supplyTH.loc[plant, :].sum() > 0.5: # type: ignore   
                 self.fig_dispatchDH.add_trace(
                     go.Scatter(
                         x=supplyTH.columns,
@@ -558,7 +639,7 @@ class DemandTimeSeriesPlotter:
         # plot values in self.storageTH_all in a stacked line plot
         for plant in storageTH.index:
             # if the sum of the values is greater than 0.5
-            if storageTH.loc[plant, :].sum() > 0.5:
+            if storageTH.loc[plant, :].sum() > 0.5: # type: ignore
                 self.fig_dispatchDH.add_trace(
                     go.Scatter(
                         x=storageTH.columns,
@@ -981,7 +1062,7 @@ class DemandTimeSeriesPlotter:
         socth_data = self.socth_dual_all
 
         for plant in socth_data.index:
-            self.fig_socth_dual.add_trace(
+            self.fig_socth_dual.add_trace( # type: ignore
                 go.Scatter(
                     x=socth_data.loc[plant, :].index,
                     y=socth_data.loc[plant, :],
@@ -1125,127 +1206,150 @@ class DemandTimeSeriesPlotter:
         )
 
     def plot_all(self, mode):
-        # # print("Plotting dispatch time series...")
-        # # self.plot_dispatch(mode)
+        if PLOT_PRICE:
+            print("Plotting price time series...")
+            self.plot_price(mode)
 
+        if PLOT_SUM_GEN:
+            print("Plotting total generation time series...")
+            self.plot_sum_gen(mode)
+        
+        if PLOT_SUM_DEM:
+            print("Plotting total demand time series...")
+            self.plot_sum_dem(mode)
 
-        # print("Plotting price time series...")
-        self.plot_price(mode)
+        if not self.sum_assets:
+            if PLOT_IND_GEN:
+                print("Plotting individual generation time series...")
+                self.plot_ind_gen(mode)
+            if PLOT_IND_DEM:
+                print("Plotting individual demand time series...")
+                self.plot_ind_dem(mode)
+        else:
+            if PLOT_AGG_GEN:
+                print("Plotting aggregated generation per technology...")
+                self.plot_agg_gen(mode)
+            if PLOT_AGG_DEM:
+                print("Plotting aggregated demand per technology...")
+                self.plot_agg_dem(mode)
 
-        # print("Plotting generation and demand time series...")
-        # fig = go.Figure()
-        # self.plot_sum_gen(mode)
-        # self.plot_sum_dem(mode)
-
-        # if not self.sum_assets:
-        #     print("Plotting individual generation and demand time series...")
-        #     self.plot_ind_dem(mode)
-        #     self.plot_ind_gen(mode)
-        # else:
-        #     print("Plotting aggregated generation and demand time series...")
-        #     self.plot_agg_dem(mode)
-        #     self.plot_agg_gen(mode)
-        print("Plotting export and import time series...")
-        self.plot_export_import(mode)
-        self.plot_soc(mode)
-        self.plot_soc_dual(mode)
+        if PLOT_EXPORT_IMPORT:
+            print("Plotting export and import time series...")
+            self.plot_export_import(mode)
+        
+        if PLOT_SOC:
+            self.plot_soc(mode)
+        
+        if PLOT_SOC_DUAL:
+            self.plot_soc_dual(mode)
+        
         # self.plot_socth_dual(mode)
 
         print("All plots successfully created...")
 
     def show_all_plots(self):
-        self.fig_price.update_xaxes(range=self.plot_range)
-        self.fig_price.update_layout(title="Price")
-        self.fig_price.update_layout(yaxis_title="CHF/MWh")
-        self.fig_price.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_price.show()
+        if PLOT_PRICE:
+            self.fig_price.update_xaxes(range=self.plot_range)
+            self.fig_price.update_layout(title="Price")
+            self.fig_price.update_layout(yaxis_title="CHF/MWh")
+            self.fig_price.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_price.show()
 
-        # self.fig_sum_gen.update_xaxes(range=self.plot_range)
-        # self.fig_sum_gen.update_layout(title="Generation (total)")
-        # self.fig_sum_gen.update_layout(yaxis_title="MWh")
-        # self.fig_sum_gen.update_layout(xaxis_title="Time [hour in year]")
-        # self.fig_sum_gen.update_layout(yaxis=dict(tickformat=".0f"))
-        # self.fig_sum_gen.show()
+        if PLOT_SUM_GEN:
+            self.fig_sum_gen.update_xaxes(range=self.plot_range)
+            self.fig_sum_gen.update_layout(title="Generation (total)")
+            self.fig_sum_gen.update_layout(yaxis_title="MWh")
+            self.fig_sum_gen.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_sum_gen.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_sum_gen.show()
 
-        # self.fig_sum_dem.update_xaxes(range=self.plot_range)
-        # self.fig_sum_dem.update_layout(title="Demand")
-        # self.fig_sum_dem.update_layout(yaxis_title="MWh")
-        # self.fig_sum_dem.update_layout(xaxis_title="Time [hour in year]")
-        # self.fig_sum_dem.update_layout(yaxis=dict(tickformat=".0f"))
-        # self.fig_sum_dem.show()
+        if PLOT_SUM_DEM:
+            self.fig_sum_dem.update_xaxes(range=self.plot_range)
+            self.fig_sum_dem.update_layout(title="Demand")
+            self.fig_sum_dem.update_layout(yaxis_title="MWh")
+            self.fig_sum_dem.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_sum_dem.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_sum_dem.show()
 
-        # if not self.sum_assets:
-        #     self.fig_ind_gen.update_xaxes(range=self.plot_range)
-        #     self.fig_ind_gen.update_layout(title="Individual generation")
-        #     self.fig_ind_gen.update_layout(yaxis_title="MWh")
-        #     self.fig_ind_gen.update_layout(xaxis_title="Time [hour in year]")
-        #     self.fig_ind_gen.update_layout(yaxis=dict(tickformat=".0f"))
-        #     self.fig_ind_gen.show()
+        if not self.sum_assets:
+            if PLOT_IND_GEN:
+                self.fig_ind_gen.update_xaxes(range=self.plot_range)
+                self.fig_ind_gen.update_layout(title="Individual generation")
+                self.fig_ind_gen.update_layout(yaxis_title="MWh")
+                self.fig_ind_gen.update_layout(xaxis_title="Time [hour in year]")
+                self.fig_ind_gen.update_layout(yaxis=dict(tickformat=".0f"))
+                self.fig_ind_gen.show()
 
-        #     self.fig_ind_dem.update_xaxes(range=self.plot_range)
-        #     self.fig_ind_dem.update_layout(title="Individual demand")
-        #     self.fig_ind_dem.update_layout(yaxis_title="MWh")
-        #     self.fig_ind_dem.update_layout(xaxis_title="Time [hour in year]")
-        #     self.fig_ind_dem.update_layout(yaxis=dict(tickformat=".0f"))
-        #     self.fig_ind_dem.show()
+            if PLOT_IND_DEM:
+                self.fig_ind_dem.update_xaxes(range=self.plot_range)
+                self.fig_ind_dem.update_layout(title="Individual demand")
+                self.fig_ind_dem.update_layout(yaxis_title="MWh")
+                self.fig_ind_dem.update_layout(xaxis_title="Time [hour in year]")
+                self.fig_ind_dem.update_layout(yaxis=dict(tickformat=".0f"))
+                self.fig_ind_dem.show()
 
-        # else:
-        #     self.fig_agg_gen.update_xaxes(range=self.plot_range)
-        #     self.fig_agg_gen.update_layout(title="Aggregated generation per technology")
-        #     self.fig_agg_gen.update_layout(yaxis_title="MWh")
-        #     self.fig_agg_gen.update_layout(xaxis_title="Time [hour in year]")
-        #     self.fig_agg_gen.update_layout(yaxis=dict(tickformat=".0f"))
-        #     self.fig_agg_gen.show()
+        else:
+            if PLOT_AGG_GEN:
+                self.fig_agg_gen.update_xaxes(range=self.plot_range)
+                self.fig_agg_gen.update_layout(title="Aggregated generation per technology")
+                self.fig_agg_gen.update_layout(yaxis_title="MWh")
+                self.fig_agg_gen.update_layout(xaxis_title="Time [hour in year]")
+                self.fig_agg_gen.update_layout(yaxis=dict(tickformat=".0f"))
+                self.fig_agg_gen.show()
 
-        #     self.fig_agg_dem.update_xaxes(range=self.plot_range)
-        #     self.fig_agg_dem.update_layout(title="Aggregated demand per technology")
-        #     self.fig_agg_dem.update_layout(yaxis_title="MWh")
-        #     self.fig_agg_dem.update_layout(xaxis_title="Time [hour in year]")
-        #     self.fig_agg_dem.update_layout(yaxis=dict(tickformat=".0f"))
-        #     self.fig_agg_dem.show()
+            if PLOT_AGG_DEM:
+                self.fig_agg_dem.update_xaxes(range=self.plot_range)
+                self.fig_agg_dem.update_layout(title="Aggregated demand per technology")
+                self.fig_agg_dem.update_layout(yaxis_title="MWh")
+                self.fig_agg_dem.update_layout(xaxis_title="Time [hour in year]")
+                self.fig_agg_dem.update_layout(yaxis=dict(tickformat=".0f"))
+                self.fig_agg_dem.show()
 
-        self.fig_export_import.update_xaxes(range=self.plot_range)
-        self.fig_export_import.update_layout(title="Import (export is negative)")
-        self.fig_export_import.update_layout(yaxis_title="MWh")
-        self.fig_export_import.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_export_import.update_layout(yaxis=dict(tickformat=".0f"))
-        self.fig_export_import.show()
+        if PLOT_EXPORT_IMPORT:
+            self.fig_export_import.update_xaxes(range=self.plot_range)
+            self.fig_export_import.update_layout(title="Import (export is negative)")
+            self.fig_export_import.update_layout(yaxis_title="MWh")
+            self.fig_export_import.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_export_import.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_export_import.show()
 
-        self.fig_soc.update_xaxes(range=self.plot_range)
-        self.fig_soc.update_layout(title="State of charge")
-        self.fig_soc.update_layout(yaxis_title="TWh")
-        self.fig_soc.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_soc.update_layout(yaxis=dict(tickformat=".0f"))
-        self.fig_soc.show()
+        if PLOT_SOC:
+            self.fig_soc.update_xaxes(range=self.plot_range)
+            self.fig_soc.update_layout(title="State of charge")
+            self.fig_soc.update_layout(yaxis_title="TWh")
+            self.fig_soc.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_soc.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_soc.show()
 
-        self.fig_socTH.update_xaxes(range=self.plot_range)
-        self.fig_socTH.update_layout(title="State of charge - Thermal storage")
-        self.fig_socTH.update_layout(yaxis_title="GWh")
-        self.fig_socTH.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_socTH.update_layout(yaxis=dict(tickformat=".0f"))
-        self.fig_socTH.show()
+        if PLOT_SOC_THERMAL:
+            self.fig_socTH.update_xaxes(range=self.plot_range)
+            self.fig_socTH.update_layout(title="State of charge - Thermal storage")
+            self.fig_socTH.update_layout(yaxis_title="GWh")
+            self.fig_socTH.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_socTH.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_socTH.show()
 
-        self.fig_socTH_pit.update_xaxes(range=self.plot_range)
-        self.fig_socTH_pit.update_layout(title="State of charge - All Pit Storage - Aggregated")
-        self.fig_socTH_pit.update_layout(yaxis_title="GWh")
-        self.fig_socTH_pit.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_socTH_pit.update_layout(yaxis=dict(tickformat=".0f"))
-        self.fig_socTH_pit.show()
+            self.fig_socTH_pit.update_xaxes(range=self.plot_range)
+            self.fig_socTH_pit.update_layout(title="State of charge - All Pit Storage - Aggregated")
+            self.fig_socTH_pit.update_layout(yaxis_title="GWh")
+            self.fig_socTH_pit.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_socTH_pit.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_socTH_pit.show()
 
-        self.fig_socTH_tank.update_xaxes(range=self.plot_range)
-        self.fig_socTH_tank.update_layout(title="State of charge - All Tank Storage - Aggregated")
-        self.fig_socTH_tank.update_layout(yaxis_title="GWh")
-        self.fig_socTH_tank.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_socTH_tank.update_layout(yaxis=dict(tickformat=".0f"))
-        self.fig_socTH_tank.show()
+            self.fig_socTH_tank.update_xaxes(range=self.plot_range)
+            self.fig_socTH_tank.update_layout(title="State of charge - All Tank Storage - Aggregated")
+            self.fig_socTH_tank.update_layout(yaxis_title="GWh")
+            self.fig_socTH_tank.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_socTH_tank.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_socTH_tank.show()
 
-
-        self.fig_soc_dual.update_xaxes(range=self.plot_range)
-        self.fig_soc_dual.update_layout(title="Opp. cost of storage")
-        self.fig_soc_dual.update_layout(yaxis_title="CHF/MWh")
-        self.fig_soc_dual.update_layout(xaxis_title="Time [hour in year]")
-        self.fig_soc_dual.update_layout(yaxis=dict(tickformat=".0f"))
-        self.fig_soc_dual.show()
+        if PLOT_SOC_DUAL:
+            self.fig_soc_dual.update_xaxes(range=self.plot_range)
+            self.fig_soc_dual.update_layout(title="Opp. cost of storage")
+            self.fig_soc_dual.update_layout(yaxis_title="CHF/MWh")
+            self.fig_soc_dual.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_soc_dual.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_soc_dual.show()
 
         # self.fig_socth_dual.update_xaxes(range=self.plot_range)
         # self.fig_socth_dual.update_layout(title="Opp. cost of thermal storage")
@@ -1254,11 +1358,12 @@ class DemandTimeSeriesPlotter:
         # self.fig_socth_dual.update_layout(yaxis=dict(tickformat=".0f"))
         # self.fig_socth_dual.show()
 
-        self.fig_investments.update_layout(title=f"Investments")
-        self.fig_investments.update_layout(yaxis_title="MW")
-        self.fig_investments.update_layout(xaxis_title="Plant")
-        self.fig_investments.show()
-        self.fig_investments.to_html(f"plots/Investments_{self.scenario_name}.html")
+        if PLOT_INVESTMENTS:
+            self.fig_investments.update_layout(title=f"Investments")
+            self.fig_investments.update_layout(yaxis_title="MW")
+            self.fig_investments.update_layout(xaxis_title="Plant")
+            self.fig_investments.show()
+            self.fig_investments.to_html(f"plots/Investments_{self.scenario_name}.html")
 
 
     def export_all_plots_to_html(self):  # 8760
@@ -1266,69 +1371,84 @@ class DemandTimeSeriesPlotter:
         if not os.path.exists("plots"):
             os.makedirs("plots")
 
-        self.fig_dispatch.update_xaxes(range=self.plot_range)
-        self.fig_dispatch.update_layout(title="Dispatch")
-        self.fig_dispatch.write_html(f"plots/Dispatch_{self.scenario_name}.html")
+        if PLOT_DISPATCH:
+            self.fig_dispatch.update_xaxes(range=self.plot_range)
+            self.fig_dispatch.update_layout(title="Dispatch")
+            self.fig_dispatch.write_html(f"plots/Dispatch_{self.scenario_name}.html")
 
-        self.fig_price.update_xaxes(range=self.plot_range)
-        self.fig_price.update_layout(title="Price")
-        self.fig_price.write_html(f"plots/Price_{self.scenario_name}.html")
+        if PLOT_PRICE:
+            self.fig_price.update_xaxes(range=self.plot_range)
+            self.fig_price.update_layout(title="Price")
+            self.fig_price.write_html(f"plots/Price_{self.scenario_name}.html")
 
-        self.fig_sum_gen.update_xaxes(range=self.plot_range)
-        self.fig_sum_gen.update_layout(title="Generation")
-        self.fig_sum_gen.write_html(f"plots/Gen_{self.scenario_name}.html")
+        if PLOT_SUM_GEN:
+            self.fig_sum_gen.update_xaxes(range=self.plot_range)
+            self.fig_sum_gen.update_layout(title="Generation")
+            self.fig_sum_gen.write_html(f"plots/Gen_{self.scenario_name}.html")
 
-        self.fig_sum_dem.update_xaxes(range=self.plot_range)
-        self.fig_sum_dem.update_layout(title="Demand")
-        self.fig_sum_dem.write_html(f"plots/Dem_{self.scenario_name}.html")
+        if PLOT_SUM_DEM:
+            self.fig_sum_dem.update_xaxes(range=self.plot_range)
+            self.fig_sum_dem.update_layout(title="Demand")
+            self.fig_sum_dem.write_html(f"plots/Dem_{self.scenario_name}.html")
 
         if not self.sum_assets:
-            self.fig_ind_gen.update_xaxes(range=self.plot_range)
-            self.fig_ind_gen.update_layout(title="Individual generation")
-            self.fig_ind_gen.write_html(f"plots/Ind_gen_{self.scenario_name}.html")
+            if PLOT_IND_GEN:
+                self.fig_ind_gen.update_xaxes(range=self.plot_range)
+                self.fig_ind_gen.update_layout(title="Individual generation")
+                self.fig_ind_gen.write_html(f"plots/Ind_gen_{self.scenario_name}.html")
 
-            self.fig_ind_dem.update_xaxes(range=self.plot_range)
-            self.fig_ind_dem.update_layout(title="Individual demand")
-            self.fig_ind_dem.write_html(f"plots/Ind_dem_{self.scenario_name}.html")
+            if PLOT_IND_DEM:
+                self.fig_ind_dem.update_xaxes(range=self.plot_range)
+                self.fig_ind_dem.update_layout(title="Individual demand")
+                self.fig_ind_dem.write_html(f"plots/Ind_dem_{self.scenario_name}.html")
 
         else:
-            self.fig_agg_gen.update_xaxes(range=self.plot_range)
-            self.fig_agg_gen.update_layout(title="Aggregated generation")
-            self.fig_agg_gen.write_html(f"plots/Agg_gen_{self.scenario_name}.html")
+            if PLOT_AGG_GEN:
+                self.fig_agg_gen.update_xaxes(range=self.plot_range)
+                self.fig_agg_gen.update_layout(title="Aggregated generation")
+                self.fig_agg_gen.write_html(f"plots/Agg_gen_{self.scenario_name}.html")
 
-            self.fig_agg_dem.update_xaxes(range=self.plot_range)
-            self.fig_agg_dem.update_layout(title="Aggregated demand")
-            self.fig_agg_dem.write_html(f"plots/Agg_dem_{self.scenario_name}.html")
+            if PLOT_AGG_DEM:
+                self.fig_agg_dem.update_xaxes(range=self.plot_range)
+                self.fig_agg_dem.update_layout(title="Aggregated demand")
+                self.fig_agg_dem.write_html(f"plots/Agg_dem_{self.scenario_name}.html")
 
-        self.fig_export_import.update_xaxes(range=self.plot_range)
-        self.fig_export_import.update_layout(title="Export and import")
-        self.fig_export_import.write_html(f"plots/Exp_imp_{self.scenario_name}.html")
+        if PLOT_EXPORT_IMPORT:
+            self.fig_export_import.update_xaxes(range=self.plot_range)
+            self.fig_export_import.update_layout(title="Export and import")
+            self.fig_export_import.write_html(f"plots/Exp_imp_{self.scenario_name}.html")
 
-        self.fig_soc.update_xaxes(range=self.plot_range)
-        self.fig_soc.update_layout(title="State of charge")
-        self.fig_soc.write_html(f"plots/SOC_{self.scenario_name}.html")
+        if PLOT_SOC:
+            self.fig_soc.update_xaxes(range=self.plot_range)
+            self.fig_soc.update_layout(title="State of charge")
+            self.fig_soc.write_html(f"plots/SOC_{self.scenario_name}.html")
 
-        self.fig_socTH.update_xaxes(range=self.plot_range)
-        self.fig_socTH.update_layout(title="State of charge")
-        self.fig_socTH.write_html(f"plots/SOC_{self.scenario_name}.html")
+        if PLOT_SOC_THERMAL:
+            self.fig_socTH.update_xaxes(range=self.plot_range)
+            self.fig_socTH.update_layout(title="State of charge - Thermal")
+            self.fig_socTH.write_html(f"plots/SOC_thermal_{self.scenario_name}.html")
 
-        self.fig_soc_dual.update_xaxes(range=self.plot_range)
-        self.fig_soc_dual.update_layout(title="Opp. cost of storage")
-        self.fig_soc_dual.write_html(f"plots/SOC_dual_{self.scenario_name}.html")
+        if PLOT_SOC_DUAL:
+            self.fig_soc_dual.update_xaxes(range=self.plot_range)
+            self.fig_soc_dual.update_layout(title="Opp. cost of storage")
+            self.fig_soc_dual.write_html(f"plots/SOC_dual_{self.scenario_name}.html")
 
         # self.fig_socth_dual.update_xaxes(range=self.plot_range)
         # self.fig_socth_dual.update_layout(title="Opp. cost of thermal storage")
         # self.fig_socth_dual.write_html(f"plots/SOC_thermal_dual_{self.scenario_name}.html")
 
-        self.fig_th_sl.update_xaxes(range=self.plot_range)
-        self.fig_th_sl.update_layout(title="Thermal storage level")
-        self.fig_th_sl.write_html(f"plots/Th_sl_{self.scenario_name}.html")
+        if PLOT_THERMAL_STORAGE_LEVEL:
+            self.fig_th_sl.update_xaxes(range=self.plot_range)
+            self.fig_th_sl.update_layout(title="Thermal storage level")
+            self.fig_th_sl.write_html(f"plots/Th_sl_{self.scenario_name}.html")
 
-        self.fig_th_sl_rel.update_xaxes(range=self.plot_range)
-        self.fig_th_sl_rel.update_layout(title="Thermal storage level")
-        self.fig_th_sl_rel.write_html(f"plots/Th_sl_{self.scenario_name}.html")
+        if PLOT_THERMAL_STORAGE_LEVEL_REL:
+            self.fig_th_sl_rel.update_xaxes(range=self.plot_range)
+            self.fig_th_sl_rel.update_layout(title="Thermal storage level (relative)")
+            self.fig_th_sl_rel.write_html(f"plots/Th_sl_rel_{self.scenario_name}.html")
 
-        self.fig_investments.write_html(f"plots/Investments_{self.scenario_name}.html")
+        if PLOT_INVESTMENTS:
+            self.fig_investments.write_html(f"plots/Investments_{self.scenario_name}.html")
 
         print("All plots sucessfully exported...")
 
@@ -1349,36 +1469,32 @@ for i_scenario in scenarios_to_plot:
     for i_scenario in scenarios_list:
         plotter.scenario_name = i_scenario
         plotter.load_data()
-        plotter.plot_investments(mode="lines")
-        data_dict = plotter.plot_dispatch(mode="lines")
+        
+        if PLOT_INVESTMENTS:
+            plotter.plot_investments(mode="lines")
+        
+        if PLOT_DISPATCH:
+            data_dict = plotter.plot_dispatch(mode="lines")
+            data_df = pd.DataFrame(data_dict)
+        
         # following items are specific to the CH00 node
         if plotter.target_node == "CH00":
-            # plotter.plot_v2g(mode="lines")
-            # plotter.plot_thermal_storage_level(mode="lines")
-            # plotter.plot_thermal_storage_level_rel(mode="lines")
+            if PLOT_V2G:
+                plotter.plot_v2g(mode="lines")
+            if PLOT_THERMAL_STORAGE_LEVEL:
+                plotter.plot_thermal_storage_level(mode="lines")
+            if PLOT_THERMAL_STORAGE_LEVEL_REL:
+                plotter.plot_thermal_storage_level_rel(mode="lines")
 
             # get the names of all districting heating nodes (NodeDH)
             all_NodeDH = list(plotter.consumptionDH_all.index)
-            # plotter.plot_dispatchDH(mode="lines", NodeDH=all_NodeDH)
 
-            if plotter.plot_thermal_dispatch:
+            if PLOT_THERMAL_DISPATCH:
                 for node in all_NodeDH:
                     plotter.plot_dispatchDH(mode="lines", NodeDH=[node])
 
-        # create one datafram from data_dict
-        data_df = pd.DataFrame(data_dict)
-                # plotter.plot_price(mode = "lines")
         plotter.plot_all(mode="lines")
         plotter.export_all_plots_to_html()
-    # else:        
-    #     plotter.scenario_name = i_scenario
-    #     plotter.load_data()
-    #     data_dict = plotter.plot_dispatch(mode="lines")
-    #     # create one datafram from data_dict
-    #     data_df = pd.DataFrame(data_dict)
-    #     # plotter.plot_price(mode = "lines")
-    #     plotter.plot_all(mode="lines")
-    #     plotter.export_all_plots_to_html()
 
 plotter.show_all_plots()
 plotter.export_all_plots_to_html()

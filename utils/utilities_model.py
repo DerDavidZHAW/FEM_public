@@ -17,7 +17,9 @@ def export_model_to_txt(suffix, model, scenario_name):
 
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
-    with open(dir_path + "\\model_" + suffix + ".txt", "w") as f:
+
+    file_name = "model.txt" if not suffix else f"model_{suffix}.txt"
+    with open(os.path.join(dir_path, file_name), "w", encoding="utf-8") as f:
         f.write(stream.getvalue())
 
 
@@ -27,5 +29,5 @@ def export_model_obj(suffix, model, scenario_name):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
-    with open(dir_path + "\\objective_" + suffix + ".txt", "w") as f:
+    with open(dir_path + "\\objective_" + suffix + ".txt", "w", encoding='utf-8') as f:
         f.write(get_objective_string(model)) #type: ignore

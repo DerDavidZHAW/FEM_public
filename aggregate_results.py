@@ -120,6 +120,16 @@ params_vars_to_agg = {
         "temporal": temporal_hy,
         "mappings": ["temporal", "Map_node_plant"],
     },
+    "EV_inflexible_demand": {
+        "type": "sum",
+        "temporal": temporal_hy,
+        "mappings": ["temporal"],
+    },
+    "HP_inflexible_demand": {
+        "type": "sum",
+        "temporal": temporal_hy,
+        "mappings": ["temporal"],
+    },
 
     # "Constraint_winter_limit_dual": {"type": "none", "temporal": False, "mappings": False},
     "curtailment": {

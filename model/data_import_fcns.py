@@ -713,13 +713,9 @@ def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investmen
     Map_plant_consumer = Plant_all_data["market"].to_dict()
     # Store numerical info for the candidate RES investments in CH: save columns gen_max_limit and energy_max_limit into a dictionary
     if allow_res_investment:
-        Plant_investment_data = Plant_res_ch_data[
-            ["gen_max_limit", "energy_max_limit"]
-        ].to_dict()
+        Plant_investment_data = Plant_res_ch_data[["gen_max_limit", "energy_max_limit"]].to_dict()
     else:
-        Plant_investment_data = {}
-        Plant_investment_data["gen_max_limit"] = {}
-        Plant_investment_data["energy_max_limit"] = {}
+        Plant_investment_data = {"gen_max_limit": {}, "energy_max_limit": {}}
 
     # for every unique value in values of Map_plant_consumer, find all keys that have that value and save them as the dictionary Map_consumer_plant
     for consumer in set(Map_plant_consumer.values()):
@@ -731,18 +727,31 @@ def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investmen
     # Please note that this is still possible by adding the respective information to plants_invest_candidates_res_CH.csv
     # but here it was also possible to do it via the settings.
 
-    # # Turns the additional battery investment nodes from a string into a list, e.g. "node1, node2" -> ["node1", "node2"]
-    # additional_battery_notes = [item.strip() for item in battery_investment_nodes_in_addition_to_CH.split(',') if item.strip()]
+    # Turns the additional battery investment nodes from a string into a list, e.g. "node1, node2" -> ["node1", "node2"].
+    # Skip gracefully if the setting is None/empty/whitespace.
+    if battery_investment_nodes_in_addition_to_CH is None or pd.isna(battery_investment_nodes_in_addition_to_CH):
+        additional_battery_nodes = []
+    else:
+        nodes_raw = str(battery_investment_nodes_in_addition_to_CH).strip()
+        if nodes_raw == "" or nodes_raw.lower() == "nan":
+            additional_battery_nodes = []
+        else:
+            additional_battery_nodes = [item.strip() for item in nodes_raw.split(',') if item.strip()]
 
-    # add_additional_batteries(
-    #     additional_battery_notes,
-    #     Plant_list,
-    #     Plant_investment_non_RES_CH_list,
-    #     Plant_investment_data,
-    #     Map_plant_node,
-    #     Map_plant_tech,
-    #     Map_consumer_plant
-    # )
+    if additional_battery_nodes and allow_res_investment:
+        from model.structural_parameters import add_additional_batteries
+        Plant_res_ch_data = add_additional_batteries(
+            additional_battery_nodes,
+            Plant_list,
+            Plant_investment_non_RES_CH_list,
+            Plant_investment_RES_CH_data=Plant_res_ch_data,
+            Map_plant_node=Map_plant_node,
+            Map_plant_tech=Map_plant_tech,
+            Map_consumer_plant=Map_consumer_plant
+        )
+
+        # Recompute investment limits to include newly added candidates
+        Plant_investment_data = Plant_res_ch_data[["gen_max_limit", "energy_max_limit"]].to_dict()
 
     return (
         Plant_list,
@@ -886,7 +895,7 @@ def read_demand_data(
     target = current - reduce_inflex_demand_by
     demand_ch_corrected = demand_ch_corrected * target / current
 
-    # subtract the electricity demand from the flexible heatpump operation from the demand here because it is not supposed to be considered twice
+    # subtract the electricity demand from the heatpump operation from the demand here because it is not supposed to be considered twice
     # (Once seperately but also included in the overall demand here already)
     demand_ch_corrected -= BA_el_con.sum(axis=1)
 
@@ -919,7 +928,7 @@ def read_fuel_limit_data(ch_policy, run_year, limit_fuel_import_CH, limited_fuel
 
     # read input/fuel_limit.csv, with first three columns as index
     read_fuel_limit_data = pd.read_csv(
-        "input/fuel_limits.csv", header=0, index_col=[0, 1, 2]
+        "input/fuel_limits.csv", header=0, index_col=[0, 1, 2], comment='#',
     )
     
     fuel_capacity_annual = {}
@@ -1918,86 +1927,177 @@ def read_electrolyzer_data(
         Data_plant_flex_d_within_window_electrolyzer,
     )
 
-def read_EV_weekly_energy_consumption_data(run_year, V2G_share_of_flexibly_charging_EV):
+def read_EV_weekly_energy_consumption_data(run_year, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV):
     """
-    Read the weekly energy consumption data of electric vehicles from the file input/demand/EV_energyconsumptionXXXX.csv with XXXX representing the year.
+    Read the weekly energy consumption data of electric vehicles from the file input/demand/EV_demand_weekly_XXXX.csv with XXXX representing the year.
+    
+    The input file contains 100% of total EV consumption. This function scales it to get the
+    consumption for flexibly charging EVs that do NOT participate in V2G (i.e., EV_CH plant).
+    
+    Scaling: Total EV * share_of_flexibly_charging_EV * (1 - V2G_share_of_flexibly_charging_EV)
+    
     Input:
-        run_year: int, the year which the model runs for (e.g. 2035)
+        run_year: int, the year which the model runs for (e.g. 2035, 2050)
+        share_of_flexibly_charging_EV: float, share of total EVs that charge flexibly (0-1)
+        V2G_share_of_flexibly_charging_EV: float, share of flexibly charging EVs that do V2G (0-1)
     Output:
-        EV_weekly_energy_consumption: dictionary with the index of the week in "week" and the energy consumption in MW in "energy_consumption_[MWh]"
+        EV_weekly_energy_consumption: dictionary with the index of the week in "week" and the energy consumption in MWh
     """
 
-    # import the energy consumption data of the EVs
-    path = f"input/demand/EV_energyconsumption_{run_year}.csv"
+    # import the energy consumption data of all EVs (100%)
+    path = f"input/demand/EV_demand_weekly_{run_year}.csv"
     EV_weekly_energy_consumption = pd.read_csv(path, index_col="week")
-    EV_weekly_energy_consumption *= (1-V2G_share_of_flexibly_charging_EV)  # consider only EVs that do not V2G
+    
+    # Scale to get only flexibly charging EVs that do NOT participate in V2G
+    # These are the EVs represented by the EV_CH plant (ev_flex technology)
+    EV_weekly_energy_consumption *= share_of_flexibly_charging_EV * (1 - V2G_share_of_flexibly_charging_EV)
 
-    # convert the pd.DataFrame to a dictionary", use the index as keys and the values in the column "energy_consumption_[MWh]" as values
+    # convert the pd.DataFrame to a dictionary, use the index as keys and the values in the column as values
     EV_weekly_energy_consumption = EV_weekly_energy_consumption.to_dict()['energy_consumption_[MWh]']
 
     return EV_weekly_energy_consumption
 
-def read_EV_and_V2G_charging_power_rate(run_year, rep_plant_name, V2G_share_of_flexibly_charging_EV, share_of_available_charging_capacity_for_V2G):
+def read_EV_and_V2G_charging_power_rate(run_year, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV, share_of_available_charging_capacity_for_V2G):
     """
-    Read the charging power rate of electric vehicles from the file input/demand/EV_chargingpowerrateXXXX_weatheryearYYYY.csv with XXXX and YYYY representing years.
+    Read the charging power rate of electric vehicles from the file input/demand/EV_chargingpowerrate_XXXX.csv.
+    
+    The input file contains charging power rate for 100% of all EVs. This function scales it to get:
+    - EV_charging_power_rate: for flexibly charging EVs that do NOT participate in V2G (EV_CH plant)
+    - V2G_charge_power_rate: for flexibly charging EVs that DO participate in V2G (V2G_CH plant)
+    
     Input:
-        run_year: int, the year which the model runs for (e.g. 2035)
-        V2G_share_of_flexibly_charging_EV: float, the share of EVs that are available for V2G out of all the cars that are available for flexible charging
+        run_year: int, the year which the model runs for (e.g. 2035, 2050)
+        rep_plant_name: string, the name of the representative V2G plant
+        share_of_flexibly_charging_EV: float, share of total EVs that charge flexibly (0-1)
+        V2G_share_of_flexibly_charging_EV: float, share of flexibly charging EVs that do V2G (0-1)
+        share_of_available_charging_capacity_for_V2G: float, fraction of V2G charging capacity actually available
     Output:
-        EV_charging_power_rate: dictionary with the index of the hour in "t", the index of the week in "week" and the charging power rate in MW in "charging_power_rate_[MW]"
+        EV_charging_power_rate: dictionary for EV_CH plant (non-V2G flexible EVs)
+        V2G_charge_power_rate_dict: dictionary for V2G_CH plant
     """
 
-    # import the charging power rate of the EVs
+    # import the charging power rate for all EVs (100%)
     path = f"input/demand/EV_chargingpowerrate_{run_year}.csv"
     EV_charging_power_rate_raw = pd.read_csv(path, index_col='t')
-    EV_charging_power_rate = EV_charging_power_rate_raw * (1 - V2G_share_of_flexibly_charging_EV)  # consider only EVs that do not V2G
-    V2G_charge_power_rate = EV_charging_power_rate_raw * V2G_share_of_flexibly_charging_EV * share_of_available_charging_capacity_for_V2G # consider only EVs that do V2G and assume that they only use 70% of the charging power rate to take it easy on the battery
-
-    # convert the pd.DataFrame to a dictionary, use the index as keys and the values in the column "charging_power_rate_[MW]" as values
-    EV_charging_power_rate = EV_charging_power_rate.to_dict()['charging_power_rate_[MWh]']
+    
+    # Scale for flexibly charging EVs that do NOT participate in V2G (EV_CH plant)
+    EV_charging_power_rate = EV_charging_power_rate_raw * share_of_flexibly_charging_EV * (1 - V2G_share_of_flexibly_charging_EV)
+    
+    # Scale for flexibly charging EVs that DO participate in V2G (V2G_CH plant)
+    # Also apply share_of_available_charging_capacity_for_V2G (e.g., 70% to take it easy on the battery)
+    V2G_charge_power_rate = EV_charging_power_rate_raw * share_of_flexibly_charging_EV * V2G_share_of_flexibly_charging_EV * share_of_available_charging_capacity_for_V2G
 
     # convert the pd.DataFrame to a dictionary
+    EV_charging_power_rate = EV_charging_power_rate.to_dict()['charging_power_rate_[MWh]']
+
+    # convert the pd.DataFrame to a dictionary with plant name as key
     V2G_charge_power_rate_dict = {}
     for ind in V2G_charge_power_rate.index:
         V2G_charge_power_rate_dict[rep_plant_name, ind] = V2G_charge_power_rate.loc[ind].values[0]
 
     return EV_charging_power_rate, V2G_charge_power_rate_dict
 
-def read_V2G_data_outflow(run_year, rep_plant_name, V2G_share_of_flexibly_charging_EV):
+def read_V2G_data_outflow(run_year, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV):
     """
-    Reads the outflow (discharging) of the representative V2G fleet from a file (e.g. input/demand/V2G_consumption_XXXX.csv where XXXX is the year)
+    Reads the outflow (consumption/discharging pattern) of the representative V2G fleet from a file.
+    
+    The input file V2G_consumption_XXXX.csv contains the hourly consumption pattern scaled to 100% of
+    total EV consumption. This function scales it to get only the V2G portion.
+    
+    Scaling: Total EV * share_of_flexibly_charging_EV * V2G_share_of_flexibly_charging_EV
+    
     Input:
-        run_year: int, the year which the model runs for (e.g. 2035)
+        run_year: int, the year which the model runs for (e.g. 2035, 2050)
         rep_plant_name: string, the name of the representative plant for the V2G fleet
-        V2G_share_of_flexibly_charging_EV: float, the share of EVs that are available for V2G out of all the cars that are available for flexible charging
+        share_of_flexibly_charging_EV: float, share of total EVs that charge flexibly (0-1)
+        V2G_share_of_flexibly_charging_EV: float, share of flexibly charging EVs that do V2G (0-1)
     Output:
-        V2G_outflow: dictionary with the index of the hour in "t" and the outflow in MW in "outflow_[MW]" (V2G_outflow_dict = {('V2G_CH', 't_1'): 1.1, ('V2G_CH', 't_2'): 1.2, )
+        V2G_outflow_dict: dictionary {(plant_name, t): outflow_MWh}
     """
 
     path = f"input/demand/V2G_consumption_{run_year}.csv"
-    V2G_outflow_df = pd.read_csv(path, index_col='t') # V2G_consumption_{run_year}.csv contains the consumption of all the EVs that charge in a flexible manner. I.e., it has to be multiplied by the share of EVs that participate in V2G
-    V2G_outflow_df *= V2G_share_of_flexibly_charging_EV
+    V2G_outflow_df = pd.read_csv(path, index_col='t')
+    
+    # Scale from 100% EV to only the V2G portion of flexibly charging EVs
+    V2G_outflow_df *= share_of_flexibly_charging_EV * V2G_share_of_flexibly_charging_EV
 
-    # convert the pd.DataFrame to a dictionary, the key is rep_plant_name and the the value in t, and the value of the dictionary is the value in column 'energy_consumption_[MWh]'
-    # V2G_outflow_dict = V2G_outflow_df.to_dict()[rep_plant_name]
+    # convert the pd.DataFrame to a dictionary with (plant_name, t) as keys
     V2G_outflow_dict = {}
     for ind in V2G_outflow_df.index:
         V2G_outflow_dict[rep_plant_name, ind] = V2G_outflow_df.loc[ind].values[0]
 
     return V2G_outflow_dict
 
-def read_V2G_storage_capacity(run_year, CH_policy, rep_plant_name):
+def read_V2G_storage_capacity(run_year, CH_policy, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV):
     """
-    Reads the battery capacity of the representative V2G fleet from a file (input/fuel_limits.csv)
+    Reads the battery capacity of the representative V2G fleet from a file (input/fuel_limits.csv).
+    
+    The input file contains total EV battery storage capacity (100% of all EVs).
+    This function scales it to get only the V2G-participating portion.
+    
+    Scaling: Total storage * share_of_flexibly_charging_EV * V2G_share_of_flexibly_charging_EV
+    
+    Input:
+        run_year: int, the year which the model runs for (e.g. 2035, 2050)
+        CH_policy: string, the Swiss policy scenario
+        rep_plant_name: string, the name of the representative V2G plant
+        share_of_flexibly_charging_EV: float, share of total EVs that charge flexibly (0-1)
+        V2G_share_of_flexibly_charging_EV: float, share of flexibly charging EVs that do V2G (0-1)
+    Output:
+        V2G_storage_capacity_dict: dictionary {plant_name: storage_capacity_MWh}
     """
     path = f"input/fuel_limits.csv"
-    V2G_storage_capacity = pd.read_csv(path)
+    V2G_storage_capacity_df = pd.read_csv(path, comment='#')
 
-    # keep the row that has V2G in the column 'fuel', limit_type is 'storage_capacity" scenario is CH_policy and year is run_year
-    # V2G_storage_capacity = V2G_storage_capacity[(V2G_storage_capacity['fuel'] == 'V2G') & (V2G_storage_capacity['limit_type'] == 'storage_capacity') & (V2G_storage_capacity['scenario'] == CH_policy)][str(run_year)].item()
-    V2G_storage_capacity = V2G_storage_capacity[(V2G_storage_capacity['fuel'] == 'V2G') & (V2G_storage_capacity['limit_type'] == 'storage_capacity') & (V2G_storage_capacity['scenario'] == CH_policy)][str(run_year)].item()
+    # Get total EV storage capacity from the file
+    total_V2G_storage_capacity = V2G_storage_capacity_df[
+        (V2G_storage_capacity_df['fuel'] == 'V2G') & 
+        (V2G_storage_capacity_df['limit_type'] == 'storage_capacity') & 
+        (V2G_storage_capacity_df['scenario'] == CH_policy)
+    ][str(run_year)].item()
+    
+    # Scale to get only the V2G-participating portion
+    V2G_storage_capacity = total_V2G_storage_capacity * share_of_flexibly_charging_EV * V2G_share_of_flexibly_charging_EV
+    
     V2G_storage_capacity_dict = {rep_plant_name: V2G_storage_capacity}
     return V2G_storage_capacity_dict
+
+
+def read_EV_inflexible_demand_data(run_year, share_of_flexibly_charging_EV, node="CH00"):
+    """
+    Read the inflexible EV demand timeseries from EV_demand_hourly_*.csv.
+    
+    The inflexible EV demand represents the portion of total EV consumption that charges 
+    according to a fixed profile (e.g., uncontrolled charging as soon as plugged in).
+    
+    The input file EV_demand_hourly_*.csv contains 100% of total EV consumption.
+    This function scales it by (1 - share_of_flexibly_charging_EV) to get the inflexible portion.
+    
+    Input:
+        run_year: int, the year which the model runs for (e.g. 2035, 2050)
+        share_of_flexibly_charging_EV: float, the share of EVs that charge flexibly (between 0 and 1)
+            The remaining (1 - share_of_flexibly_charging_EV) are inflexible
+        node: str, the node for which to compute EV inflexible demand (default: "CH00")
+    
+    Output:
+        EV_inflexible_demand_data: dictionary with keys (node, t) and values are the inflexible EV demand in MWh
+            e.g., {('CH00', 't_1'): 15.5, ('CH00', 't_2'): 18.2, ...}
+    """
+    # Read the total EV consumption profile (100% of all EVs)
+    path = f"input/demand/EV_demand_hourly_{run_year}.csv"
+    EV_total_demand_df = pd.read_csv(path, index_col='t')
+    
+    # Scale to get only the inflexible portion
+    EV_inflexible_demand_df = EV_total_demand_df * (1 - share_of_flexibly_charging_EV)
+    
+    # Convert to dictionary with (node, t) keys
+    EV_inflexible_demand_dict = {}
+    for t in EV_inflexible_demand_df.index:
+        # Ensure t is in the correct format (t_1, t_2, etc.)
+        t_str = t if isinstance(t, str) and t.startswith('t_') else f"t_{t}"
+        EV_inflexible_demand_dict[(node, t_str)] = EV_inflexible_demand_df.loc[t].values[0]
+    
+    return EV_inflexible_demand_dict
 
 
 def read_building_archetypes(run_year, weather_year, flexible_household_heatpump_share, heat_flexibility_Kelvin, heating_system):
@@ -2103,6 +2203,44 @@ def read_building_archetypes(run_year, weather_year, flexible_household_heatpump
     BA_max_heating_capacity = BA_max_heating_capacity.to_dict()
 
     return BA_el_con, BA_th_con, BA_th_lim, COP, BA_names, BA_max_heating_capacity
+
+
+def read_HP_inflexible_demand_data(BA_el_con_df, flexible_household_heatpump_share, node="CH00"):
+    """
+    Calculate the inflexible household heat pump demand timeseries.
+    
+    The inflexible HP demand represents the portion of household heat pump consumption that operates
+    according to a fixed profile (i.e., not participating in flexibility/demand response).
+    
+    The input BA_el_con_df contains 100% of household heat pump electricity consumption.
+    This function scales it by (1 - flexible_household_heatpump_share) to get the inflexible portion.
+    
+    Input:
+        BA_el_con_df: pandas DataFrame with hourly values of the electrical demand of the building archetypes [MWh]
+                      Index: timestep (t_1, t_2, ...), Columns: building archetype names
+        flexible_household_heatpump_share: float, the share of households with flexible heat pumps (between 0 and 1)
+            The remaining (1 - flexible_household_heatpump_share) are inflexible
+        node: str, the node for which to compute HP inflexible demand (default: "CH00")
+    
+    Output:
+        HP_inflexible_demand_dict: dictionary with keys (node, t) and values are the inflexible HP demand in MWh
+            e.g., {('CH00', 't_1'): 25.5, ('CH00', 't_2'): 28.2, ...}
+    """
+    # Calculate the inflexible portion by summing across all building archetypes and scaling
+    # BA_el_con_df has timesteps as index and building archetype names as columns
+    HP_total_demand = BA_el_con_df.sum(axis=1)  # Sum across all building archetypes for each timestep
+    
+    # Scale to get only the inflexible portion
+    HP_inflexible_demand = HP_total_demand * (1 - flexible_household_heatpump_share)
+    
+    # Convert to dictionary with (node, t) keys
+    HP_inflexible_demand_dict = {}
+    for t in HP_inflexible_demand.index:
+        # Ensure t is in the correct format (t_1, t_2, etc.)
+        t_str = t if isinstance(t, str) and t.startswith('t_') else f"t_{t}"
+        HP_inflexible_demand_dict[(node, t_str)] = HP_inflexible_demand.loc[t]
+    
+    return HP_inflexible_demand_dict
 
 def read_KVA_infeed_data():
     """

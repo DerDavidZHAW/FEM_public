@@ -20,7 +20,10 @@ def get_cost_component(tech, year, cost_type, scenario_name):
     if cost_type == "investment_fuel_energy_cost_chfMWh": 
         amortization_years = cost_params.amortization_years_all[tech + "_fuel_storage"] # years
         investment_fuel_energy_cost = cost_component["investment_fuel_energy_cost_chfMWh"].get(tech, {}).get(year)
-        investment_fuel_energy_cost_discounted = investment_fuel_energy_cost * (discount_rate / (1 - (1 + discount_rate) ** (-amortization_years)))
+        if amortization_years > 0 and investment_fuel_energy_cost:
+            investment_fuel_energy_cost_discounted = investment_fuel_energy_cost * (discount_rate / (1 - (1 + discount_rate) ** (-amortization_years)))
+        else:
+            investment_fuel_energy_cost_discounted = investment_fuel_energy_cost if investment_fuel_energy_cost else 0
         if tech=="oil":
             return investment_fuel_energy_cost
         else:
@@ -35,14 +38,20 @@ def get_cost_component(tech, year, cost_type, scenario_name):
             investment_cost *= battery_cost_factor
 
         # write this equation : Yearly Cost = inv_cost * ( Social Interest Rate / (1 - (1 + Social Interest Rate)^(-Amortization Period) ) )
-        investment_cost_discounted = investment_cost * (discount_rate / (1 - (1 + discount_rate) ** (-amortization_years)))
+        if amortization_years > 0 and investment_cost:
+            investment_cost_discounted = investment_cost * (discount_rate / (1 - (1 + discount_rate) ** (-amortization_years)))
+        else:
+            investment_cost_discounted = investment_cost if investment_cost else 0
 
         fixed_op_cost = cost_component["fixed_op_cost_chfMW"].get(tech, {}).get(year)
-        om_cost = cost_component["om_cost_eurMWH"].get(tech, {})
-        fuel_cost = cost_component["input_cost_scenario_ZERO"].get(tech, {}).get(year, {})/cost_component["efficiency"].get(tech, {})
-        emission_per_mwh =  cost_component["emission_factor"].get(tech, {}) / cost_component["efficiency"].get(tech, {})
+        om_cost = cost_component["om_cost_eurMWH"].get(tech, {}).get(year, 0)
+        efficiency = cost_component["efficiency"].get(tech, {}).get(year, 1) if isinstance(cost_component["efficiency"].get(tech, {}), dict) else cost_component["efficiency"].get(tech, 1)
+        emission_factor = cost_component["emission_factor"].get(tech, {}).get(year, 0) if isinstance(cost_component["emission_factor"].get(tech, {}), dict) else cost_component["emission_factor"].get(tech, 0)
+        
+        fuel_cost = cost_component["input_cost_scenario_ZERO"].get(tech, {}).get(year, {})/efficiency if efficiency != 0 else 0
+        emission_per_mwh = emission_factor / efficiency if efficiency != 0 else 0
         co2_cost = emission_per_mwh * cost_component["input_cost_scenario_ZERO"].get("co2", {}).get(year, {})
-        var_cost = cost_component["om_cost_eurMWH"].get(tech, {}) + co2_cost +  fuel_cost 
+        var_cost = om_cost + co2_cost +  fuel_cost 
 
         # NOTE: implied assumption below is that gas generation in CH and EU are CCS and CCGT based
         if tech in ["CCGTCCS", "gas"] :
@@ -81,16 +90,22 @@ def get_cost_component(tech, year, cost_type, scenario_name):
             return om_cost
         elif cost_type == "var":
             return var_cost
+        elif cost_type == "emission_factor_per_MWh":
+            # Returns emission factor in tCO2/MWh of output (already divided by efficiency)
+            return emission_per_mwh
         elif cost_type in ("investment_energy", "investment_discharge"):
             if cost_type == "investment_energy":
                 investment_energy_cost = cost_component["investment_energy_cost_chfMWh"].get(tech, {}).get(year, 0)
             else:  # investment_discharge
-                investment_energy_cost = cost_component["investment_cost_discharge_chfMW"].get(tech, {}).get(year, 0)
+                investment_energy_cost = cost_component["investment_cost_charge_chfMW"].get(tech, {}).get(year, 0)
 
             if tech == "battery":
                 investment_energy_cost *= battery_cost_factor
 
-            investment_energy_cost_discounted = investment_energy_cost * (discount_rate / (1 - (1 + discount_rate) ** (-amortization_years)))
+            if amortization_years > 0 and investment_energy_cost:
+                investment_energy_cost_discounted = investment_energy_cost * (discount_rate / (1 - (1 + discount_rate) ** (-amortization_years)))
+            else:
+                investment_energy_cost_discounted = investment_energy_cost if investment_energy_cost else 0
 
             # NOTE: the lines below should not be used in the model because now fuel tracking is added. Equivalent lines should be added to fuel tracking.
             if tech == "oil": # NOTE: this needs to be automated (detecting the technologies that have pre-installed capacity and annual operation costs are already calculated)
@@ -145,11 +160,8 @@ def data_import_costs_fcn(scenario_name):
     run_year = read_scenario_settings((scenario_name))['run_year']
 
     # for every technology -------------------------------------------------------
-    # costs - investment in capacity #NOTE: remove the plant types that have no investment (eg EVs), then adjust model.investment_genmax_slp  so that it is defined on a different set
-    # cost_data_inv_gen_int = {"pv": 0,     "gas": 0,  "limited_energy": 100000000 , "battery": 0,  "bt": 0,  "dam":0 , "psp_open": 0, "psp_close": 0, "v1g": 0, "v2g": 0, "hp": 0, "chp": 10000, "oil":1000, "dsr": 10000, "hardcoal":10000, "nuclear": 100000, "lignite": 100000}
     # cost_data_inv_gen_slp = {"pv": 15,    "gas": 10, "limited_energy": 100000000, "battery": 10, "bt": 0,  "dam":10, "psp_open":10, "psp_close":10, "v1g": 0, "v2g": 0, "hp": 0, "chp": 10000, "oil":1000, "dsr": 10000, "hardcoal":10000, "nuclear": 100000, "lignite": 100000}
     # NOTE: update, if intercept of investment cost is not zero
-    cost_data_inv_gen_int = {tech: 0 for tech in dict.keys(Map_plant_tech_cost_component)}
     cost_data_inv_gen_slp = create_tech_cost_dict(
         list(dict.keys(Map_plant_tech_cost_component)), "investment", run_year, scenario_name
     )
@@ -179,4 +191,9 @@ def data_import_costs_fcn(scenario_name):
         fuel_limited_CH_list, "investment_fuel_energy_cost_chfMWh", run_year, scenario_name
     )
 
-    return cost_data_inv_gen_int, cost_data_inv_gen_slp, cost_data_opr_int, cost_data_opr_slp, op_cost_n_tech_calibration, cost_data_inv_e_slp, cost_data_inv_fuel_storage_slp, cost_data_inv_discharge_slp
+    # emission factor per MWh of output (tCO2/MWh_elec), already divided by efficiency
+    emission_factor_per_MWh = create_tech_cost_dict(
+        list(dict.keys(Map_plant_tech_cost_component)), "emission_factor_per_MWh", run_year, scenario_name
+    )
+
+    return cost_data_inv_gen_slp, cost_data_opr_int, cost_data_opr_slp, op_cost_n_tech_calibration, cost_data_inv_e_slp, cost_data_inv_fuel_storage_slp, cost_data_inv_discharge_slp, emission_factor_per_MWh

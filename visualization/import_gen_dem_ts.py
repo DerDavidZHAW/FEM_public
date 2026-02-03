@@ -337,6 +337,19 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
     # for backward compatibility purpose (some older versions did not allow for V2G)
     v2g_outflow_all = safe_pivot_csv(output_dir, "outflow.csv", scenario_name, "P_outflow", "T", "value", time_indices)
 
+    # ------------------------------------------------------------------------------------------------------
+    # ------------------------------------------ EV Inflexible demand --------------------------------------
+    # ------------------------------------------------------------------------------------------------------
+    # EV inflexible demand: the portion of EV consumption that follows a fixed charging profile
+    # This is stored separately from regular demand to enable visualization
+    EV_inflexible_demand_all = safe_pivot_csv(output_dir, "EV_inflexible_demand.csv", scenario_name, "Node", "T", "value", time_indices)
+
+    # ------------------------------------------------------------------------------------------------------
+    # ------------------------------------------ HP Inflexible demand --------------------------------------
+    # ------------------------------------------------------------------------------------------------------
+    # HP inflexible demand: the portion of household heat pump consumption that follows a fixed profile
+    # This is stored separately from regular demand to enable visualization
+    HP_inflexible_demand_all = safe_pivot_csv(output_dir, "HP_inflexible_demand.csv", scenario_name, "Node", "T", "value", time_indices)
 
     # ------------------------------------------------------------------------------------------------------
     # -------------------------------------- adjusting time stamps------------------------------------------
@@ -372,6 +385,8 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
     BA_th_lim = BA_th_lim.rename(index=hour_dict_custom) # technically BA_th_lim is not a time series, so this is not necessary, but it is done for consistency (this line has no effect on the dataframe)
     v2g_outflow_all = v2g_outflow_all.rename(columns=hour_dict_custom)
     priceTh_all = priceTh_all.rename(columns=hour_dict_custom)
+    EV_inflexible_demand_all = EV_inflexible_demand_all.rename(columns=hour_dict_custom)
+    HP_inflexible_demand_all = HP_inflexible_demand_all.rename(columns=hour_dict_custom)
 
 
     return (
@@ -397,4 +412,6 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
         BA_th_lim,
         v2g_outflow_all,
         priceTh_all,
+        EV_inflexible_demand_all,
+        HP_inflexible_demand_all,
     )
