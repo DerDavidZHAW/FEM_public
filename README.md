@@ -305,7 +305,7 @@ The model includes comprehensive visualization capabilities:
 If you use this model in your research, please cite:
 
 ```
-[Add appropriate citation information]
+Holmer, D., & Darudi, A. (2025). The Future Energy Market Model (FEM): A Mathematical Description (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.17722336
 ```
 
 ## License
