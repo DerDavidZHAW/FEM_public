@@ -31,7 +31,7 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
 
 ### Prerequisites
 
-- **Python 3.10.5**
+- **Python 3.10–3.12**
 - **Poetry** for dependency management
 - **Gurobi license** (academic license available)
 
@@ -60,7 +60,104 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
    - Place your `gurobi.lic` file in the appropriate directory
    - Or set the `GRB_LICENSE_FILE` environment variable
 
-### Installation on HPC Clusters (Euler/SciCORE)
+### Installation on HPC Clusters
+
+Two clusters are supported. Pick the one you use:
+
+#### ETH Euler (from scratch)
+
+This walkthrough assumes you have an ETH nethz account and SSH access to `euler.ethz.ch`. Read every step; the Poetry-on-Euler setup has a few non-obvious quirks and skipping any of them will cost you hours later.
+
+1. **Clone the repository into `~/repos/Future_Markets`:**
+
+   ```bash
+   mkdir -p ~/repos && cd ~/repos
+   git clone https://github.com/alidrd/Future_Markets.git
+   cd Future_Markets
+   ```
+
+2. **Set up `~/.bashrc` once.** Use this to configure your interactive Euler shell with the modules and environment variables needed for this project. Batch jobs should still load required modules and re-declare needed environment variables explicitly, because non-login SLURM shells may not source `~/.bashrc` automatically. Append the following block:
+
+   ```bash
+   # ---- FEM model: Euler setup ----
+   # Cluster modules
+   module load stack/2024-06
+   module load python/3.11.6
+   module load gurobi/10.0.3
+   # Make user-local binaries (Poetry, etc.) findable
+   export PATH="$HOME/.local/bin:$PATH"
+   # Poetry storage — venv on $HOME (persistent, ~45 GB quota), cache on
+   # scratch (re-downloadable, fine to purge). Without these, Poetry's
+   # default location ends up on scratch and gets wiped after 15 days.
+   export POETRY_VIRTUALENVS_PATH="$HOME/.poetry_venvs"
+   export POETRY_CACHE_DIR="/cluster/scratch/$USER/.poetry_cache"
+   export POETRY_VIRTUALENVS_IN_PROJECT=false
+   export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+   ```
+
+   Then reload:
+
+   ```bash
+   source ~/.bashrc
+   ```
+
+3. **Install Poetry (one-time).** Skip if `poetry --version` already prints a version.
+
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   poetry --version   # should print something like "Poetry (version 1.x.x)"
+   ```
+
+4. **Tell Poetry not to inherit system-site-packages.** Without this, Poetry's `install` step on Euler will try to uninstall numpy from the read-only `python/3.11.6` module directory and crash with `PermissionError`. Run from inside the repo:
+
+   ```bash
+   cd ~/repos/Future_Markets
+   poetry config virtualenvs.options.system-site-packages false --local
+   ```
+
+   This writes a small `poetry.toml` file in the repo. It is gitignored on purpose — the setting is per-user (it only matters on Euler, where the cluster's Python module is read-only), so each user re-runs this step on a fresh clone instead of inheriting a committed file.
+
+5. **Install project dependencies (one-time, interactive only).** Takes 5–10 minutes the first time as wheels are downloaded and compiled.
+
+   ```bash
+   poetry install --no-interaction --no-root
+   ```
+
+   **Do this interactively, not from inside a SLURM array job.** Array tasks all race to create the venv simultaneously and corrupt it. See the [troubleshooting note](#troubleshooting-on-euler) at the end of this section if you ever need to recover.
+
+6. **Verify the environment.** Both lines should succeed:
+
+   ```bash
+   poetry run python -c "import gurobipy; print('gurobipy', gurobipy.gurobi.version(), 'OK')"
+   du -sh $HOME/.poetry_venvs/  # expect ~500 MB
+   lquota                        # confirm you're well under the 45 GB home quota
+   ```
+
+   If the `gurobipy` line prints a version tuple followed by `OK`, you're done. SLURM jobs will inherit the same modules and Poetry env vars and use this venv automatically.
+
+7. **(Required for parallel runs) Redirect outputs to scratch and logs to a dedicated home folder.** Run once:
+
+   ```bash
+   bash cluster_runs/setup_euler_scratch.sh
+   ```
+
+   This idempotent script:
+
+   - Creates `~/logs_FEM/` for SLURM `.out`/`.err` files (small, on home — kept across runs)
+   - Creates `/cluster/scratch/$USER/FEM/output/` for model outputs (large, on scratch — purged every 15 days)
+   - Replaces `<repo>/output/` with a symlink to the scratch location
+
+   If `<repo>/output/` already has content, the script prompts before moving it. Use `-y` to auto-accept.
+
+   After this, every model script (`run_scenarios.py`, `aggregate_results.py`, `visualization_class.py`, etc.) writes to `output/<scenario>/` transparently — the OS follows the symlink so writes land on scratch and your home quota stays flat.
+
+   > **Note:** The symlink is fully transparent to Python's file operations — reads work exactly like writes. `aggregate_results.py` and `visualization_class.py` can be used as normal since they discover and read results from `output/` as in a local run; no additional changes or path adjustments are needed.
+
+   **Caveat:** scratch is purged after 15 days of file inactivity. Pull important results off `/cluster/scratch/$USER/FEM/output/` to your laptop, ETH Polybox, or a group `/cluster/project/...` space before then. SLURM logs in `~/logs_FEM/` are never purged.
+
+   The parallel-execution script (`cluster_runs/parallel_runs_Euler.sh`) refuses to submit unless this setup has been done, so a forgetful user gets a clear error instead of writing outputs back onto home.
+
+#### SciCORE (University of Basel)
 
 1. **Clone the repository:**
 
@@ -69,35 +166,7 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
    cd Future_Markets
    ```
 
-2. **Check if Poetry is available, install if needed:**
-
-   **First, try to see if Poetry is already installed:**
-
-   ```bash
-   poetry --version
-   ```
-
-   **If Poetry is not found, install it (one-time setup):**
-
-   **On Euler (ETH Zurich):**
-
-   ```bash
-   # If your .bashrc already has module load commands for stack and python,
-   # they're automatically loaded on login - you don't need to run them again.
-   # Just install Poetry directly:
-
-   curl -sSL https://install.python-poetry.org | python3 -
-
-   # Poetry will be installed to ~/.local/bin/poetry (as a symbolic link)
-   # Your .bashrc already has: export PATH="$HOME/.local/bin:$PATH"
-   # So Poetry will be available automatically on next login
-
-   # Verify Poetry installation:
-   ls -la ~/.local/bin/poetry
-   poetry --version
-   ```
-
-   **On SciCORE (University of Basel):**
+2. **Install Poetry (one-time):**
 
    ```bash
    # Check available Python modules first:
@@ -111,12 +180,6 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
    poetry --version
    ```
 
-   **Note:**
-
-   - `stack/2024-06` sets up the software environment (base libraries, compilers, etc.)
-   - Check your `~/.bashrc` file to see which exact module versions you have loaded
-   - Poetry installs as a symbolic link to `~/.local/share/pypoetry/venv/bin/poetry`
-
 3. **Install project dependencies:**
 
    ```bash
@@ -124,21 +187,9 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
    poetry shell
    ```
 
-4. **Ensure required modules in ~/.bashrc:**
+4. **Ensure required modules in `~/.bashrc`:**
 
    For SLURM jobs to work properly, make sure your `~/.bashrc` contains all necessary modules:
-
-   **On Euler (ETH Zurich):**
-
-   ```bash
-   # Required lines in ~/.bashrc:
-   module load stack/2024-06
-   module load python/3.11.6
-   module load gurobi/10.0.3
-   export PATH="$HOME/.local/bin:$PATH"  # For Poetry
-   ```
-
-   **On SciCORE (University of Basel):**
 
    ```bash
    # Required lines in ~/.bashrc:
@@ -182,39 +233,53 @@ python visualization_class.py
 
 ### Parallel Execution on HPC Clusters
 
-For running multiple scenarios in parallel on HPC clusters (Euler/SciCORE):
+For running multiple scenarios in parallel:
 
-1. **Analyze scenarios:**
+**Prerequisite (Euler only):** if you haven't already, run `bash cluster_runs/setup_euler_scratch.sh` once. The job script will refuse to submit otherwise.
+
+1. **Confirm the scenario count:**
 
    ```bash
    python cluster_runs/get_scenario_names.py
    ```
 
-2. **Update SLURM script paths:**
+   Note the total number of scenarios printed.
 
-   Edit `cluster_runs/parallel_runs.sh` and update the project path:
+2. **Update the SLURM array bounds.** Edit `cluster_runs/parallel_runs_Euler.sh` and set `#SBATCH --array=0-N` where `N = (total scenarios − 1)`. No other paths in the script need editing — it points at `~/repos/Future_Markets` by default.
 
-   ```bash
-   cd ~/Models/Future_Markets  # Change this to your actual project location
-   ```
-
-3. **Update SLURM array bounds:**
-
-   Based on the scenario count, update the `#SBATCH --array=0-N` line in your SLURM script (where N = total scenarios - 1)
-
-4. **Submit parallel jobs:**
+3. **Submit the job:**
 
    ```bash
-   cd cluster_runs
-   sbatch parallel_runs.sh
+   sbatch cluster_runs/parallel_runs_Euler.sh
    ```
 
-5. **Monitor execution:**
+4. **Monitor execution:**
+
    ```bash
-   squeue -u $USER
+   squeue -u $USER                       # queue + per-task status
+   tail -f ~/logs_FEM/myrun_<jobid>_0.out # live log of array task 0
    ```
 
-See the `cluster_runs/parallel_runs.sh` script for the SLURM job configuration.
+   On Euler, log files will be stored in `~/logs_FEM` (as set in `cluster_runs/parallel_runs_Euler.sh`) `myrun_<jobid>_<arrayid>.out` and `.err`.
+
+See `cluster_runs/parallel_runs_Euler.sh` for the full SLURM configuration. The script does **not** run `poetry install` — it relies on the venv prepared during initial setup. If the venv is missing or broken, the job will fail fast with a clear error message pointing to the recovery steps below.
+
+#### Troubleshooting on Euler
+
+**Symptom:** the job fails immediately with `ModuleNotFoundError: No module named 'gurobipy'`, or with `[Errno 17] File exists: '.../future-markets-*/bin'`.
+
+**Cause:** the Poetry venv is partially corrupted — typically from an interrupted install, or from a previous attempt to run `poetry install` inside an array job (which races across tasks).
+
+**Recovery:** nuke and rebuild interactively.
+
+```bash
+rm -rf ~/.poetry_venvs/future-markets-*
+cd ~/repos/Future_Markets
+poetry install --no-interaction --no-root
+poetry run python -c "import gurobipy; print(gurobipy.gurobi.version())"
+```
+
+Then resubmit `sbatch cluster_runs/parallel_runs_Euler.sh`.
 
 ### Output and Results
 
@@ -305,7 +370,7 @@ The model includes comprehensive visualization capabilities:
 If you use this model in your research, please cite:
 
 ```
-Holmer, D., & Darudi, A. (2025). The Future Energy Market Model (FEM): A Mathematical Description (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.17722336
+[Add appropriate citation information]
 ```
 
 ## License

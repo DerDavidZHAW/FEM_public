@@ -169,8 +169,11 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
         .pivot(index="P_storage", columns="T", values="value")
         .reindex(columns=time_indices)
     )
+    soc_dual_all = soc_dual_all/float(weight_shock) # type: ignore
     
     socth_dual_all = safe_pivot_csv(output_dir, "storageTh_soc_dual.csv", scenario_name, "PDH_storage", "T", "value", time_indices)
+    if not socth_dual_all.empty:
+        socth_dual_all = socth_dual_all/float(weight_shock) # type: ignore
 
     # export ------------------------------------------
     # trade over lines, per line and time steps

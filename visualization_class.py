@@ -13,21 +13,32 @@ target_node = "CH00"  # a node name ("CH_00"), or "all"
 
 
 scenarios_to_plot =[
-    "20260119/2035_sens_100",
-    "20260119/2035_sens_30",
+    "20260311/2035_100_070_EUbat",
+    "20260311/2035_090_070_EUbat",
+    "20260311/2035_080_070_EUbat",
+    "20260311/2035_070_inv_EUbat",
+    "20260311/2035_060_070_EUbat",
+    "20260311/2035_050_070_EUbat",
+    "20260311/2035_040_070_EUbat",
+    "20260311/2035_030_070_EUbat",
 ]
 
 # ========== PLOT SWITCHES ==========
 # Set to True to enable each plot, False to disable
-PLOT_PRICE = False
+PLOT_PRICE = True
 PLOT_DISPATCH = True
-PLOT_MERGED_DISPATCH = False  # Merged dispatch figure (combines similar technologies)
-PLOT_THERMAL_DISPATCH = False  # Plot thermal dispatch for each NodeDH individually
+PLOT_MERGED_DISPATCH = False  # Merged dispatch figure (combines similar technologies) - works only if PLOT_DISPATCH is True
+PLOT_THERMAL_DISPATCH = True  # Plot thermal dispatch for each NodeDH individually
+PLOT_THERMAL_DISPATCH_DUALS = False  # Plot shadow prices of thermal capacity constraints (HP, PTES, RH)
+PLOT_DUALS_ALL_NODES = False        # If False, only plot duals for DH_NODE_DEFAULT; set True for all DH nodes
+PLOT_DISPATCH_ALL_NODES = False  # If False, only plot dispatch for DH_NODE_DEFAULT; set True for all thermal nodes
+DH_NODE_DEFAULT = "DH_medium"      # Default DH node for dual plot (substring match)
 PLOT_INVESTMENTS = False
 PLOT_EXPORT_IMPORT = False
 PLOT_SOC = False  # State of charge (electrical storage)
-PLOT_SOC_THERMAL = False  # State of charge for thermal storage
+PLOT_SOC_THERMAL = True  # State of charge for thermal storage - works only if PLOT_THERMAL_DISPATCH is True
 PLOT_SOC_DUAL = False  # Opportunity cost of storage
+PLOT_SOC_THERMAL_DUAL = False  # Opportunity cost of thermal storage - works only if PLOT_THERMAL_DISPATCH_DUALS is True
 PLOT_THERMAL_STORAGE_LEVEL = False  # Thermal storage level
 PLOT_THERMAL_STORAGE_LEVEL_REL = False  # Thermal storage level (relative)
 PLOT_V2G = False  # Vehicle-to-grid
@@ -45,6 +56,7 @@ PLOT_IND_DEM = False  # Individual demand
 # 
 class DemandTimeSeriesPlotter:
     def __init__(self, target_node):
+        os.makedirs("plots", exist_ok=True)
         self.output_dir = ""
         self.scenario_name = ""
         self.target_node = target_node
@@ -69,8 +81,9 @@ class DemandTimeSeriesPlotter:
         self.fig_th_sl = go.Figure()
         self.fig_th_sl_rel = go.Figure() # the same as fig_th_sl but the demands are normalized
         self.fig_soc_dual = go.Figure()
-        # self.fig_socth_dual = go.Figure()
+        self.fig_socth_dual = go.Figure()
         self.fig_dispatch = go.Figure()
+        self.fig_dispatchDH_duals = go.Figure()
         self.plot_range_int_list = [0, 168]
         self.plot_range = []
         self.Map_plant_tech = {}
@@ -483,10 +496,6 @@ class DemandTimeSeriesPlotter:
             if trace.name in self.dispatch_color_mapping: # type: ignore
                 trace.line.color = self.dispatch_color_mapping[trace.name] # type: ignore
 
-        # if folder plots does not exist, create it
-        if not os.path.exists("plots"):
-            os.makedirs("plots")
-
         # save trace_dataframes to csv
         trace_dataframes.to_csv(f"plots/Dispatch_{self.scenario_name}_trace_dataframes.csv")
 
@@ -540,39 +549,6 @@ class DemandTimeSeriesPlotter:
                 legend=dict(font=dict(size=18, color="black"),),
                 margin=dict(l=0, r=0, t=50, b=0),
             )
-
-            # # Run this code to create a nice 01-07 May pdf slice
-            # start_hour = 5088
-
-            # # Slice data and convert x to Python datetime
-            # for a in self.fig_merged.data:
-            #     x_slice = a['x'][start_hour:start_hour+167]  # your May 1–7 slice
-            #     y_slice = a['y'][start_hour:start_hour+167]
-            #     a['x'] = pd.to_datetime(x_slice).to_pydatetime()
-            #     a['y'] = y_slice
-
-            # # Remove unwanted trace
-            # self.fig_merged.data = tuple(t for t in self.fig_merged.data if t.name != "Price (CHF/GWh)")
-
-            # # Remove figure title
-            # self.fig_merged.update_layout(title="")
-
-            # # Force x-axis to start at May 1 and end at May 7 with clean tick labels
-            # self.fig_merged.update_xaxes(
-            #     range=[pd.to_datetime("2035-05-01"), pd.to_datetime("2035-05-07")],
-            #     tickformat="%b %-d"
-            # )
-
-            # # Export to PDF
-            # pio.write_image(
-            #     self.fig_merged,
-            #     "plots/Dispatch_2035_all_wy_sensitivity_1,0_wy1995_filtered.pdf",
-            #     format="pdf",
-            #     width=1600,
-            #     height=900,
-            #     scale=2
-            # )
-
             self.fig_merged.show()
 
         # ----------------
@@ -764,6 +740,173 @@ class DemandTimeSeriesPlotter:
             )
         )
         self.fig_dispatchDH.show()
+        return
+
+    def plot_dispatchDH_duals(self, mode, NodeDH):
+        """
+        Plot shadow prices (duals) of thermal capacity constraints for HP, PTES, and RH.
+
+        Mirrors the layout of plot_dispatchDH. One line per plant, all three constraints
+        overlaid with different line styles:
+          - generationTh_limit   : solid   (MW_th generation capacity)
+          - storageTh_rate_limit : dashed  (MW pump/charge rate capacity)
+          - storageTh_soc_limit  : dotted  (MWh_th energy storage capacity — PTES only)
+
+        Left y-axis : dual value (CHF/MW or CHF/MWh per hour)
+        Right y-axis: thermal heat price (CHF/MWh), for reference
+        """
+        pattern = "|".join(NodeDH)
+
+        # --- Load and pivot each dual CSV into plant x timestep DataFrame ---
+        dual_constraints = {
+            "generationTh_limit":   {"dash": "solid",  "label_suffix": " [gen cap — CHF/MW]"},
+            "storageTh_rate_limit": {"dash": "dash",   "label_suffix": " [pump cap — CHF/MW]"},
+            "storageTh_soc_limit":  {"dash": "dot",    "label_suffix": " [soc cap — CHF/MWh]"},
+            "storageTh_soc":        {"dash": "solid",  "label_suffix": " [soc value — CHF/MWh]"},
+        }
+
+        # Build t_XXXX -> timestamp mapping from supplyTH_all, which is already converted
+        # by import_gen_demand_timeseries using util.hour_to_timestamp().
+        # Use the first available dual CSV instead of assuming generationTh_limit_dual.csv
+        # is always present.
+        t_to_timestamp = {}
+        for constraint_name in dual_constraints:
+            mapping_csv_path = os.path.join(self.output_dir, f"{constraint_name}_dual.csv")
+            if not os.path.exists(mapping_csv_path):
+                continue
+            df_t = pd.read_csv(mapping_csv_path, usecols=["T"])
+            t_index_raw = df_t["T"].unique()
+            t_to_timestamp = dict(zip(t_index_raw, self.supplyTH_all.columns[:len(t_index_raw)]))
+            break
+
+        settings = pd.read_csv(os.path.join(self.output_dir, "settings.csv"), index_col=0, header=0)
+        weight_shock = float(settings.loc["weight_in_objective_fcn", self.scenario_name])  # type: ignore
+
+        dual_dfs = {}
+        for constraint_name in dual_constraints:
+            csv_path = os.path.join(self.output_dir, f"{constraint_name}_dual.csv")
+            if not os.path.exists(csv_path):
+                continue
+            df_raw = pd.read_csv(csv_path)
+            # Structure: [plant_col, T, Scenarios, value]
+            plant_col = df_raw.columns[0]   # e.g. "PDH" or "PDH_storage"
+            if "T" not in df_raw.columns:
+                continue
+            # Filter to the current scenario before pivoting (mirrors read_filtered_csv)
+            if "Scenarios" in df_raw.columns:
+                df_raw = df_raw[df_raw["Scenarios"] == self.scenario_name]
+            df_pivot = df_raw.groupby([plant_col, "T"])["value"].mean().reset_index().pivot(index=plant_col, columns="T", values="value")
+            df_pivot = df_pivot / weight_shock
+            # Map t_XXXX columns to timestamps to align x-axis with dispatch plot
+            df_pivot = df_pivot.rename(columns=t_to_timestamp)
+            # Filter to relevant DH nodes
+            df_pivot = df_pivot[df_pivot.index.str.contains(pattern)]
+            dual_dfs[constraint_name] = df_pivot
+
+        if not dual_dfs:
+            print("No dual CSV files found. Run the model first.")
+            return
+
+        # Load capacity to filter out near-zero (non-invested) plants
+        cap_gen    = pd.read_csv(os.path.join(self.output_dir, "genTh_max.csv"))
+        cap_energy = pd.read_csv(os.path.join(self.output_dir, "gen_energyTh_max.csv"))
+        cap_gen_series    = cap_gen.groupby("PDH")["value"].mean()
+        cap_energy_series = cap_energy.groupby("PDH_TES")["value"].mean()
+        CAP_MIN_MW = 1.0  # skip plants with capacity below this (numerical noise)
+
+        self.fig_dispatchDH_duals = go.Figure()
+
+        for constraint_name, df in dual_dfs.items():
+            dash_style   = dual_constraints[constraint_name]["dash"]
+            label_suffix = dual_constraints[constraint_name]["label_suffix"]
+
+            for plant in df.index:
+                # Skip non-invested plants (numerical noise from solver)
+                cap = cap_gen_series.get(plant, cap_energy_series.get(plant, 0.0))
+                if cap < CAP_MIN_MW:
+                    continue
+
+                # storageTh_soc is an equality constraint: dual non-zero every hour.
+                # Negate (same Pyomo convention as inequality duals: -dual = value in
+                # CHF/MWh). Resample to daily mean to avoid a dense 8760-point band.
+                # Inequality duals: filter to binding hours only, negate, plot as markers.
+                DUAL_THRESHOLD = 1e-4
+                series = df.loc[plant, :]
+                is_equality = (constraint_name == "storageTh_soc")
+                if is_equality:
+                    # Negate here so plot_series is already in display sign convention
+                    plot_series = (-series).resample("D").mean().dropna()
+                    plot_mode   = "lines"
+                else:
+                    # Negate here too — LP inequality duals are negative for ≤ constraints
+                    plot_series = -series[series.abs() > DUAL_THRESHOLD]
+                    plot_mode   = "markers"
+                if plot_series.empty:
+                    continue
+
+                trace_name = plant + label_suffix
+
+                # Determine color using same keyword matching as dispatch plot
+                color = None
+                if any("_" + key in plant for key in self.dispatchDH_color_mapping.keys()):
+                    key = next(k for k in self.dispatchDH_color_mapping.keys() if "_" + k in plant)
+                    color = self.dispatchDH_color_mapping[key]
+
+                y_values = plot_series.values
+                self.fig_dispatchDH_duals.add_trace(
+                    go.Scatter(
+                        x=plot_series.index,
+                        y=y_values,
+                        mode=plot_mode,
+                        name=trace_name,
+                        marker=dict(size=5, symbol={
+                            "generationTh_limit":   "circle",
+                            "storageTh_rate_limit": "diamond",
+                            "storageTh_soc_limit":  "square",
+                            "storageTh_soc":        "triangle-up",
+                        }.get(constraint_name, "circle"), color=color),
+                        line=dict(color=color) if is_equality else None,
+                    )
+                )
+
+        # Thermal price on the same axis as duals (both in CHF/MWh)
+        for node in NodeDH:
+            try:
+                self.fig_dispatchDH_duals.add_trace(
+                    go.Scatter(
+                        x=self.priceTh_all.loc[node, :].index,
+                        y=self.priceTh_all.loc[node, :],
+                        mode=mode,
+                        name="Price - Heat",
+                        line=dict(dash="solid"),
+                    )
+                )
+            except KeyError:
+                pass
+
+        self.fig_dispatchDH_duals.update_xaxes(range=self.plot_range)
+        self.fig_dispatchDH_duals.update_layout(
+            title=f"Thermal Capacity Duals {self.scenario_name} - {NodeDH[0]}",
+            height=800,
+            width=1200,
+            font=dict(color="black"),
+            legend=dict(
+                font=dict(size=18, color="black"),
+                x=1.15,
+                y=1,
+                xanchor='left',
+                yanchor='top',
+            ),
+            margin=dict(l=0, r=0, t=50, b=0),
+            xaxis_tickangle=-45,
+            yaxis=dict(
+                title="CHF/MWh",
+                showgrid=False,
+                zeroline=True,
+                zerolinecolor='black',
+            ),
+        )
+        self.fig_dispatchDH_duals.show()
         return
 
     def plot_sum_gen(self, mode):
@@ -983,33 +1126,41 @@ class DemandTimeSeriesPlotter:
                 name=f"{self.scenario_name}_SOC_all",
             )
         )
+
+    def plot_socTH(self, mode, NodeDH=[]):    
         # district heating ----------------------------------
         # soc of the thermal sotrage assets
 
+        if NodeDH == []:
         # plants with socTH are defined as plants that have values in self.socTH_all
-        plants_with_socth = [
-            plant for plant in self.socTH_all.index
-        ]
+            plants_with_socth = [
+                plant for plant in self.socTH_all.index
+            ]
+        else:
+            plants_with_socth = [
+                plant for plant in self.socTH_all.index if plant in self.Map_nodeDH_plantDH[NodeDH[0]]
+            ]
 
-        # for plant in plants_with_socth:
-        #     if plant in self.socTH_all.index:
-        #         self.fig_socTH.add_trace(
-        #             go.Scatter(
-        #                 x=self.socTH_all.loc[plant, :].index,
-        #                 y=self.socTH_all.loc[plant, :], #/(1000*1000),
-        #                 mode=mode,
-        #                 name=f"{self.scenario_name}_{plant}",
-        #             )
-        #         )
-        # add a trace that sums up the soc of all plants that are in self.plant_list and self.soc_all.index
-        self.fig_socTH.add_trace(
-            go.Scatter(
-                x=self.socTH_all.loc[plants_with_socth, :].sum(axis=0).index,
-                y=self.socTH_all.loc[plants_with_socth, :].sum(axis=0)/1000, # GWh
-                mode=mode,
-                name=f"{self.scenario_name} All",
-            )
-        )
+        for plant in plants_with_socth:
+            if plant in self.socTH_all.index:
+                self.fig_socTH.add_trace(
+                    go.Scatter(
+                        x=self.socTH_all.loc[plant, :].index,
+                        y=self.socTH_all.loc[plant, :] / 1000,  # GWh
+                        mode=mode,
+                        name=f"{self.scenario_name}_{plant}",
+                    )
+                )
+
+        # # add a trace that sums up the soc of all plants that are in self.plant_list and self.soc_all.index
+        # self.fig_socTH.add_trace(
+        #     go.Scatter(
+        #         x=self.socTH_all.loc[plants_with_socth, :].sum(axis=0).index,
+        #         y=self.socTH_all.loc[plants_with_socth, :].sum(axis=0)/1000, # GWh
+        #         mode=mode,
+        #         name=f"{self.scenario_name} All",
+        #     )
+        # )
 
         # plot soc plot for assets that are of technology pit
         plants_with_socpit = [
@@ -1058,12 +1209,13 @@ class DemandTimeSeriesPlotter:
                     )
                 )
 
-    def plot_socth_dual(self, mode):
+    def plot_socth_dual(self, mode, NodeDH):
         socth_data = self.socth_dual_all
 
         for plant in socth_data.index:
-            self.fig_socth_dual.add_trace( # type: ignore
-                go.Scatter(
+            if plant in self.Map_nodeDH_plantDH[NodeDH[0]]:
+                self.fig_socth_dual.add_trace( # type: ignore
+                    go.Scatter(
                     x=socth_data.loc[plant, :].index,
                     y=socth_data.loc[plant, :],
                     mode=mode,
@@ -1351,12 +1503,13 @@ class DemandTimeSeriesPlotter:
             self.fig_soc_dual.update_layout(yaxis=dict(tickformat=".0f"))
             self.fig_soc_dual.show()
 
-        # self.fig_socth_dual.update_xaxes(range=self.plot_range)
-        # self.fig_socth_dual.update_layout(title="Opp. cost of thermal storage")
-        # self.fig_socth_dual.update_layout(yaxis_title="CHF/MWh")
-        # self.fig_socth_dual.update_layout(xaxis_title="Time [hour in year]")
-        # self.fig_socth_dual.update_layout(yaxis=dict(tickformat=".0f"))
-        # self.fig_socth_dual.show()
+        if PLOT_SOC_THERMAL_DUAL:
+            self.fig_socth_dual.update_xaxes(range=self.plot_range)
+            self.fig_socth_dual.update_layout(title="Opp. cost of thermal storage")
+            self.fig_socth_dual.update_layout(yaxis_title="CHF/MWh")
+            self.fig_socth_dual.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_socth_dual.update_layout(yaxis=dict(tickformat=".0f"))
+            self.fig_socth_dual.show()
 
         if PLOT_INVESTMENTS:
             self.fig_investments.update_layout(title=f"Investments")
@@ -1433,9 +1586,10 @@ class DemandTimeSeriesPlotter:
             self.fig_soc_dual.update_layout(title="Opp. cost of storage")
             self.fig_soc_dual.write_html(f"plots/SOC_dual_{self.scenario_name}.html")
 
-        # self.fig_socth_dual.update_xaxes(range=self.plot_range)
-        # self.fig_socth_dual.update_layout(title="Opp. cost of thermal storage")
-        # self.fig_socth_dual.write_html(f"plots/SOC_thermal_dual_{self.scenario_name}.html")
+        if PLOT_SOC_THERMAL_DUAL:
+            self.fig_socth_dual.update_xaxes(range=self.plot_range)
+            self.fig_socth_dual.update_layout(title="Opp. cost of thermal storage")
+            self.fig_socth_dual.write_html(f"plots/SOC_thermal_dual_{self.scenario_name}.html")
 
         if PLOT_THERMAL_STORAGE_LEVEL:
             self.fig_th_sl.update_xaxes(range=self.plot_range)
@@ -1490,8 +1644,18 @@ for i_scenario in scenarios_to_plot:
             all_NodeDH = list(plotter.consumptionDH_all.index)
 
             if PLOT_THERMAL_DISPATCH:
-                for node in all_NodeDH:
+                nodes_for_plotting = all_NodeDH if PLOT_DISPATCH_ALL_NODES else [n for n in all_NodeDH if DH_NODE_DEFAULT in n] 
+                for node in nodes_for_plotting:
                     plotter.plot_dispatchDH(mode="lines", NodeDH=[node])
+                    if PLOT_SOC_THERMAL:
+                        plotter.plot_socTH(mode="lines", NodeDH=[node])
+
+            if PLOT_THERMAL_DISPATCH_DUALS:
+                nodes_for_duals = all_NodeDH if PLOT_DUALS_ALL_NODES else [n for n in all_NodeDH if DH_NODE_DEFAULT in n]
+                for node in nodes_for_duals:
+                    plotter.plot_dispatchDH_duals(mode="lines", NodeDH=[node])
+                    if PLOT_SOC_THERMAL_DUAL:
+                        plotter.plot_socth_dual(mode="lines", NodeDH=[node])
 
         plotter.plot_all(mode="lines")
         plotter.export_all_plots_to_html()

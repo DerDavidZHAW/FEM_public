@@ -50,6 +50,7 @@ seetings_default_param = {
     "RES_EU_coefficient": 1.1,
     "weather_year": 1995,
     "run_year": 2050,
+    "high_resolution_PV": False,   # if True, replace 7 CHxx_pvrf investment candidates with per-plant Nexus-E rooftop PV. Reads input/RES_nexuse/PV/<weather_year>/. EMHIRES pvrf still loaded for preexisting (EP2050+) capacity.
     "eu_policy": "GA",
     "ch_policy": "ZBA",
     "Node_list_setting": [

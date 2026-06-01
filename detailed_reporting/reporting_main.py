@@ -16,7 +16,7 @@ from detailed_reporting.Output_Temp import export_output_temporal
 __all__ = ['CHF_TO_EUR', 'is_winter_t', 'is_summer_t', 'get_run_year', 'generate_detailed_reports']
 
 
-def generate_detailed_reports(model, scenario_name, total_time_seconds=None):
+def generate_detailed_reports(model, scenario_name, total_time_seconds=None, subscenario=None):
     """
     Generate all detailed reports for the solved model.
     
@@ -53,20 +53,25 @@ def generate_detailed_reports(model, scenario_name, total_time_seconds=None):
     --------
     >>> generate_detailed_reports(solved_model, "2035_basecase")
     """
-    print("Generating detailed reports for Swiss model intercomparison...")
-    
+    label = f"{scenario_name} / {subscenario}" if subscenario else scenario_name
+    print(f"Generating detailed reports for Swiss model intercomparison ({label})...")
+
     # Create output directory for detailed reports
     report_dir = Path("output") / scenario_name / "detailed_reporting"
+    if subscenario is not None:
+        report_dir = report_dir / subscenario
     report_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate reports in the specified order
     print("  - Exporting Output_Spatial...")
-    export_output_spatial(model, scenario_name)
-    
+    export_output_spatial(model, scenario_name, subscenario=subscenario)
+
     print("  - Exporting Output_Sys...")
-    export_output_system(model, scenario_name, total_time_seconds=total_time_seconds) # type: ignore
-    
+    export_output_system(model, scenario_name,
+                        total_time_seconds=total_time_seconds,
+                        subscenario=subscenario)  # type: ignore
+
     print("  - Exporting Output_Temp...")
-    export_output_temporal(model, scenario_name)
-    
+    export_output_temporal(model, scenario_name, subscenario=subscenario)
+
     print("Detailed reporting complete.")

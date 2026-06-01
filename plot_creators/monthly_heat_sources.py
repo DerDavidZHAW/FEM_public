@@ -1,8 +1,15 @@
 """
-Script to create monthly pie charts showing heat sources (Heat Pumps, Resistive Heaters, CHP)
-for two scenarios: 2035_sens_100_fixed_inv and 2035_sens_30_fixed_inv
+Script to create monthly stacked bar charts showing provided heat
+(Heat Pumps, Resistive Heaters, CHP) across scenarios.
+
+genTh.csv contains thermal generation (MWh_th).
+For heat pumps, genTh already represents the heat output (= electricity * COP),
+so the values are used directly as heat provision.
+For resistive heaters, COP = 1, so heat = electricity consumption.
+For CHP, genTh is also the thermal output.
 """
 
+import argparse
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -11,246 +18,343 @@ from pathlib import Path
 
 pio.renderers.default = "browser"
 
-# ========== CONFIGURATION ==========
-scenarios = {
-    "NTC 100%": r"C:\Models\Future_Markets\output\20260122\2035_sens_100_fixed_inv",
-    "NTC 30%": r"C:\Models\Future_Markets\output\20260122\2035_sens_30_fixed_inv",
-}
-# ===================================
 
-# Define colors for heat sources
-colors = {
-    'Heat Pumps': '#ff7f0e',  # orange
-    'Resistive Heaters': '#1f77b4',  # blue
-    'CHP': '#bcbd22',  # olive
-}
+def parse_args():
+    parser = argparse.ArgumentParser(description="Monthly heat provision stacked bar charts.")
+    parser.add_argument(
+        "--scenarios", nargs="+",
+        help="Scenario folder names (relative to output/{output-folder}).",
+    )
+    parser.add_argument(
+        "--display-names", nargs="+",
+        help="Display names matching the scenarios order.",
+    )
+    parser.add_argument(
+        "--output-base",
+        help="Output path without extension for PDF/HTML/MD.",
+    )
+    parser.add_argument(
+        "--output-folder", default="20260311",
+        help="Date folder under output/ (default: 20260311).",
+    )
+    return parser.parse_args()
 
-# Month order (hydro year starts in October)
-month_order = ['oct', 'nov', 'dec', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep']
-month_labels = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
 
-# Read time mapping
-base_dir = Path(__file__).parent.parent
-timemap_path = base_dir / "input" / "timemaps_hydro_year.csv"
-timemap_df = pd.read_csv(timemap_path)
+# ========== DEFAULT CONFIGURATION (for standalone execution) ==========
+DEFAULT_OUTPUT_FOLDER = "20260311"
+DEFAULT_SCENARIOS = [
+    "2050_100_inv_EUbat",
+    "2050_090_inv_EUbat",
+    "2050_080_inv_EUbat",
+    "2050_070_inv_EUbat",
+    "2050_060_inv_EUbat",
+    "2050_050_inv_EUbat",
+    "2050_040_inv_EUbat",
+    "2050_030_inv_EUbat",
+]
+DEFAULT_DISPLAY_NAMES = [
+    "NTC 100%",
+    "NTC 90%",
+    "NTC 80%",
+    "NTC 70%",
+    "NTC 60%",
+    "NTC 50%",
+    "NTC 40%",
+    "NTC 30%",
+]
+# ======================================================================
 
-# Create t to month mapping
-t_to_month = dict(zip(timemap_df['t'], timemap_df['month']))
 
-# Initialize storage for results
-# Structure: results[scenario][month] = {'HP': value, 'resistive': value, 'CHP': value}
-results = {}
+def main():
+    args = parse_args()
 
-for scenario_name, scenario_path in scenarios.items():
-    print(f"\nProcessing scenario: {scenario_name}")
-    
-    # Read thermal generation data
-    genTh_path = f"{scenario_path}\\genTh.csv"
-    genTh_df = pd.read_csv(genTh_path)
-    
-    # Read scenario weights
-    weights_path = f"{scenario_path}\\weight_in_objective_fcn.csv"
-    weights_df = pd.read_csv(weights_path)
-    weights_dict = dict(zip(weights_df['Scenarios'], weights_df['value']))
-    
-    print(f"  Scenario weights: {weights_dict}")
-    
-    # Add month column based on T
-    genTh_df['month'] = genTh_df['T'].map(t_to_month)
-    
-    # Initialize monthly results
-    monthly_results = {month: {'HP': 0, 'resistive': 0, 'CHP': 0} for month in month_order}
-    
-    # Process each plant
-    for plant in genTh_df['PDH'].unique():
-        plant_data = genTh_df[genTh_df['PDH'] == plant].copy()
-        
-        # Determine technology type
-        is_hp = ('_HPNew' in plant or '_HPG' in plant or 'HP' in plant)
-        is_resistive = '_resistiveNew' in plant or 'resistive' in plant.lower()
-        is_chp = '_CHPNew' in plant or 'CHP' in plant
-        
-        if not (is_hp or is_resistive or is_chp):
-            continue
-        
-        # Determine category
-        if is_hp:
-            cat = 'HP'
-        elif is_resistive:
-            cat = 'resistive'
-        elif is_chp:
-            cat = 'CHP'
-        else:
-            continue
-        
-        # Apply weights and aggregate by month
-        for subscen in plant_data['Scenarios'].unique():
-            subscen_data = plant_data[plant_data['Scenarios'] == subscen]
-            weight = weights_dict.get(subscen, 1.0 / 3)
-            
-            # Group by month and sum
-            monthly_gen = subscen_data.groupby('month')['value'].sum() * weight
-            
-            for month, gen_value in monthly_gen.items():
-                if month in monthly_results:
-                    monthly_results[month][cat] += gen_value
-    
-    results[scenario_name] = monthly_results
-    
-    # Print summary
-    print(f"\n  Monthly heat generation summary for {scenario_name} (GWh):")
-    for month in month_order:
-        hp = monthly_results[month]['HP'] / 1000
-        rh = monthly_results[month]['resistive'] / 1000
-        chp = monthly_results[month]['CHP'] / 1000
-        print(f"    {month.upper()}: HP={hp:.1f}, RH={rh:.1f}, CHP={chp:.1f}")
+    output_folder = args.output_folder or DEFAULT_OUTPUT_FOLDER
+    scenario_names_list = args.scenarios or DEFAULT_SCENARIOS
+    display_names = args.display_names or DEFAULT_DISPLAY_NAMES
 
-# Create figure with 4 rows (2 per scenario: Oct-Mar, Apr-Sep) and 6 columns
-# Row 1: Scenario 1, Oct-Mar
-# Row 2: Scenario 1, Apr-Sep
-# Row 3: Scenario 2, Oct-Mar
-# Row 4: Scenario 2, Apr-Sep
-num_cols = 6
-num_rows = 4
+    if len(scenario_names_list) != len(display_names):
+        raise ValueError("scenarios and display names must have the same length")
 
-# Month labels for each half
-months_first_half = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
-months_second_half = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-months_order_first = ['oct', 'nov', 'dec', 'jan', 'feb', 'mar']
-months_order_second = ['apr', 'may', 'jun', 'jul', 'aug', 'sep']
+    base_dir = Path(__file__).parent.parent
+    output_base_dir = base_dir / "output" / output_folder
 
-scenario_names = list(scenarios.keys())
+    # Build scenarios dict: display_name -> full path
+    scenarios = {}
+    for scen, disp in zip(scenario_names_list, display_names):
+        scenarios[disp] = str(output_base_dir / scen)
 
-# Create subplot titles (month labels only for rows 1 and 3)
-subplot_titles = months_first_half + months_second_half + months_first_half + months_second_half
+    if args.output_base:
+        output_base_path = Path(args.output_base)
+    else:
+        output_base_path = Path(__file__).parent / "monthly_heat_sources"
+    output_base_path.parent.mkdir(parents=True, exist_ok=True)
 
-fig = make_subplots(
-    rows=num_rows, cols=num_cols,
-    specs=[[{"type": "pie"}] * num_cols for _ in range(num_rows)],
-    subplot_titles=subplot_titles,
-    vertical_spacing=0.08,
-    horizontal_spacing=0.02,
-)
+    # Colors matching rh_hp_comparison.py pie charts
+    colors = {
+        'Heat Pumps': 'rgb(237,219,171)',       # beige (HP)
+        'Resistive Heaters': 'rgb(150,150,150)', # grey
+        'CHP': 'rgb(88,49,25)',                  # brown
+    }
+    plot_font_family = "Times New Roman"
+    plot_font_size = 15
 
-# Add pie charts
-for scen_idx, (scenario_name, monthly_data) in enumerate(results.items()):
-    # First half: Oct-Mar (rows 1 and 3)
-    row_first = scen_idx * 2 + 1
-    for col_idx, month in enumerate(months_order_first):
-        heat_values = [
-            monthly_data[month]['HP'] / 1000,
-            monthly_data[month]['resistive'] / 1000,
-            monthly_data[month]['CHP'] / 1000,
-        ]
-        heat_labels = ['Heat Pumps', 'Resistive Heaters', 'CHP']
-        
-        filtered_labels = [l for l, v in zip(heat_labels, heat_values) if v > 0.01]
-        filtered_values = [v for v in heat_values if v > 0.01]
-        filtered_colors = [colors[l] for l in filtered_labels]
-        
-        if filtered_values:
-            fig.add_trace(go.Pie(
-                labels=filtered_labels,
-                values=filtered_values,
-                name=f'{scenario_name} - {month}',
-                marker_colors=filtered_colors,
-                textinfo='percent',
-                textposition='inside',
-                hovertemplate='%{label}: %{value:.1f} GWh<extra></extra>',
-                showlegend=(scen_idx == 0 and col_idx == 0),
-            ), row=row_first, col=col_idx + 1)
-    
-    # Second half: Apr-Sep (rows 2 and 4)
-    row_second = scen_idx * 2 + 2
-    for col_idx, month in enumerate(months_order_second):
-        heat_values = [
-            monthly_data[month]['HP'] / 1000,
-            monthly_data[month]['resistive'] / 1000,
-            monthly_data[month]['CHP'] / 1000,
-        ]
-        heat_labels = ['Heat Pumps', 'Resistive Heaters', 'CHP']
-        
-        filtered_labels = [l for l, v in zip(heat_labels, heat_values) if v > 0.01]
-        filtered_values = [v for v in heat_values if v > 0.01]
-        filtered_colors = [colors[l] for l in filtered_labels]
-        
-        if filtered_values:
-            fig.add_trace(go.Pie(
-                labels=filtered_labels,
-                values=filtered_values,
-                name=f'{scenario_name} - {month}',
-                marker_colors=filtered_colors,
-                textinfo='percent',
-                textposition='inside',
-                hovertemplate='%{label}: %{value:.1f} GWh<extra></extra>',
-                showlegend=False,
-            ), row=row_second, col=col_idx + 1)
+    # Month order (hydro year starts in October) - now only December and June
+    month_order = ['dec', 'jun']
+    all_months_for_table = ['oct', 'nov', 'dec', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep']
 
-# Update layout
-fig.update_layout(
-    height=700,
-    width=1100,
-    template='plotly_white',
-    legend=dict(
-        orientation="h",
-        yanchor="top",
-        y=1.18,  # move legend further up
-        xanchor="center",
-        x=0.5,
-        font=dict(size=13),
-    ),
-    margin=dict(l=140, r=20, t=120, b=20),  # more left and top margin
-)
+    # Read time mapping
+    timemap_path = base_dir / "input" / "timemaps_hydro_year.csv"
+    timemap_df = pd.read_csv(timemap_path)
+    t_to_month = dict(zip(timemap_df['t'], timemap_df['month']))
 
-# Add scenario name annotations manually after layout
-# NOTE: Static exports (PDF/PNG) may render these differently than the web version.
-# To improve alignment, move x further left.
-fig.add_annotation(
-    text=f"<b>{scenario_names[0]}</b>",
-    x=-0.08,  # further left for static export
-    y=0.85,
-    xref="paper",
-    yref="paper",
-    showarrow=False,
-    font=dict(size=14),
-    textangle=-90,
-)
-fig.add_annotation(
-    text=f"<b>{scenario_names[1]}</b>",
-    x=-0.08,  # further left for static export
-    y=0.15,
-    xref="paper",
-    yref="paper",
-    showarrow=False,
-    font=dict(size=14),
-    textangle=-90,
-)
+    # Initialize storage for results
+    results = {}
 
-# Show plot
-fig.show()
+    for scenario_display, scenario_path in scenarios.items():
+        print(f"\nProcessing scenario: {scenario_display}")
 
-# Export to HTML
-output_path = Path(__file__).parent / "monthly_heat_sources.html"
-fig.write_html(output_path)
-print(f"\nPlot exported to {output_path}")
+        genTh_df = pd.read_csv(f"{scenario_path}/genTh.csv")
 
-# Export to PDF
-pdf_path = Path(__file__).parent / "monthly_heat_sources.pdf"
-fig.write_image(pdf_path, format="pdf")
-print(f"Plot exported to {pdf_path}")
+        weights_df = pd.read_csv(f"{scenario_path}/weight_in_objective_fcn.csv")
+        weights_dict = dict(zip(weights_df['Scenarios'], weights_df['value']))
+        print(f"  Scenario weights: {weights_dict}")
 
-# Export to PNG and crop top and left
-from PIL import Image
-import io
+        genTh_df['month'] = genTh_df['T'].map(t_to_month)
 
-png_bytes = fig.to_image(format="png", scale=3)
-img = Image.open(io.BytesIO(png_bytes))
+        # Initialize monthly results for all months (for table output)
+        monthly_results = {month: {'HP': 0, 'resistive': 0, 'CHP': 0} for month in all_months_for_table}
 
-# Crop 100px from top and 40px from left
-crop_top = 150
-crop_left = 250
-cropped_img = img.crop((crop_left, crop_top, img.width, img.height))
+        for plant in genTh_df['PDH'].unique():
+            plant_data = genTh_df[genTh_df['PDH'] == plant].copy()
 
-png_path = Path(__file__).parent / "monthly_heat_sources.png"
-cropped_img.save(png_path)
-print(f"Plot exported to {png_path} (cropped top {crop_top}px, left {crop_left}px)")
+            # Check CHP BEFORE HP to avoid '_CHPNew' matching '_HPNew' substring
+            is_chp = '_CHPNew' in plant or '_CHP' in plant
+            is_hp = not is_chp and ('_HPNew' in plant or '_HPG' in plant)
+            is_resistive = '_resistiveNew' in plant or 'resistive' in plant.lower()
+
+            if is_chp:
+                cat = 'CHP'
+            elif is_hp:
+                cat = 'HP'
+            elif is_resistive:
+                cat = 'resistive'
+            else:
+                continue
+
+            # Normalize weights over the sub-scenarios available in this plant data
+            # so monthly results are weighted averages across weather years.
+            subscen_list = list(plant_data['Scenarios'].unique())
+            raw_weights = {sub: weights_dict.get(sub, 0.0) for sub in subscen_list}
+            raw_sum = sum(raw_weights.values())
+            if raw_sum <= 0:
+                norm_weights = {sub: 1.0 / len(subscen_list) for sub in subscen_list}
+            else:
+                norm_weights = {sub: w / raw_sum for sub, w in raw_weights.items()}
+
+            for subscen in subscen_list:
+                subscen_data = plant_data[plant_data['Scenarios'] == subscen]
+                weight = norm_weights[subscen]
+                # genTh values are thermal generation (heat provision) in MWh_th
+                monthly_gen = subscen_data.groupby('month')['value'].sum() * weight
+                for month, gen_value in monthly_gen.items():
+                    if month in monthly_results:
+                        monthly_results[month][cat] += gen_value
+
+        results[scenario_display] = monthly_results
+
+        print(f"\n  Monthly heat provision summary for {scenario_display} (GWh):")
+        for month in all_months_for_table:
+            hp = monthly_results[month]['HP'] / 1000
+            rh = monthly_results[month]['resistive'] / 1000
+            chp = monthly_results[month]['CHP'] / 1000
+            print(f"    {month.upper()}: HP={hp:.1f}, RH={rh:.1f}, CHP={chp:.1f}")
+
+    # ---- Build stacked bar chart figure ----
+    scenario_keys = list(scenarios.keys())
+    scenario_tick_labels = [label.replace("NTC ", "") for label in scenario_keys]
+
+    # Two panels: all scenarios in December on the left, all scenarios in June on the right.
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        specs=[[{"type": "bar"}, {"type": "bar"}]],
+        subplot_titles=["December", "June"],
+        horizontal_spacing=0.1,
+    )
+
+    dec_hp = [results[sc]['dec']['HP'] / 1000 for sc in scenario_keys]
+    dec_rh = [results[sc]['dec']['resistive'] / 1000 for sc in scenario_keys]
+    dec_chp = [results[sc]['dec']['CHP'] / 1000 for sc in scenario_keys]
+
+    jun_hp = [results[sc]['jun']['HP'] / 1000 for sc in scenario_keys]
+    jun_rh = [results[sc]['jun']['resistive'] / 1000 for sc in scenario_keys]
+    jun_chp = [results[sc]['jun']['CHP'] / 1000 for sc in scenario_keys]
+
+    # Left panel: December (all scenarios)
+    fig.add_trace(
+        go.Bar(
+            x=scenario_keys,
+            y=dec_hp,
+            name='Heat Pumps',
+            marker_color=colors['Heat Pumps'],
+            hovertemplate='Heat Pumps: %{y:.1f} GWh<sub>th</sub><extra></extra>',
+            legendgroup='Heat Pumps',
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=scenario_keys,
+            y=dec_rh,
+            name='Resistive Heaters',
+            marker_color=colors['Resistive Heaters'],
+            hovertemplate='Resistive Heaters: %{y:.1f} GWh<sub>th</sub><extra></extra>',
+            legendgroup='Resistive Heaters',
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=scenario_keys,
+            y=dec_chp,
+            name='CHP',
+            marker_color=colors['CHP'],
+            hovertemplate='CHP: %{y:.1f} GWh<sub>th</sub><extra></extra>',
+            legendgroup='CHP',
+        ),
+        row=1,
+        col=1,
+    )
+
+    # Right panel: June (all scenarios)
+    fig.add_trace(
+        go.Bar(
+            x=scenario_keys,
+            y=jun_hp,
+            name='Heat Pumps',
+            marker_color=colors['Heat Pumps'],
+            hovertemplate='Heat Pumps: %{y:.1f} GWh<sub>th</sub><extra></extra>',
+            legendgroup='Heat Pumps',
+            showlegend=False,
+        ),
+        row=1,
+        col=2,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=scenario_keys,
+            y=jun_rh,
+            name='Resistive Heaters',
+            marker_color=colors['Resistive Heaters'],
+            hovertemplate='Resistive Heaters: %{y:.1f} GWh<sub>th</sub><extra></extra>',
+            legendgroup='Resistive Heaters',
+            showlegend=False,
+        ),
+        row=1,
+        col=2,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=scenario_keys,
+            y=jun_chp,
+            name='CHP',
+            marker_color=colors['CHP'],
+            hovertemplate='CHP: %{y:.1f} GWh<sub>th</sub><extra></extra>',
+            legendgroup='CHP',
+            showlegend=False,
+        ),
+        row=1,
+        col=2,
+    )
+
+    fig.update_yaxes(title_text="Provided heat (GWh<sub>th</sub>)", range=[0, 900], row=1, col=1)
+    fig.update_yaxes(title_text="Provided heat (GWh<sub>th</sub>)", range=[0, 900], row=1, col=2)
+    fig.update_xaxes(
+        title_text="NTC",
+        tickvals=scenario_keys,
+        ticktext=scenario_tick_labels,
+        tickangle=-35,
+        row=1,
+        col=1,
+    )
+    fig.update_xaxes(
+        title_text="NTC",
+        tickvals=scenario_keys,
+        ticktext=scenario_tick_labels,
+        tickangle=-35,
+        row=1,
+        col=2,
+    )
+    fig.update_annotations(font=dict(size=plot_font_size + 2))
+
+    fig.update_layout(
+        height=720,
+        width=1890,
+        template='plotly_white',
+        barmode='stack',
+        font=dict(family=plot_font_family, size=plot_font_size),
+        legend=dict(
+            orientation="h", yanchor="top", y=-0.25,
+            xanchor="center", x=0.5, font=dict(size=plot_font_size),
+        ),
+        margin=dict(l=80, r=20, t=45, b=120),
+    )
+
+    # Show plot (only when running standalone / in browser)
+    fig.show()
+
+    # ---- Write markdown description (before image export to ensure it's always produced) ----
+    md_path = f"{output_base_path}.md"
+    md_lines = [
+        "# Monthly Heat Provision (December & June)",
+        "",
+        "This plot shows the monthly heat provision breakdown (GWh<sub>th</sub>) by source: "
+        "Heat Pumps, Resistive Heaters, and CHP (combined heat and power) for December and June.",
+        "",
+        "Only December and June are shown in the plots.",
+        "Any interpretation and narrative should focus on these two months.",
+        "",
+        "Heat pump values represent thermal output (electricity × COP).",
+        "Resistive heater values equal electricity consumption (COP = 1).",
+        "CHP values represent thermal co-generation output.",
+        "",
+    ]
+    for scenario_display, monthly_data in results.items():
+        md_lines.append(f"## {scenario_display}")
+        md_lines.append("")
+        md_lines.append("| Month | Heat Pumps (GWh<sub>th</sub>) | Resistive Heaters (GWh<sub>th</sub>) | CHP (GWh<sub>th</sub>) | Total (GWh<sub>th</sub>) |")
+        md_lines.append("|-------|-----------------|------------------------|-----------|-------------|")
+        annual_hp, annual_rh, annual_chp = 0, 0, 0
+        for month in all_months_for_table:
+            hp = monthly_data[month]['HP'] / 1000
+            rh = monthly_data[month]['resistive'] / 1000
+            chp = monthly_data[month]['CHP'] / 1000
+            total = hp + rh + chp
+            annual_hp += hp
+            annual_rh += rh
+            annual_chp += chp
+            md_lines.append(f"| {month.upper()} | {hp:.1f} | {rh:.1f} | {chp:.1f} | {total:.1f} |")
+        annual_total = annual_hp + annual_rh + annual_chp
+        md_lines.append(f"| **Annual** | **{annual_hp:.1f}** | **{annual_rh:.1f}** | **{annual_chp:.1f}** | **{annual_total:.1f}** |")
+        md_lines.append("")
+
+    with open(md_path, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(md_lines))
+    print(f"Markdown exported to {md_path}")
+
+    # Export HTML and PDF
+    html_path = f"{output_base_path}.html"
+    pdf_path = f"{output_base_path}.pdf"
+    fig.write_html(html_path)
+    print(f"Plot exported to {html_path}")
+    try:
+        fig.write_image(pdf_path, format="pdf")
+        print(f"Plot exported to {pdf_path}")
+    except Exception as e:
+        print(f"Warning: PDF export failed ({e}). HTML was exported successfully.")
+
+
+if __name__ == '__main__':
+    main()

@@ -152,6 +152,7 @@ def data_import_TYNDP_fcn(scenario_name):
     share_of_available_charging_capacity_for_V2G = settings_scen["share_of_available_charging_capacity_for_V2G"]
     neighbor_countries_for_CH_only_mode = settings_scen["neighbor_countries_for_CH_only_mode"]
     neighbor_price_scenario_for_CH_only_mode = settings_scen["neighbor_price_scenario_for_CH_only_mode"]
+    high_resolution_PV = settings_scen["high_resolution_PV"]
 
     # --- Read multi-step lost load cost data ---
     lost_load_cost_filename = f"lostLoadCost_{lost_load_cost_mode}.csv"
@@ -197,7 +198,7 @@ def data_import_TYNDP_fcn(scenario_name):
     # RES availability data
     print("Reading RES availability and capacity data and calculate infeed...")
     Avail_plant_RES_year_scenario = read_RES_avail_data(
-        weather_year, Node_list
+        weather_year, Node_list, run_year=run_year, high_resolution_PV=high_resolution_PV,
     )
     # Avail_plant.update(Avail_plant_RES_year_scenario)
 
@@ -341,7 +342,7 @@ def data_import_TYNDP_fcn(scenario_name):
         Map_plant_tech_nonhydro,
         Map_consumer_plant_nonhydro,
         P_list_fuelswitching_plants_instance,
-    ) = read_plant_non_hydro_data(allow_investment, Node_list, battery_investment_nodes_in_addition_to_CH, CH_only)
+    ) = read_plant_non_hydro_data(allow_investment, Node_list, battery_investment_nodes_in_addition_to_CH, CH_only, weather_year=weather_year, run_year=run_year, high_resolution_PV=high_resolution_PV)
 
     dle.extend_list_with_new_elements(Plant_investment_RES_CH_list_instance, Plant_investment_RES_CH_list)
     dle.extend_list_with_new_elements(Plant_investment_non_RES_CH_list_instance, Plant_investment_non_RES_CH_list)

@@ -4,4 +4,4 @@ This module exists to avoid circular imports between core.py and detailed_report
 """
 
 # Model version - update this when releasing new versions
-MODEL_VERSION = "1.0.1"  # 12 December 2025
+MODEL_VERSION = "1.0.2"  # 10 March 2026

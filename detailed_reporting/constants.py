@@ -121,45 +121,58 @@ def is_summer_t(t: str) -> bool:
     return (2185 <= n <= 6552)
 
 
-def get_run_year(scenario_name: str) -> int:
-    """Get run_year from scenario settings.csv.
-    
-    The settings.csv is written at the start of each scenario run, so this
-    should be available even before the model is solved.
-    """
+def _read_settings(scenario_name: str) -> pd.DataFrame:
     settings_path = PROJECT_ROOT / "output" / scenario_name / "settings.csv"
-    df = pd.read_csv(settings_path, index_col=0)
-    return int(df.loc["run_year"].iloc[0]) # type: ignore
+    return pd.read_csv(settings_path, index_col=0)
 
 
-def get_flexible_household_heatpump_share(scenario_name: str) -> float:
-    """Get flexible_household_heatpump_share from scenario settings.csv.
-    
-    Returns the fraction of heat pump demand that is flexible.
+def _setting_value(scenario_name: str, key: str, subscenario: str = None):  # type: ignore
+    """Return a setting value, choosing the column for `subscenario` if given.
+
+    When subscenario is None, fall back to the first column (preserves prior behaviour
+    for runs with a single subscenario).
     """
-    settings_path = PROJECT_ROOT / "output" / scenario_name / "settings.csv"
-    df = pd.read_csv(settings_path, index_col=0)
-    return float(df.loc["flexible_household_heatpump_share"].iloc[0]) # type: ignore
+    df = _read_settings(scenario_name)
+    row = df.loc[key]
+    if subscenario is None:
+        return row.iloc[0]
+    if subscenario not in row.index:
+        raise KeyError(
+            f"Subscenario '{subscenario}' not found in settings.csv columns for '{scenario_name}'. "
+            f"Available: {list(row.index)}"
+        )
+    return row[subscenario]
 
 
-def get_eu_policy(scenario_name: str) -> str:
-    """Get eu_policy from scenario settings.csv.
-    
-    Returns 'GA' (GlobalAmbition) or 'DE' (DistributedEnergy).
-    """
-    settings_path = PROJECT_ROOT / "output" / scenario_name / "settings.csv"
-    df = pd.read_csv(settings_path, index_col=0)
-    return str(df.loc["eu_policy"].iloc[0]) # type: ignore
+def get_run_year(scenario_name: str, subscenario: str = None) -> int:  # type: ignore
+    """Get run_year from scenario settings.csv."""
+    return int(_setting_value(scenario_name, "run_year", subscenario))
 
 
-def get_weather_year(scenario_name: str) -> int:
-    """Get weather_year from scenario settings.csv.
-    
-    Returns the weather year used for the scenario.
-    """
-    settings_path = PROJECT_ROOT / "output" / scenario_name / "settings.csv"
-    df = pd.read_csv(settings_path, index_col=0)
-    return int(df.loc["weather_year"].iloc[0]) # type: ignore
+def get_flexible_household_heatpump_share(scenario_name: str, subscenario: str = None) -> float:  # type: ignore
+    """Get flexible_household_heatpump_share from scenario settings.csv."""
+    return float(_setting_value(scenario_name, "flexible_household_heatpump_share", subscenario))
+
+
+def get_eu_policy(scenario_name: str, subscenario: str = None) -> str:  # type: ignore
+    """Get eu_policy from scenario settings.csv."""
+    return str(_setting_value(scenario_name, "eu_policy", subscenario))
+
+
+def get_weather_year(scenario_name: str, subscenario: str = None) -> int:  # type: ignore
+    """Get weather_year from scenario settings.csv."""
+    return int(_setting_value(scenario_name, "weather_year", subscenario))
+
+
+def get_subscenario_weight(scenario_name: str, subscenario: str) -> float:
+    """Return the weight_in_objective_fcn for a specific subscenario."""
+    return float(_setting_value(scenario_name, "weight_in_objective_fcn", subscenario))
+
+
+def list_subscenarios(scenario_name: str) -> List[str]:
+    """Return the subscenario names recorded in settings.csv (one per column)."""
+    df = _read_settings(scenario_name)
+    return list(df.columns)
 
 
 def read_full_ev_demand(run_year: int) -> pd.DataFrame:

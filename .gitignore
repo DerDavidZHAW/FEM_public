@@ -158,3 +158,8 @@ detailed_reporting/to_consider_from_*
 output/
 # plot_creators/daily_electricity_costs_*
 # plot_creators/nuclear_breakeven_*
+# Claude Code session state
+.claude/
+
+# Per-user Poetry config written by the Euler walkthrough — local-only by design
+poetry.toml

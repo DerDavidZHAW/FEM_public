@@ -1,0 +1,2 @@
+# Shell scripts must use LF on all platforms (SLURM/Linux requirement)
+*.sh text eol=lf

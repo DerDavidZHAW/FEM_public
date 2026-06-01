@@ -15,8 +15,18 @@ from model.version import MODEL_VERSION
 from detailed_reporting.constants import (
     CHF_TO_EUR, is_winter_t, is_summer_t, get_run_year, get_weather_year,
     get_flexible_household_heatpump_share, get_eu_policy, HP_PLANTS,
-    read_full_ev_demand, read_full_hp_demand, PROJECT_ROOT
+    read_full_ev_demand, read_full_hp_demand, PROJECT_ROOT,
+    get_subscenario_weight
 )
+
+
+# Cost files whose value column must be divided by the subscenario weight to
+# recover the unweighted per-subscenario value (see user spec). Output_Temp
+# does not currently read these, but kept in sync with the other modules.
+_WEIGHT_DIVIDE_COST_FILES = {
+    "cost_inv_dict.csv": "cost_CHF",
+    "cost_op_dict.csv": "cost_CHF",
+}
 
 
 # Swiss cross-border lines
@@ -84,12 +94,25 @@ def _scenario_or_test_path(scenario_name: str, filename: str) -> Path:
     return fallback if fallback.exists() else primary
 
 
-def _read_csv(scenario_name: str, filename: str) -> pd.DataFrame:
-    """Read a CSV file from the scenario output directory."""
+def _read_csv(scenario_name: str, filename: str, subscenario: str = None) -> pd.DataFrame:  # type: ignore
+    """Read a CSV file from the scenario output directory, optionally filtered to a subscenario."""
     path = _scenario_or_test_path(scenario_name, filename)
     if not path.exists():
         return pd.DataFrame()
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+    if subscenario is None or df.empty:
+        return df
+    if "Scenarios" in df.columns:
+        return df[df["Scenarios"] == subscenario].copy()
+    if "scenario" in df.columns:
+        out = df[df["scenario"] == subscenario].copy()
+        value_col = _WEIGHT_DIVIDE_COST_FILES.get(filename)
+        if value_col is not None and not out.empty and value_col in out.columns:
+            weight = get_subscenario_weight(scenario_name, subscenario)
+            if weight != 0:
+                out[value_col] = out[value_col] / weight
+        return out
+    return df
 
 
 def _pyomo_to_dataframe(pyomo_obj, expected_cols: Optional[List[str]] = None) -> pd.DataFrame:
@@ -129,13 +152,14 @@ def _pyomo_to_dataframe(pyomo_obj, expected_cols: Optional[List[str]] = None) ->
 
 
 def _get_data(model, scenario_name: str, attr_name: str, csv_name: str,
-              expected_cols: Optional[List[str]] = None) -> pd.DataFrame:
+              expected_cols: Optional[List[str]] = None,
+              subscenario: str = None) -> pd.DataFrame:  # type: ignore
     """Get data from model attribute or CSV file."""
-    if model is not None and hasattr(model, attr_name):
+    if subscenario is None and model is not None and hasattr(model, attr_name):
         df = _pyomo_to_dataframe(getattr(model, attr_name), expected_cols)
         if not df.empty:
             return df
-    return _read_csv(scenario_name, csv_name)
+    return _read_csv(scenario_name, csv_name, subscenario=subscenario)
 
 
 def _detect_hours_from_data(*dataframes: pd.DataFrame) -> List[int]:
@@ -222,7 +246,8 @@ def _sum_hourly_storage_charge_for_plants(df_storage_charge: pd.DataFrame, plant
     return filtered.groupby("T")["value"].sum()
 
 
-def export_output_temporal(model, scenario_name: str, model_version: str = None): # type: ignore
+def export_output_temporal(model, scenario_name: str, model_version: str = None,  # type: ignore
+                           subscenario: str = None):  # type: ignore
     """
     Export temporally-resolved model outputs to CSV.
     
@@ -245,36 +270,38 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None)
     
     # Create output directory
     report_dir = Path("output") / scenario_name / "detailed_reporting"
+    if subscenario is not None:
+        report_dir = report_dir / subscenario
     report_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Load data
     df_gen = _get_data(model, scenario_name, "gen", "gen.csv",
-                       ["P_gen", "T", "Scenarios", "value"])
+                       ["P_gen", "T", "Scenarios", "value"], subscenario=subscenario)
     df_infeed = _get_data(model, scenario_name, "infeed", "infeed.csv",
-                          ["Consumer_with_infeed", "Tech_infeed", "T", "Scenarios", "value"])
+                          ["Consumer_with_infeed", "Tech_infeed", "T", "Scenarios", "value"], subscenario=subscenario)
     df_storage_charge = _get_data(model, scenario_name, "storage_charge", "storage_charge.csv",
-                                   ["P_pumping", "T", "Scenarios", "value"])
+                                   ["P_pumping", "T", "Scenarios", "value"], subscenario=subscenario)
     df_export = _get_data(model, scenario_name, "Export", "Export.csv",
-                          ["lineATC", "T", "Scenarios", "value"])
+                          ["lineATC", "T", "Scenarios", "value"], subscenario=subscenario)
     df_dual = _get_data(model, scenario_name, "energy_balance_dual", "energy_balance_dual.csv",
-                        ["Node", "T", "Scenarios", "value"])
+                        ["Node", "T", "Scenarios", "value"], subscenario=subscenario)
     df_curtailment = _get_data(model, scenario_name, "curtailment", "curtailment.csv",
-                               ["Consumer_with_infeed", "T", "Scenarios", "value"])
+                               ["Consumer_with_infeed", "T", "Scenarios", "value"], subscenario=subscenario)
     df_lostload = _get_data(model, scenario_name, "lostload", "lostload.csv",
-                            ["Consumer", "T", "lostLoad_step", "Scenarios", "value"])
+                            ["Consumer", "T", "lostLoad_step", "Scenarios", "value"], subscenario=subscenario)
     df_demand = _get_data(model, scenario_name, "demand", "demand.csv",
-                          ["Consumer", "Consumption_types_inflex", "T", "Scenarios", "value"])
+                          ["Consumer", "Consumption_types_inflex", "T", "Scenarios", "value"], subscenario=subscenario)
     df_ev_inflexible = _get_data(model, scenario_name, "EV_inflexible_demand", "EV_inflexible_demand.csv",
-                                  ["Node", "T", "Scenarios", "value"])
+                                  ["Node", "T", "Scenarios", "value"], subscenario=subscenario)
     df_hp_inflexible = _get_data(model, scenario_name, "HP_inflexible_demand", "HP_inflexible_demand.csv",
-                                  ["Node", "T", "Scenarios", "value"])
-    df_ba_th_con = _read_csv(scenario_name, "BA_th_con.csv")
-    df_cop = _read_csv(scenario_name, "COP.csv")
-    
+                                  ["Node", "T", "Scenarios", "value"], subscenario=subscenario)
+    df_ba_th_con = _read_csv(scenario_name, "BA_th_con.csv", subscenario=subscenario)
+    df_cop = _read_csv(scenario_name, "COP.csv", subscenario=subscenario)
+
     # Get settings
-    run_year = get_run_year(scenario_name)
-    flex_hp_share = get_flexible_household_heatpump_share(scenario_name)
-    eu_policy = get_eu_policy(scenario_name)
+    run_year = get_run_year(scenario_name, subscenario)
+    flex_hp_share = get_flexible_household_heatpump_share(scenario_name, subscenario)
+    eu_policy = get_eu_policy(scenario_name, subscenario)
     
     # Use hardcoded HP plants from constants
     hp_plants = HP_PLANTS
@@ -617,7 +644,7 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None)
     # ========== NET LOAD ==========
     
     # Read full EV and HP demand from source files (100%, before flexibility splitting)
-    weather_year = get_weather_year(scenario_name)
+    weather_year = get_weather_year(scenario_name, subscenario)
     df_full_ev = read_full_ev_demand(run_year)
     df_full_hp = read_full_hp_demand(run_year, weather_year)
     
@@ -1039,7 +1066,7 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None)
     for param, unit, values in output_params:
         row = {
             "Model": f"FEM v{model_version}",
-            "Scenario Name": scenario_name,
+            "Scenario Name": subscenario if subscenario is not None else scenario_name,
             "Output-Parameter": param,
             "Unit": unit,
         }

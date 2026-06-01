@@ -20,7 +20,6 @@ hydro_inflow_TWh,20.06
 pump_capacity_GW,5.54
 adding_hydro_storage_cap_TWh,2
 heat_flexibility_Kelvin,0.5
-PVRF_CH_coeficient,1
 battery_cost_factor,1
 source_for_CH_NTC,TYNDP22
 lost_load_cost_mode,multi_step_v1

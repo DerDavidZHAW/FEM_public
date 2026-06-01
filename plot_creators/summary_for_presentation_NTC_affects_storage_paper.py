@@ -86,14 +86,14 @@ def parse_args():
 default_year = "2035"
 
 DEFAULT_SCENARIOS = [
-    f"20260119/{default_year}_sens_100",
-    f"20260119/{default_year}_sens_90",
-    f"20260119/{default_year}_sens_80",
-    f"20260119/{default_year}_sens_70",
-    f"20260119/{default_year}_sens_60",
-    f"20260119/{default_year}_sens_50",
-    f"20260119/{default_year}_sens_40",
-    f"20260119/{default_year}_sens_30",
+    f"20260311/{default_year}_100_inv_EUbat",
+    f"20260311/{default_year}_090_inv_EUbat",
+    f"20260311/{default_year}_080_inv_EUbat",
+    f"20260311/{default_year}_070_inv_EUbat",
+    f"20260311/{default_year}_060_inv_EUbat",
+    f"20260311/{default_year}_050_inv_EUbat",
+    f"20260311/{default_year}_040_inv_EUbat",
+    f"20260311/{default_year}_030_inv_EUbat",
 ]
 DEFAULT_DISPLAY_NAMES = [
     'NTC 100%',
@@ -122,7 +122,7 @@ output_base_path = Path(output_base)
 output_base_path.parent.mkdir(parents=True, exist_ok=True)
 
 # --- Visualization Parameters ---
-FONT_SIZE = 12
+FONT_SIZE = 18
 FONT_FAMILY = "Times New Roman"
 
 # Default size (not too big)
@@ -154,8 +154,8 @@ row_renaming = {
      "psp_close" : "psp_close",
      "biomass" : "biomass",
      "other" : "other",
-     "pvrf" : "additional PV",
-     "windon" : "Wind",
+     "pvrf" : "Additional PV",
+     "windon" : "Additional Wind",
      "V2G_" : "V2G",
      "fossilmethane" : "Fossil Methane",
      "resmethane" : "RES Methane",
@@ -198,8 +198,10 @@ df = (df.fillna(0) / 1000).round(5)
 
 # Technologies to be plotted
 # Note: CHP capacity is shown in MW_th (from genTh_max), Wind is in MW_el (from gen_max)
-techs_to_plot_power = ["Battery", "additional PV", "Wind", "Tank TES", "Pit TES", "Resistive Heater", "Heat pump", "CHP"]
-techs_to_plot_storage = ["Battery", "Tank TES", "Pit TES"]
+techs_to_plot_power = ["Battery", "Pit TES", "Resistive Heater", "Heat pump", "CHP"]
+techs_to_plot_storage = ["Battery", "Pit TES"]
+techs_to_document_power = ["Battery", "Additional PV", "Additional Wind", "Tank TES", "Pit TES", "Resistive Heater", "Heat pump", "CHP"]
+techs_to_document_storage = ["Battery", "Tank TES", "Pit TES"]
 categories = ['Added Power (MW)', 'Storage level (MWh)']
 
 # Rename the columns for easier plotting
@@ -271,23 +273,9 @@ for tech in x_pos:
         for scen in scenarios_display_names
     }
 
-    # Decide if all labels need to be rotated for this technology
-    rotate_all = False
-    for scen1, scen2 in combinations(scenarios_display_names, 2):
-        v1 = values_by_scen[scen1]
-        v2 = values_by_scen[scen2]
-        if v1 and v2 and abs(v1 - v2) < 0.1:
-            rotate_all = True
-            break
-
     # Plot all bars for this tech
     for idx, scen in enumerate(scenarios_display_names):
         value = values_by_scen[scen]
-        label = ""
-        if value >= 10:
-            label = str(int(round(value)))
-        elif value > 0:
-            label = str(round(value, 1))
 
         fig.add_trace(
             go.Bar(
@@ -296,20 +284,18 @@ for tech in x_pos:
                 name=scen,
                 marker_color=colors[scenarios_to_summarize[idx]],
                 offsetgroup=scen,
-                text=[label],
-                textposition="outside",
-                textangle=-45 if rotate_all else 0,
                 showlegend=(tech == x_pos[0])
             ),
             row=1, col=1
         )
 
 # Add vertical line to separate electrical and thermal technologies
+separator_tech = "Pit TES"
 for line in [[added_power_max, 1], [pit_tes_max, 2]]:
     fig.add_shape(
         type="line",
-        x0="Tank TES",
-        x1="Tank TES",
+        x0=separator_tech,
+        x1=separator_tech,
         x0shift=-0.5,
         x1shift=-0.5,
         y0=0,
@@ -318,14 +304,14 @@ for line in [[added_power_max, 1], [pit_tes_max, 2]]:
         row=1, col=line[1]
     )
 
-for annotation in [["el", -31, 1, added_power_max], ["th", -6, 1, added_power_max], ["el", -60, 2, pit_tes_max], ["th", -35, 2, pit_tes_max]]:
+for annotation in [["el", -45, 1, added_power_max], ["th", -21, 1, added_power_max], ["el", -95, 2, pit_tes_max], ["th", -71, 2, pit_tes_max]]:
     fig.add_annotation(
         text=annotation[0],
-        x="Tank TES",
+        x=separator_tech,
         xshift=annotation[1],
         y=annotation[3] * 0.95,
         showarrow=False,
-        font=dict(size=14, color="black"),
+        font=dict(size=FONT_SIZE, color="black"),
         row=1, col=annotation[2]
     )
 
@@ -337,23 +323,9 @@ for tech in techs_to_plot_storage:
         for scen in scenarios_display_names
     }
 
-    # Decide if all labels need to be rotated for this technology
-    rotate_all = False
-    for scen1, scen2 in combinations(scenarios_display_names, 2):
-        v1 = values_by_scen[scen1]
-        v2 = values_by_scen[scen2]
-        if v1 and v2 and abs(v1 - v2) < 3:
-            rotate_all = True
-            break
-
     # Plot all bars for this tech
     for idx, scen in enumerate(scenarios_display_names):
         value = values_by_scen[scen]
-        label = ""
-        if value >= 10:
-            label = str(int(round(value)))
-        elif value > 0:
-            label = str(round(value, 1))
 
         fig.add_trace(
             go.Bar(
@@ -362,9 +334,6 @@ for tech in techs_to_plot_storage:
                 name=scen,
                 marker_color=colors[scenarios_to_summarize[idx]],
                 offsetgroup=scen,
-                text=[label],
-                textposition="outside",
-                textangle=-45 if rotate_all else 0,
                 showlegend=False  # legend shown in left plot only
             ),
             row=1, col=2
@@ -385,7 +354,7 @@ fig.update_layout(
     legend=dict(
         orientation="h",
         yanchor="top",
-        y=-0.23,
+        y=-0.35,
         xanchor="center",
         x=0.5,
         title=None,
@@ -393,7 +362,7 @@ fig.update_layout(
                   color="black"
                   )
     ),
-    margin=dict(t=80, b=0)
+    margin=dict(t=20, b=75, l=20, r=10)
 )
 
 # Axis titles & limits
@@ -415,28 +384,89 @@ fig.show()
 pdf_path = f"{output_base_path}.pdf"
 png_path = f"{output_base_path}.png"
 
-pio.write_image(
-    fig,
-    pdf_path,
-    format="pdf",
-    width=PLOT_WIDTH,
-    height=PLOT_HEIGHT,
-    scale=300 / (96/2)
-)
+# ---- Write markdown description (before image export to ensure it's always produced) ----
+md_path = f"{output_base_path}.md"
+md_lines = [
+    "# Investment Summary",
+    "",
+    "This plot shows installed power capacity (GW) and storage capacity (GWh) "
+    "for different NTC scenarios.",
+    "",
+    "Note: Additional PV, Additional Wind, and Tank TES are intentionally omitted from the graphics to keep them readable. "
+    "They are still listed in the markdown below for completeness and should only be mentioned briefly in the text, "
+    "for example: 'there were PV investments of up to 3 GW'.",
+    "",
+    "## Installed Power Capacity (GW)",
+    "",
+]
+# Build header
+header = "| Technology | " + " | ".join(scenarios_display_names) + " |"
+sep = "|------------|" + "|".join(["------"] * len(scenarios_display_names)) + "|"
+md_lines.append(header)
+md_lines.append(sep)
+for tech in techs_to_document_power:
+    row_vals = []
+    for scen in scenarios_display_names:
+        val = df[f'{scen} {categories[0]}'].loc[tech]
+        row_vals.append(f"{val:.2f}")
+    md_lines.append(f"| {tech} | " + " | ".join(row_vals) + " |")
 
-pio.write_image(
-    fig,
-    png_path,
-    format="png",
-    width=PLOT_WIDTH,
-    height=PLOT_HEIGHT,
-    scale=300 / (96/2)
-)
+md_lines += [
+    "",
+    "## Storage Capacity (GWh)",
+    "",
+]
+header = "| Technology | " + " | ".join(scenarios_display_names) + " |"
+md_lines.append(header)
+md_lines.append(sep)
+for tech in techs_to_document_storage:
+    row_vals = []
+    for scen in scenarios_display_names:
+        val = df[f'{scen} {categories[1]}'].loc[tech]
+        row_vals.append(f"{val:.2f}")
+    md_lines.append(f"| {tech} | " + " | ".join(row_vals) + " |")
+md_lines.append("")
 
-# Crop the top white bar from the exported PNG
-with Image.open(png_path) as img:
-    width, height = img.size
-    crop_top = 400
-    crop_top = min(crop_top, height)
-    cropped = img.crop((0, crop_top, width, height))
-    cropped.save(png_path)
+with open(md_path, 'w', encoding='utf-8') as f:
+    f.write('\n'.join(md_lines))
+print(f"Exported markdown to {md_path}")
+
+# Export HTML
+html_path = f"{output_base_path}.html"
+fig.write_html(html_path)
+print(f"Exported HTML to {html_path}")
+
+# Export PDF and PNG
+try:
+    pio.write_image(
+        fig,
+        pdf_path,
+        format="pdf",
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT,
+        scale=300 / (96/2)
+    )
+    print(f"Exported PDF to {pdf_path}")
+except Exception as e:
+    print(f"Warning: PDF export failed ({e}).")
+
+try:
+    pio.write_image(
+        fig,
+        png_path,
+        format="png",
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT,
+        scale=300 / (96/2)
+    )
+
+    # Crop the top white bar from the exported PNG
+    with Image.open(png_path) as img:
+        width, height = img.size
+        crop_top = 400
+        crop_top = min(crop_top, height)
+        cropped = img.crop((0, crop_top, width, height))
+        cropped.save(png_path)
+    print(f"Exported PNG to {png_path}")
+except Exception as e:
+    print(f"Warning: PNG export failed ({e}).")

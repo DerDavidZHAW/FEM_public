@@ -21,8 +21,16 @@ import pandas as pd
 from model.version import MODEL_VERSION
 from detailed_reporting.constants import (
     is_winter_t, is_summer_t, CHF_TO_EUR, get_run_year, get_weather_year,
-    read_full_ev_demand, read_full_hp_demand
+    read_full_ev_demand, read_full_hp_demand, get_subscenario_weight
 )
+
+
+# Cost files whose value column must be divided by the subscenario weight to
+# recover the unweighted per-subscenario value (see user spec).
+_WEIGHT_DIVIDE_COST_FILES = {
+    "cost_inv_dict.csv": "cost_CHF",
+    "cost_op_dict.csv": "cost_CHF",
+}
 
 
 CH_ZONES: List[str] = [f"CH0{i}" for i in range(1, 8)]
@@ -146,14 +154,28 @@ def _scenario_or_test_path(scenario_name: str, filename: str) -> Path:
     return test_path
 
 
-def _read_csv(scenario_name: str, filename: str) -> pd.DataFrame:
+def _read_csv(scenario_name: str, filename: str, subscenario: str = None) -> pd.DataFrame:  # type: ignore
     path = _scenario_or_test_path(scenario_name, filename)
     if not path.exists():
         return pd.DataFrame()
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+    if subscenario is None or df.empty:
+        return df
+    if "Scenarios" in df.columns:
+        return df[df["Scenarios"] == subscenario].copy()
+    if "scenario" in df.columns:
+        out = df[df["scenario"] == subscenario].copy()
+        value_col = _WEIGHT_DIVIDE_COST_FILES.get(filename)
+        if value_col is not None and not out.empty and value_col in out.columns:
+            weight = get_subscenario_weight(scenario_name, subscenario)
+            if weight != 0:
+                out[value_col] = out[value_col] / weight
+        return out
+    return df
 
 
-def _get_data(model, scenario_name: str, attr_name: str, csv_name: str) -> pd.DataFrame:
+def _get_data(model, scenario_name: str, attr_name: str, csv_name: str,
+              subscenario: str = None) -> pd.DataFrame:  # type: ignore
     """Get data from model attribute or CSV file.
     
     Parameters
@@ -185,14 +207,15 @@ def _get_data(model, scenario_name: str, attr_name: str, csv_name: str) -> pd.Da
     }
     expected_cols = expected_columns_map.get(attr_name)
 
-    # Try model first
-    if model is not None and hasattr(model, attr_name):
+    # Try model first (only when not filtering for a specific subscenario; the model
+    # object would aggregate over subscenarios and can't be sliced here).
+    if subscenario is None and model is not None and hasattr(model, attr_name):
         df = _pyomo_to_dataframe(getattr(model, attr_name), expected_cols)
         if not df.empty:
             return df
-    
+
     # Fall back to CSV
-    df = _read_csv(scenario_name, csv_name)
+    df = _read_csv(scenario_name, csv_name, subscenario=subscenario)
     # If expected columns provided and csv has same length, align names
     if expected_cols and not df.empty and len(df.columns) == len(expected_cols):
         df.columns = expected_cols
@@ -382,7 +405,8 @@ def _average_netload(
 
 
 
-def export_output_spatial(model, scenario_name, model_version: str = None): # type: ignore
+def export_output_spatial(model, scenario_name, model_version: str = None,  # type: ignore
+                          subscenario: str = None):  # type: ignore
     """
     Build Output_Spatial.csv with spatial breakdown per Swiss region.
 
@@ -402,6 +426,8 @@ def export_output_spatial(model, scenario_name, model_version: str = None): # ty
     
     # Ensure output directory exists
     report_dir = Path("output") / scenario_name / "detailed_reporting"
+    if subscenario is not None:
+        report_dir = report_dir / subscenario
     report_dir.mkdir(parents=True, exist_ok=True)
 
     # Define report structure: (parameter name, unit, spatial_resolution)
@@ -447,17 +473,17 @@ def export_output_spatial(model, scenario_name, model_version: str = None): # ty
     ]
 
     # Load commonly used datasets (from model if available, else from CSV)
-    df_gen_max = _get_data(model, scenario_name, "gen_max", "gen_max.csv")
-    df_gen_max_infeedp = _get_data(model, scenario_name, "gen_max_infeedp", "gen_max_infeedp.csv")
-    df_gen = _get_data(model, scenario_name, "gen", "gen.csv")
-    df_infeed = _get_data(model, scenario_name, "infeed", "infeed.csv")
-    df_storage_charge = _get_data(model, scenario_name, "storage_charge", "storage_charge.csv")
-    df_lostload = _get_data(model, scenario_name, "lostload", "lostload.csv")
-    df_demand = _get_data(model, scenario_name, "demand", "demand.csv")
-    
+    df_gen_max = _get_data(model, scenario_name, "gen_max", "gen_max.csv", subscenario=subscenario)
+    df_gen_max_infeedp = _get_data(model, scenario_name, "gen_max_infeedp", "gen_max_infeedp.csv", subscenario=subscenario)
+    df_gen = _get_data(model, scenario_name, "gen", "gen.csv", subscenario=subscenario)
+    df_infeed = _get_data(model, scenario_name, "infeed", "infeed.csv", subscenario=subscenario)
+    df_storage_charge = _get_data(model, scenario_name, "storage_charge", "storage_charge.csv", subscenario=subscenario)
+    df_lostload = _get_data(model, scenario_name, "lostload", "lostload.csv", subscenario=subscenario)
+    df_demand = _get_data(model, scenario_name, "demand", "demand.csv", subscenario=subscenario)
+
     # Read full EV and HP demand from source files (100%, before flexibility splitting)
-    run_year = get_run_year(scenario_name)
-    weather_year = get_weather_year(scenario_name)
+    run_year = get_run_year(scenario_name, subscenario)
+    weather_year = get_weather_year(scenario_name, subscenario)
     df_full_ev = read_full_ev_demand(run_year)
     df_full_hp = read_full_hp_demand(run_year, weather_year)
 
@@ -771,7 +797,7 @@ def export_output_spatial(model, scenario_name, model_version: str = None): # ty
 
         rows.append({
             "Model": f"FEM v{model_version}",
-            "Scenario Name": scenario_name,
+            "Scenario Name": subscenario if subscenario is not None else scenario_name,
             "Output-Parameter": param,
             "Unit": unit,
             "Sum": sum_str,

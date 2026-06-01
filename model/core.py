@@ -178,6 +178,15 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         for preset, status, message in preset_summary['details']:
             print(f"  - {status}: {preset.get('variable_name')} | indices={preset.get('indices')} | scen={preset.get('scenario_name')} -> {message}")
     
+    # Set tiny lower bound for nuclear investment to prevent presolve from fixing it to 0
+    # This ensures meaningful reduced costs are computed for break-even analysis
+    # Using 1e-2 MW (10 kW) - negligible vs nuclear scale (1000+ MW) but numerically safe
+    first_scen = list(model.Scenarios)[0]
+    nuclear_plant = 'CH00_nuclear'
+    if nuclear_plant in model.P_gen and (nuclear_plant, first_scen) in model.gen_max:
+        model.gen_max[nuclear_plant, first_scen].setlb(1e-2)
+        print(f"Set lower bound for gen_max[{nuclear_plant}, {first_scen}] = 1e-2 MW (prevents presolve fixing)")
+
     # %% solve model -------------------------------------------------------------------------------------
     # export_model_to_txt("before_solve" + scenario_name, model, scenario_name) # Exporting the model (debugging purposes)
     # export_model_obj("OBJbefore_solve" + scenario_name, model, scenario_name) # Exporting the model (debugging purposes)
@@ -201,16 +210,8 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     else:
         print("  OK: No unusually large objective coefficients found.")
     
-    # Solver settings optimized for reliable reduced costs
-    # - Crossover=0 disabled: Gurobi will use default crossover (important for basis/reduced costs)
-    # - Method=2: Barrier method (good for large LPs)
-    # - BarConvTol=1e-10: Tighter barrier convergence for better numerical precision
-    # - OptimalityTol=1e-8: Slightly tighter than default (1e-6) for better reduced costs
-    # - FeasibilityTol=1e-7: Slightly tighter than default for constraint satisfaction
-    # - NumericFocus=1: Mild numeric focus (0=off, 1=mild, 2=moderate, 3=aggressive)
-    # Note: We do NOT use ScaleFlag or extreme NumericFocus to avoid slowing down too much
-    solver_parameters = "threads=8 Method=2 BarConvTol=1e-10 OptimalityTol=1e-8 FeasibilityTol=1e-7 NumericFocus=1"
-    
+    solver_parameters = "threads=8"  
+
     result = opt.solve(
         model,
         tee=True,                           # tee: prints solver statements (summary)
@@ -326,6 +327,11 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         "energy_balancethermal",
         # "storage_soc_limit",
         # "lineATClimit",
+        # Thermal capacity duals (HP, PTES, RH):
+        "generationTh_limit",      # shadow price of thermal generation capacity (MW_th) — HP, PTES, RH
+        "storageTh_rate_limit",    # shadow price of charging/pumping rate (MW_th/el) — HP, PTES, RH
+        "storageTh_soc_limit",     # shadow price of thermal energy storage capacity (MWh_th) — PTES TTES
+        "storageTh_soc",           # shadow price of thermal energy storage level (MWh_th) - PTES TTES
     ]
 
     if winter_limit[sub_scen]["mode"]:
@@ -375,7 +381,7 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     total_time_seconds = time.time() - total_timer_start
     
     # Generate detailed reports for Swiss model intercomparison (only for single subscenario runs)
-    if len(sub_scenarios_list) == 1:
-        generate_detailed_reports(model, scenario_name, total_time_seconds=total_time_seconds)
-    else:
-        print(f"Skipping detailed reporting: only supported for single subscenario runs (found {len(sub_scenarios_list)} subscenarios)")
+    # if len(sub_scenarios_list) == 1:
+    #     generate_detailed_reports(model, scenario_name, total_time_seconds=total_time_seconds)
+    # else:
+    #     print(f"Skipping detailed reporting: only supported for single subscenario runs (found {len(sub_scenarios_list)} subscenarios)")

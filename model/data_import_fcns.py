@@ -349,7 +349,7 @@ def read_ror_Infeed_data(
     return ror_Infeed_hourly_data, Plant_list, Map_plant_tech, Map_plant_node
 
 
-def read_RES_avail_data(weather_year, Node_list):
+def read_RES_avail_data(weather_year, Node_list, run_year=None, high_resolution_PV=False):
     """
     Read renewable availability factors of a given technology data from csv file and store in dictionary Avail_plant_region.
 
@@ -441,7 +441,18 @@ def read_RES_avail_data(weather_year, Node_list):
 
     # Step 3.2: reading data and applying coeffients of correction, if needed ------------------------------------------------------------------
     # PV technologies --------------------------------------------------------------
-    for RES_tech in pv_tech_list:
+    if high_resolution_PV:
+        from model.high_res_PV import load_high_res_PV
+        _, hires_avail = load_high_res_PV(weather_year, run_year)
+        Avail_plant_RES_region.update(hires_avail)
+        # Per-plant CH00_*_pvrf availability is loaded ADDITIONALLY here.
+        # The EMHIRES pvrf loop below still runs because preexisting installed
+        # PV at CH01..CH07 (from TYNDP) is keyed by CHxx_pvrf and still needs
+        # availability factors — only the *investment candidates* are switched
+        # to per-plant in read_plant_non_hydro_data.
+    pv_tech_list_to_load = pv_tech_list
+
+    for RES_tech in pv_tech_list_to_load:
         # if the file does not exist, skip the loop
         if not os.path.exists(file_names[RES_tech]):
             print("File not found: ", file_names[RES_tech])
@@ -625,7 +636,7 @@ def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
     return Plant_non_hydro_diff_list
 
 
-def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investment_nodes_in_addition_to_CH, CH_only=False):
+def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investment_nodes_in_addition_to_CH, CH_only=False, weather_year=None, run_year=None, high_resolution_PV=False):
     """
     Read plant data from plants_non_hydro.csv file and store data in:
     Plant_non_hydro_list: list of plants
@@ -668,7 +679,27 @@ def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investmen
                 Plant_res_ch_data["market"].isin(Node_list)
             ]
             print(f"CH_only mode: filtered investment candidates to only CH markets")
-        
+
+        if high_resolution_PV:
+            from model.high_res_PV import load_high_res_PV
+            hires_plants, _ = load_high_res_PV(weather_year, run_year)
+
+            # drop the 7 aggregated CHxx_pvrf rows
+            idx_match = pd.Series(
+                Plant_res_ch_data.index.str.match(r"^CH0[1-7]_pvrf$"),
+                index=Plant_res_ch_data.index,
+            )
+            mask_old_pvrf = Plant_res_ch_data["tech"].eq("pvrf") & idx_match
+            n_removed = int(mask_old_pvrf.sum())
+            Plant_res_ch_data = Plant_res_ch_data[~mask_old_pvrf]
+
+            # append per-plant candidates
+            Plant_res_ch_data = pd.concat([Plant_res_ch_data, hires_plants])
+            print(
+                f"[high_res_PV] removed {n_removed} aggregated CHxx_pvrf candidates, "
+                f"added {len(hires_plants)} per-plant candidates"
+            )
+
         # create the list P_list_fuelswitching_plants, which is the list of plants in which column fuel_switching in Plant_res_ch_data has value of TRUE
         P_list_fuelswitching_plants = Plant_res_ch_data[
             Plant_res_ch_data["fuel_switching"] == True

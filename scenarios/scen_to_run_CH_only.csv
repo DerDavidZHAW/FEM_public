@@ -19,7 +19,6 @@ hydro_inflow_TWh,20.06,20.06,20.06,20.06,20.06
 pump_capacity_GW,5.54,5.54,5.54,5.54,5.54
 adding_hydro_storage_cap_TWh,2,2,2,2,2
 heat_flexibility_Kelvin,0.5,0.5,0.5,0.5,0.5
-PVRF_CH_coeficient,0.5,0.5,0.5,0.5,0.5
 battery_cost_factor,1,1,1,1,1
 CH_only,True,True,True,True,True
 neighbor_price_scenario_for_CH_only_mode,FEMbase_zeroPV_avg,FEMbase_zeroPV_AT,FEMbase_zeroPV_DE,FEMbase_zeroPV_FR,FEMbase_zeroPV_IT
