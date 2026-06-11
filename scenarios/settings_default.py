@@ -1,4 +1,5 @@
 seetings_default_param = {
+    "DUALS_EXPORT_ALL": False,
     "consumer_based_on_tariff": False,
     "consumer_connection_limit": False,
     "solver_name": "gurobi",
