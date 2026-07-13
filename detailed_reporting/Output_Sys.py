@@ -252,42 +252,39 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
         return prices
     
     def calc_import_cost(df_export: pd.DataFrame, df_dual: pd.DataFrame, season: str = None) -> float: # type: ignore
-        """Calculate import cost: sum of (import_MWh * neighbor_price)."""
+        """Calculate import cost: sum of (import_MWh * CH_price) — Option 1, uses Swiss market price."""
         if df_export.empty or df_dual.empty:
             return 0.0
-        
-        total_cost = 0.0
-        for line in CH_LINES:
-            neighbor = LINE_TO_NEIGHBOR[line]
-            line_df = df_export[df_export["lineATC"] == line].copy()
-            
-            if season == "winter":
-                line_df = line_df[line_df["T"].astype(str).map(_is_winter_t)]
-            elif season == "summer":
-                line_df = line_df[line_df["T"].astype(str).map(_is_summer_t)]
-            
-            if line_df.empty:
-                continue
-            
-            line_df["value"] = pd.to_numeric(line_df["value"], errors="coerce").fillna(0.0)
-            # Only imports (positive)
-            line_df = line_df[line_df["value"] > 0]
-            
-            if line_df.empty:
-                continue
-            
-            # Get neighbor prices
-            neighbor_prices = get_neighbor_prices(df_dual, neighbor)
-            if neighbor_prices.empty:
-                continue
-            
-            # Merge on T and Scenarios
-            merged = pd.merge(line_df, neighbor_prices[["T", "Scenarios", "value"]],
-                             on=["T", "Scenarios"], suffixes=("_export", "_price"))
-            if not merged.empty:
-                total_cost += (merged["value_export"] * merged["value_price"]).sum()
-        
-        return float(total_cost)
+
+        ch_prices = get_ch_prices(df_dual)
+        if ch_prices.empty:
+            return 0.0
+
+        ch_df = df_export[df_export["lineATC"].isin(CH_LINES)].copy()
+
+        if season == "winter":
+            ch_df = ch_df[ch_df["T"].astype(str).map(_is_winter_t)]
+        elif season == "summer":
+            ch_df = ch_df[ch_df["T"].astype(str).map(_is_summer_t)]
+
+        if ch_df.empty:
+            return 0.0
+
+        ch_df["value"] = pd.to_numeric(ch_df["value"], errors="coerce").fillna(0.0)
+        # Only imports (positive)
+        ch_df = ch_df[ch_df["value"] > 0]
+
+        if ch_df.empty:
+            return 0.0
+
+        # Sum imports across all lines per T and Scenarios, then price with CH price
+        import_by_t = ch_df.groupby(["T", "Scenarios"])["value"].sum().reset_index()
+        merged = pd.merge(import_by_t, ch_prices[["T", "Scenarios", "value"]],
+                         on=["T", "Scenarios"], suffixes=("_import", "_price"))
+        if merged.empty:
+            return 0.0
+
+        return float((merged["value_import"] * merged["value_price"]).sum())
     
     def calc_export_revenue(df_export: pd.DataFrame, df_dual: pd.DataFrame, season: str = None) -> float: # type: ignore
         """Calculate export revenue: sum of (export_MWh * CH_price)."""
@@ -904,7 +901,7 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
          f"{fr_export_stats['p5'] * CHF_TO_EUR:.2f}",
          f"{fr_export_stats['p95'] * CHF_TO_EUR:.2f}",
          f"{fr_export_stats['min'] * CHF_TO_EUR:.2f}",
-         f"{fr_export_stats['max'] * CHF_TO_EUR:.2f}"),
+         f"{fr_export_stats['max'] * CHF_TO_EUR:.2f}"),   
         ("Price for electricity export to IT", "EUR/MWh", "",
          f"{it_export_stats['average'] * CHF_TO_EUR:.2f}",
          f"{it_export_stats['p5'] * CHF_TO_EUR:.2f}",
