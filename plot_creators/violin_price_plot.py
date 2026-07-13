@@ -222,6 +222,19 @@ def main():
     fig.show()
 
     md_path = f"{output_base_path}.md"
+    percentile_specs = [
+        (0.05, "P5"),
+        (0.10, "P10"),
+        (0.20, "P20"),
+        (0.30, "P30"),
+        (0.40, "P40"),
+        (0.50, "P50"),
+        (0.60, "P60"),
+        (0.70, "P70"),
+        (0.80, "P80"),
+        (0.90, "P90"),
+        (0.95, "P95"),
+    ]
     md_lines = [
         f"# Violin Plot of Electricity Prices at {NODE} ({WEATHER_YEAR})",
         "",
@@ -231,29 +244,35 @@ def main():
         "",
         "## Winter Statistics",
         "",
-        "| Scenario | Mean | Median | Std | Min | Max |",
-        "|----------|------|--------|-----|-----|-----|",
+        "| Scenario | Mean | Median | Std | P5 | P10 | P20 | P30 | P40 | P50 | P60 | P70 | P80 | P90 | P95 | Min | Max |",
+        "|----------|------|--------|-----|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|",
     ]
     for scenario in scenarios_list:
         s_data = df_winter[df_winter["Scenario"] == scenario]["value"]
         if len(s_data) > 0:
+            percentile_values = " | ".join(
+                f"{s_data.quantile(q):.1f}" for q, _ in percentile_specs
+            )
             md_lines.append(
                 f"| {scenario_labels[scenario]} | {s_data.mean():.1f} | {s_data.median():.1f} "
-                f"| {s_data.std():.1f} | {s_data.min():.1f} | {s_data.max():.1f} |"
+                f"| {s_data.std():.1f} | {percentile_values} | {s_data.min():.1f} | {s_data.max():.1f} |"
             )
     md_lines += [
         "",
         "## Summer Statistics",
         "",
-        "| Scenario | Mean | Median | Std | Min | Max |",
-        "|----------|------|--------|-----|-----|-----|",
+        "| Scenario | Mean | Median | Std | P5 | P10 | P20 | P30 | P40 | P50 | P60 | P70 | P80 | P90 | P95 | Min | Max |",
+        "|----------|------|--------|-----|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|",
     ]
     for scenario in scenarios_list:
         s_data = df_summer[df_summer["Scenario"] == scenario]["value"]
         if len(s_data) > 0:
+            percentile_values = " | ".join(
+                f"{s_data.quantile(q):.1f}" for q, _ in percentile_specs
+            )
             md_lines.append(
                 f"| {scenario_labels[scenario]} | {s_data.mean():.1f} | {s_data.median():.1f} "
-                f"| {s_data.std():.1f} | {s_data.min():.1f} | {s_data.max():.1f} |"
+                f"| {s_data.std():.1f} | {percentile_values} | {s_data.min():.1f} | {s_data.max():.1f} |"
             )
     md_lines.append("")
 

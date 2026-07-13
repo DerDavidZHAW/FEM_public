@@ -85,14 +85,14 @@ DEFAULT_SCENARIOS = [
     f"20260311/{default_year}_100_inv_CHbat",
 ]
 DEFAULT_DISPLAY_NAMES = [
-    'NTC 30%',
-    'NTC 40%',
-    'NTC 50%',
-    'NTC 60%',
-    'NTC 70%',
-    'NTC 80%',
-    'NTC 90%',
-    'NTC 100%',
+    '30%',
+    '40%',
+    '50%',
+    '60%',
+    '70%',
+    '80%',
+    '90%',
+    '100%',
 ]
 
 args = parse_args()
@@ -189,12 +189,10 @@ for idx, scen_display in enumerate(scenarios_display_names):
     value = df[f'{scen_display} {categories[0]}'].loc[tech_label]
     fig.add_trace(
         go.Bar(
-            x=[tech_label],
+            x=[scen_display],
             y=[value],
-            name=scen_display,
             marker_color=colors[scenarios_to_summarize[idx]],
-            offsetgroup=scen_display,
-            showlegend=True,
+            showlegend=False,
         )
     )
 
@@ -208,19 +206,11 @@ fig.update_layout(
         size=FONT_SIZE,
         color="black",
     ),
-    legend=dict(
-        orientation="h",
-        yanchor="top",
-        y=-0.15,
-        xanchor="center",
-        x=0.5,
-        title=None,
-        font=dict(size=FONT_SIZE, color="black"),
-    ),
-    margin=dict(t=20, b=75, l=20, r=10),
+    margin=dict(t=20, b=65, l=20, r=10),
 )
 
 fig.update_yaxes(title_text="Capacity [GW<sub>el</sub>]", range=[0, battery_power_max])
+fig.update_xaxes(title_text="NTC")
 
 fig.show()
 
