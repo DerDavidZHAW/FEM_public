@@ -140,6 +140,7 @@ def data_import_TYNDP_fcn(scenario_name):
     V2G_share_of_flexibly_charging_EV = settings_scen["V2G_share_of_flexibly_charging_EV"]
     reduce_inflex_demand_by = settings_scen["reduce_inflex_demand_by_[MWh]"]
     reduce_DH_demand_by = settings_scen["reduce_DH_demand_by_[MWh]"]
+    DH_demand_adjustment_file = settings_scen["DH_demand_adjustment_file"]
     ror_annual_TWh = settings_scen["ror_annual_TWh"]
     hydro_inflow_TWh = settings_scen["hydro_inflow_TWh"]
     pump_capacity_GW = settings_scen["pump_capacity_GW"]
@@ -520,7 +521,7 @@ def data_import_TYNDP_fcn(scenario_name):
 
     # ----------------------------------- district heating data -----------------------------------
     # disrict heating demand data
-    DemandDH_data_year_scenario = read_demandDH_data(run_year, weather_year, reduce_DH_demand_by)
+    DemandDH_data_year_scenario = read_demandDH_data(run_year, weather_year, reduce_DH_demand_by, DH_demand_adjustment_file)
 
     dle.update_dict_with_add_dim(DemandDH_data_year_scenario, DemandDH_data, scenario_name)
     # district heating plant data and capacities

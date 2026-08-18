@@ -158,6 +158,9 @@ detailed_reporting/to_consider_from_*
 output/
 # plot_creators/daily_electricity_costs_*
 # plot_creators/nuclear_breakeven_*
+
+# Backed up files in the input
+input/hydro_WATSA/camels_ch/
 # Claude Code session state
 .claude/
 

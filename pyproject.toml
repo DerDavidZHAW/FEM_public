@@ -19,6 +19,11 @@ pyarrow = "^15"
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.0"
 
+[tool.pytest.ini_options]
+# Put the repo root on sys.path so tests can import the `model` / `utils`
+# namespace packages (e.g. `from model.dh_demand_adjustment import ...`).
+pythonpath = ["."]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

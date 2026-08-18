@@ -16,6 +16,7 @@ seetings_default_param = {
     "opt_mode": "core",
     "consumers_representing": 8230,
     "reduce_DH_demand_by_[MWh]": 0.0,
+    "DH_demand_adjustment_file": False,  # False (off) or a CSV filename in input/demand/adjustments/ (PRD #43)
     "slack_soc": False,
     "single_large_battery": True,
     "winter_limit": {"mode": False, "window": [6553, 2184], "energy_MWh": 5 * 1000000},

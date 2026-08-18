@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FEM Power Market Explorer</title>
+<style>
+:root{
+  --bg:#fafaf8; --card:#ffffff; --ink:#1c2733; --muted:#6b7785; --faint:#9aa5b1;
+  --line:#e4e7ea; --accent:#1f407a; --accent2:#2e6fad;
+  --pos:#2e6fad; --neg:#c0604d;
+  font-size:15px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-weight:400;-webkit-font-smoothing:antialiased}
+#wrap{max-width:1240px;margin:0 auto;padding:28px 32px 80px}
+h1{font-size:26px;font-weight:600;letter-spacing:-.3px;margin:0}
+h1 small{font-weight:300;color:var(--muted);font-size:17px;margin-left:10px}
+h2{font-size:18px;font-weight:600;margin:0 0 2px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:22px 24px;margin-top:22px;box-shadow:0 1px 2px rgba(20,30,40,.04)}
+/* chips */
+#chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{background:#eef1f5;border:1px solid var(--line);color:var(--ink);
+  border-radius:999px;padding:4px 12px;font-size:12.5px;white-space:nowrap}
+.chip b{font-weight:600}
+.chip .lbl{color:var(--muted);margin-right:5px}
+/* drop zone */
+#drop{border:2px dashed #c3cad3;border-radius:14px;background:#fdfdfc;
+  padding:70px 30px;text-align:center;margin-top:26px;cursor:pointer;transition:.15s}
+#drop.hover{border-color:var(--accent);background:#f3f6fb}
+#drop h2{font-size:20px;border:none}
+#drop p{color:var(--muted)}
+#drop code{background:#eef1f5;border:1px solid var(--line);border-radius:6px;
+  padding:3px 9px;font-size:12.5px;color:#33425a;display:inline-block;margin-top:6px}
+/* KPI cards */
+#kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:14px;margin-top:22px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px}
+.kpi .v{font-size:23px;font-weight:600;letter-spacing:-.4px;line-height:1.15}
+.kpi .v small{font-size:13px;font-weight:400;color:var(--muted);margin-left:3px}
+.kpi .t{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}
+/* controls */
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 12px}
+.ctl label{font-size:12.5px;color:var(--muted)}
+select,button.btn{font:inherit;font-size:13px;padding:5px 10px;border:1px solid #c9d0d8;
+  border-radius:7px;background:#fff;color:var(--ink);cursor:pointer}
+button.btn:hover{border-color:var(--accent)}
+button.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.zchips{display:flex;flex-wrap:wrap;gap:6px}
+.zchips .zc{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid #c9d0d8;
+  cursor:pointer;background:#fff;color:var(--muted)}
+.zchips .zc.on{background:var(--accent);border-color:var(--accent);color:#fff}
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;font-size:12px;color:var(--muted)}
+.legend .li{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none}
+.legend .li.off{opacity:.32}
+.legend .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+/* tooltip */
+#tip{position:fixed;pointer-events:none;background:rgba(28,36,46,.94);color:#fff;
+  font-size:12px;line-height:1.5;padding:7px 10px;border-radius:7px;z-index:50;
+  display:none;max-width:300px;white-space:nowrap}
+#tip .h{font-weight:600;margin-bottom:2px}
+#tip .r{display:flex;justify-content:space-between;gap:14px}
+#tip .r .k{color:#b7c1cc}
+/* tables */
+table.tab{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:8px}
+table.tab th{font-weight:600;color:var(--muted);text-align:right;padding:6px 9px;
+  border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer}
+table.tab th:first-child,table.tab td:first-child{text-align:left}
+table.tab td{padding:5px 9px;border-bottom:1px solid #f0f2f4;text-align:right;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.scrollbox{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:10px}
+.scrollbox table.tab{margin:0}
+.scrollbox th{position:sticky;top:0;background:#fff;z-index:2}
+.note{font-size:12px;color:var(--faint);margin-top:8px}
+.missing{color:var(--faint);font-style:italic;padding:18px 0}
+svg{display:block}
+svg text{font-family:inherit}
+.axis{font-size:10.5px;fill:var(--faint)}
+.gline{stroke:#eceff2;stroke-width:1}
+canvas.hm{width:100%;image-rendering:pixelated;border-radius:4px;cursor:crosshair}
+#daycard .dnav{display:flex;gap:10px;align-items:center}
+#daycard .dnav b{font-size:16px;min-width:200px;text-align:center}
+details.meta{margin-top:18px;font-size:12.5px;color:var(--muted)}
+details.meta summary{cursor:pointer}
+details.meta table{font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+hr.sep{border:none;border-top:1px solid var(--line);margin:18px 0}
+a{color:var(--accent2)}
+.tag{font-size:10.5px;letter-spacing:.8px;color:var(--faint);text-transform:uppercase;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <header>
+    <h1>FEM Power Market Explorer <small id="hdrSub">drop a result file to begin</small></h1>
+    <div id="chips"></div>
+  </header>
+
+  <div id="drop">
+    <h2>Drop a viewer file here</h2>
+    <p>…or click to browse. Accepts <b>*_viewer.json.gz</b> or plain <b>.json</b>, one scenario per file.</p>
+    <p>Create one from a solved run with:</p>
+    <code>python tools/prepare_viewer.py output/&lt;run_name&gt;</code>
+    <input type="file" id="fileInput" accept=".json,.gz" style="display:none">
+  </div>
+
+  <div id="app" style="display:none"></div>
+</div>
+<div id="tip"></div>
+
+<script>
+"use strict";
+/* ============================== utilities ============================== */
+const NH = 8760, ND = 365;
+const $  = s => document.querySelector(s);
+const el = (tag, attrs = {}, parent = null) => {
+  const isSvg = ["svg","g","path","rect","line","circle","text","polyline","polygon","defs","marker","clipPath"].includes(tag);
+  const n = isSvg ? document.createElementNS("http://www.w3.org/2000/svg", tag)
+                  : document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "text") n.textContent = v;
+    else if (k === "html") n.innerHTML = v;
+    else n.setAttribute(k, v);
+  }
+  if (parent) parent.appendChild(n);
+  return n;
+};
+const LOC = "de-CH";
+const fmt  = (x, d = 0) => (x == null || !isFinite(x)) ? "–"
+  : x.toLocaleString(LOC, {minimumFractionDigits: d, maximumFractionDigits: d});
+const fmtP = mw => mw == null ? "–" : Math.abs(mw) >= 99500 ? fmt(mw/1000, 0) + " GW"
+  : Math.abs(mw) >= 1000 ? fmt(mw/1000, 1) + " GW" : fmt(mw, 0) + " MW";
+const fmtE = mwh => mwh == null ? "–" : Math.abs(mwh) >= 1e6 ? fmt(mwh/1e6, Math.abs(mwh)>=1e7?1:2) + " TWh"
+  : Math.abs(mwh) >= 1e3 ? fmt(mwh/1e3, 1) + " GWh" : fmt(mwh, 0) + " MWh";
+const fmtCHF = chf => chf == null ? "–" : Math.abs(chf) >= 1e9 ? fmt(chf/1e9, 2) + " bn"
+  : Math.abs(chf) >= 1e6 ? fmt(chf/1e6, 1) + " M" : fmt(chf, 0);
+const sum = a => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i]; return s; };
+const zeros = n => new Float64Array(n);
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+/* Hydrological year: the model's native time frame (input/timemaps_hydro_year.csv).
+   All annual views start at Oct 1 (= t_6553); arrays are rotated on load. */
+const HY_ROT_H = 6552, HY_ROT_D = 273;
+const MONTHS_DISP = ["Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep"];
+const monthStartDisp = [0,31,61,92,123,151,182,212,243,273,304,335];
+const CAL_OF_DISP = (p) => (p + 9) % 12;   // display month position -> calendar month index
+
+let D = null;          // loaded dataset
+let X = null;          // derived/index structures
+const state = { zone: "CH00", day: 14, priceZones: null, storZone: null,
+                invZone: null, dhNode: null, hmQ: "price", socMode: "abs" };
+
+/* date helpers — d is a DISPLAY day (0 = Oct 1 of the hydro year); dates use the
+   weather-year calendar */
+function dayInfo(d) {
+  const wy = (D.meta.weather_year || 1995);
+  const cal = (d + HY_ROT_D) % 365;
+  const dt = new Date(Date.UTC(wy, 0, 1 + cal));
+  return { dow: DOW[dt.getUTCDay()], day: dt.getUTCDate(), mon: MONTHS[dt.getUTCMonth()],
+           m: dt.getUTCMonth(), label: `${DOW[dt.getUTCDay()]} ${dt.getUTCDate()} ${MONTHS[dt.getUTCMonth()]}` };
+}
+/* calendar month (0 = Jan) of each display day */
+const monthOfDay = []; { const dpm = [31,28,31,30,31,30,31,31,30,31,30,31], cal = [];
+  let m = 0, c = 0;
+  for (let d = 0; d < 365; d++) { cal.push(m); if (++c === dpm[m]) { m++; c = 0; } }
+  for (let d = 0; d < 365; d++) monthOfDay.push(cal[(d + HY_ROT_D) % 365]); }
+
+/* array helpers */
+const arr = (obj, key) => (obj && obj[key]) ? Float64Array.from(obj[key]) : zeros(NH);
+const has = (obj, key) => obj && obj[key] && obj[key].length;
+function dailyMean(a) { const o = zeros(ND);
+  for (let d = 0; d < ND; d++) { let s = 0; for (let h = 0; h < 24; h++) s += a[d*24+h]; o[d] = s/24; } return o; }
+function addInto(dst, src) { for (let i = 0; i < dst.length; i++) dst[i] += src[i]; return dst; }
+
+/* tooltip */
+const tip = $("#tip");
+function showTip(ev, html) {
+  tip.style.display = "block"; tip.innerHTML = html;
+  const pad = 14, r = tip.getBoundingClientRect();
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + r.width > innerWidth - 8)  x = ev.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - pad;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip() { tip.style.display = "none"; }
+const tipRow = (k, v, sw) => `<div class="r"><span class="k">${sw ? `<span class="sw" style="background:${sw};width:9px;height:9px;display:inline-block;border-radius:2px;margin-right:5px"></span>` : ""}${k}</span><span>${v}</span></div>`;
+
+/* nice axis ticks */
+function niceTicks(lo, hi, n = 5) {
+  if (lo === hi) { hi = lo + 1; }
+  const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  let step = mag; for (const m of [1, 2, 2.5, 5, 10]) if (step0 <= m*mag) { step = m*mag; break; }
+  const t = []; for (let v = Math.ceil(lo/step)*step; v <= hi + 1e-9; v += step) t.push(+v.toFixed(10));
+  return t;
+}
+
+/* color scales */
+function lerpColor(c1, c2, t) {
+  const p = c => [parseInt(c.slice(1,3),16), parseInt(c.slice(3,5),16), parseInt(c.slice(5,7),16)];
+  const a = p(c1), b = p(c2);
+  return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(",")})`;
+}
+function scaleSeq(t) { // 0..1 : deep blue -> sand -> warm red
+  const stops = ["#23406e","#3a6ca8","#7fa8cd","#e8e3d4","#e3a45c","#c0604d","#8a2f25"];
+  const x = Math.max(0, Math.min(1, t)) * (stops.length - 1), i = Math.min(stops.length-2, Math.floor(x));
+  return lerpColor(stops[i], stops[i+1], x - i);
+}
+function scaleDiv(t) { // -1..1 : blue <- white -> red
+  t = Math.max(-1, Math.min(1, t));
+  return t < 0 ? lerpColor("#f7f7f5", "#23406e", -t) : lerpColor("#f7f7f5", "#9e3a2b", t);
+}
+
+/* ============================== data load ============================== */
+async function parseFile(file) {
+  let text;
+  if (file.name.endsWith(".gz")) {
+    if (typeof DecompressionStream === "undefined")
+      throw new Error("This browser lacks DecompressionStream - use a plain .json or a recent Chrome/Edge/Firefox/Safari.");
+    const ds = new DecompressionStream("gzip");
+    text = await new Response(file.stream().pipeThrough(ds)).text();
+  } else {
+    text = await file.text();
+  }
+  return JSON.parse(text);
+}
+function rotateBlock(o) {   // rotate every 8760-array to hydro-year order (Oct 1 first)
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    if (Array.isArray(v) && v.length === NH) o[k] = v.slice(HY_ROT_H).concat(v.slice(0, HY_ROT_H));
+    else if (v && typeof v === "object") rotateBlock(v);
+  }
+}
+function bootFromObject(obj) {
+  if (!obj || !obj.meta || obj.meta.schema !== 1)
+    throw new Error("Not a FEM viewer file (meta.schema must be 1). Re-create it with tools/prepare_viewer.py.");
+  D = obj;
+  if (!D.__hyRotated) { rotateBlock(D.H || {}); rotateBlock(D.dh || {}); D.__hyRotated = true; }
+  deriveIndexes();
+  renderAll();
+}
+const drop = $("#drop"), fileInput = $("#fileInput");
+drop.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+["dragover","dragenter"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("hover"); }));
+["dragleave","drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("hover"); }));
+drop.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+async function loadFile(f) {
+  try { drop.firstElementChild.textContent = "Loading " + f.name + " …"; bootFromObject(await parseFile(f)); }
+  catch (err) { drop.firstElementChild.textContent = "Could not load file"; alert("Load failed: " + err.message); }
+}
+window.__loadViewerData = bootFromObject;   // test hook
+(async () => {                              // ?data=<url> hook (needs http://)
+  const u = new URLSearchParams(location.search).get("data");
+  if (!u) return;
+  try {
+    const resp = await fetch(u);
+    let obj;
+    if (u.endsWith(".gz")) {
+      const ds = new DecompressionStream("gzip");
+      obj = JSON.parse(await new Response(resp.body.pipeThrough(ds)).text());
+    } else obj = await resp.json();
+    bootFromObject(obj);
+  } catch (e) { console.error("autoload failed", e); }
+})();
+
+/* ===================== derived structures on load ===================== */
+function deriveIndexes() {
+  const H = D.H || {}, m = D.meta;
+  X = {};
+  X.zones = m.zones || Object.keys(H.price || H.gen || {});
+  X.focus = m.focus && X.zones.includes(m.focus) ? m.focus : X.zones[0];
+  X.gById = {};
+  for (const grpset of Object.values(m.groups || {}))
+    for (const g of grpset) X.gById[g.k] = g;
+  X.supplyOrder = (m.groups?.supply || []).map(g => g.k);
+  X.chargeOrder = (m.groups?.charge || []).map(g => g.k);
+  X.socOrder    = (m.groups?.soc || []).map(g => g.k);
+  X.dhOrder     = (m.groups?.dh || []).map(g => g.k);
+  X.dhChgOrder  = (m.groups?.dh_charge || []).map(g => g.k);
+  X.linesByZone = {};
+  for (const l of (m.lines || [])) {
+    (X.linesByZone[l.frm] = X.linesByZone[l.frm] || []).push(l);
+    (X.linesByZone[l.to]  = X.linesByZone[l.to]  || []).push(l);
+  }
+  // total inflexible load per zone
+  X.load = {};
+  for (const z of X.zones) {
+    const a = zeros(NH);
+    addInto(a, arr(H.loadf, z)); addInto(a, arr(H.loadev, z)); addInto(a, arr(H.loadhp, z));
+    X.load[z] = a;
+  }
+  // defaults
+  state.zone = X.focus;
+  state.storZone = X.focus;
+  state.invZone = X.focus;
+  const nbrs = (X.linesByZone[X.focus] || []).map(l => l.frm === X.focus ? l.to : l.frm);
+  state.priceZones = [X.focus, ...nbrs.filter(z => X.zones.includes(z))].slice(0, 5);
+  state.dhNode = (m.dh_nodes || [])[0] || null;
+  if (m.dh_nodes?.includes("DH_medium")) state.dhNode = "DH_medium";
+  // peak price day as default day detail
+  const pArr = H.price ? arr(H.price, X.focus) : null;
+  if (pArr) { let mi = 0; for (let i = 1; i < NH; i++) if (pArr[i] > pArr[mi]) mi = i;
+              state.day = Math.floor(mi / 24); }
+}
+
+/* zone gen/chg accessors honoring legend toggles */
+const hidden = new Set();      // hidden group keys, electric dispatch (annual + day)
+const hiddenStor = new Set();  // hidden storage SoC series
+const hiddenDH = new Set();    // hidden DH dispatch series
+function zoneSeries(block, z, order) {
+  const o = [];
+  if (!D.H[block] || !D.H[block][z]) return o;
+  for (const k of order) if (has(D.H[block][z], k))
+    o.push({ k, label: X.gById[k]?.label || k, color: X.gById[k]?.color || "#999",
+             a: Float64Array.from(D.H[block][z][k]) });
+  // groups present in data but not in meta order (e.g. ev_gen, other_c)
+  for (const k of Object.keys(D.H[block][z]))
+    if (!order.includes(k)) o.push({ k, label: k, color: "#b3b9c0",
+                                     a: Float64Array.from(D.H[block][z][k]) });
+  return o;
+}
+
+/* ============================ chart engine ============================ */
+function chartFrame(parent, w, h, pad) {
+  const svg = el("svg", { viewBox: `0 0 ${w} ${h}`, width: "100%", style: "max-width:100%" }, parent);
+  return { svg, w, h, pad, iw: w - pad.l - pad.r, ih: h - pad.t - pad.b };
+}
+function yAxis(f, lo, hi, unitFmt, n = 5) {
+  const ticks = niceTicks(lo, hi, n);
+  const ty = v => f.pad.t + f.ih * (1 - (v - lo) / (hi - lo));
+  for (const v of ticks) {
+    if (v < lo - 1e-9 || v > hi + 1e-9) continue;
+    el("line", { x1: f.pad.l, x2: f.pad.l + f.iw, y1: ty(v), y2: ty(v), class: "gline" }, f.svg);
+    el("text", { x: f.pad.l - 6, y: ty(v) + 3.5, "text-anchor": "end", class: "axis", text: unitFmt(v) }, f.svg);
+  }
+  return ty;
+}
+function xAxisMonths(f) {
+  for (let m = 0; m < 12; m++) {
+    const x = f.pad.l + f.iw * (monthStartDisp[m] + 0.5) / ND;
+    el("text", { x: x + f.iw/24/2, y: f.h - f.pad.b + 14, "text-anchor": "middle", class: "axis", text: MONTHS_DISP[m] }, f.svg);
+    if (m) el("line", { x1: f.pad.l + f.iw*monthStartDisp[m]/ND, x2: f.pad.l + f.iw*monthStartDisp[m]/ND,
+                        y1: f.pad.t, y2: f.pad.t + f.ih, class: "gline", "stroke-dasharray": "2 3" }, f.svg);
+  }
+}
+function xAxisHours(f, n = 24) {
+  for (let hh = 0; hh <= n; hh += 3) {
+    const x = f.pad.l + f.iw * hh / n;
+    el("text", { x, y: f.h - f.pad.b + 14, "text-anchor": "middle", class: "axis", text: hh }, f.svg);
+    el("line", { x1: x, x2: x, y1: f.pad.t, y2: f.pad.t + f.ih, class: "gline", "stroke-dasharray": "2 3" }, f.svg);
+  }
+  el("text", { x: f.pad.l + f.iw, y: f.h - 4, "text-anchor": "end", class: "axis", text: "hour of day" }, f.svg);
+}
+function pathFrom(pts) { return pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(""); }
+
+/* stacked dispatch chart: pos series stacked up, neg stacked down, overlay lines */
+function dispatchChart(parent, opts) {
+  const { pos, neg, lines, n, onClick, clickedIdx, xMode, unit = "GW", tipExtra,
+          w = 1180, h = 330, yDiv = 1000, hset = hidden } = opts;
+  const pad = { l: 58, r: 12, t: 20, b: 30 };
+  const f = chartFrame(parent, w, h, pad);
+  const visPos = pos.filter(s => !hset.has(s.k)), visNeg = neg.filter(s => !hset.has(s.k));
+  const top = zeros(n), bot = zeros(n);
+  for (const s of visPos) for (let i = 0; i < n; i++) top[i] += s.a[i];
+  for (const s of visNeg) for (let i = 0; i < n; i++) bot[i] += s.a[i];
+  let hi = 0, lo = 0;
+  for (let i = 0; i < n; i++) { if (top[i] > hi) hi = top[i]; if (-bot[i] < lo) lo = -bot[i]; }
+  for (const L of (lines || [])) for (let i = 0; i < n; i++) {
+    if (L.a[i] > hi) hi = L.a[i]; if (L.a[i] < lo) lo = L.a[i]; }
+  hi *= 1.04; lo = lo < 0 ? lo * 1.04 : 0;
+  const ty = yAxis(f, lo, hi, v => fmt(v/yDiv, Math.abs(hi-lo) < 4*yDiv ? 1 : 0), 6);
+  el("text", { x: 8, y: 11, class: "axis", text: unit }, f.svg);
+  const tx = i => f.pad.l + f.iw * (i + 0.5) / n;
+  // stacks
+  const cum = zeros(n);
+  const bands = [];
+  for (const s of visPos) {
+    const upper = [], lower = [];
+    for (let i = 0; i < n; i++) { lower.push([tx(i), ty(cum[i])]); cum[i] += s.a[i]; upper.push([tx(i), ty(cum[i])]); }
+    bands.push({ s, d: pathFrom(upper) + "L" + lower.reverse().map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + "Z" });
+  }
+  const cumN = zeros(n);
+  for (const s of visNeg) {
+    const upper = [], lower = [];
+    for (let i = 0; i < n; i++) { lower.push([tx(i), ty(-cumN[i])]); cumN[i] += s.a[i]; upper.push([tx(i), ty(-cumN[i])]); }
+    bands.push({ s, d: pathFrom(upper) + "L" + lower.reverse().map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + "Z" });
+  }
+  for (const b of bands) el("path", { d: b.d, fill: b.s.color, "fill-opacity": .92, stroke: "none" }, f.svg);
+  el("line", { x1: f.pad.l, x2: f.pad.l + f.iw, y1: ty(0), y2: ty(0), stroke: "#8b95a0", "stroke-width": 1 }, f.svg);
+  if (xMode === "year") xAxisMonths(f); else xAxisHours(f, n);
+  for (const L of (lines || []))
+    el("path", { d: pathFrom([...Array(n)].map((_, i) => [tx(i), ty(L.a[i])])),
+                 fill: "none", stroke: L.color, "stroke-width": L.w || 1.7, "stroke-dasharray": L.dash || "" }, f.svg);
+  if (clickedIdx != null && xMode === "year")
+    el("line", { x1: tx(clickedIdx), x2: tx(clickedIdx), y1: f.pad.t, y2: f.pad.t + f.ih,
+                 stroke: "var(--accent)", "stroke-width": 1.4, "stroke-dasharray": "4 3" }, f.svg);
+  // hover overlay
+  const ov = el("rect", { x: f.pad.l, y: f.pad.t, width: f.iw, height: f.ih, fill: "transparent",
+                          style: onClick ? "cursor:pointer" : "" }, f.svg);
+  const cursor = el("line", { y1: f.pad.t, y2: f.pad.t + f.ih, stroke: "#90651a00" }, f.svg);
+  ov.addEventListener("mousemove", ev => {
+    const r = ov.getBoundingClientRect();
+    const i = Math.max(0, Math.min(n - 1, Math.floor((ev.clientX - r.left) / r.width * n)));
+    cursor.setAttribute("x1", tx(i)); cursor.setAttribute("x2", tx(i));
+    cursor.setAttribute("stroke", "#5b687566");
+    let html = `<div class="h">${xMode === "year" ? dayInfo(i).label : "Hour " + i + ":00"}</div>`;
+    const rows = [];
+    for (const s of [...visPos].reverse()) if (Math.abs(s.a[i]) > 0.5) rows.push(tipRow(s.label, fmtP(s.a[i]), s.color));
+    for (const s of visNeg) if (Math.abs(s.a[i]) > 0.5) rows.push(tipRow(s.label, "−" + fmtP(s.a[i]), s.color));
+    for (const L of (lines || [])) rows.push(tipRow(L.label, (L.fmt || fmtP)(L.a[i]), L.color));
+    if (tipExtra) rows.push(tipExtra(i));
+    showTip(ev, html + rows.join(""));
+  });
+  ov.addEventListener("mouseleave", () => { hideTip(); cursor.setAttribute("stroke", "transparent"); });
+  if (onClick) ov.addEventListener("click", ev => {
+    const r = ov.getBoundingClientRect();
+    onClick(Math.max(0, Math.min(n - 1, Math.floor((ev.clientX - r.left) / r.width * n))));
+  });
+  return f;
+}
+
+/* multi-line chart */
+function lineChart(parent, opts) {
+  const { series, n, w = 1180, h = 280, unitFmt = v => fmt(v), xMode = "year",
+          xLabel, yLabel, fillTo = null, onClick, refLines, right = null } = opts;
+  const pad = { l: 62, r: right ? 56 : 12, t: 20, b: 30 };
+  const f = chartFrame(parent, w, h, pad);
+  let lo = Infinity, hi = -Infinity;
+  for (const s of series) for (let i = 0; i < n; i++) {
+    const v = s.a[i]; if (v == null || !isFinite(v)) continue;
+    if (v < lo) lo = v; if (v > hi) hi = v;
+  }
+  if (!isFinite(lo)) { lo = 0; hi = 1; }
+  if (lo > 0 && lo < hi * 0.3) lo = 0;
+  const span = hi - lo || 1; hi += span * .05; if (lo !== 0) lo -= span * .05;
+  const ty = yAxis(f, lo, hi, unitFmt, 5);
+  if (yLabel) el("text", { x: 8, y: 11, class: "axis", text: yLabel }, f.svg);
+  const tx = i => f.pad.l + f.iw * (i + 0.5) / n;
+  if (xMode === "year") xAxisMonths(f);
+  else if (xMode === "day") xAxisHours(f, n);
+  else if (xMode === "pct") {
+    for (let p = 0; p <= 100; p += 25) {
+      const x = f.pad.l + f.iw * p / 100;
+      el("text", { x, y: f.h - f.pad.b + 14, "text-anchor": "middle", class: "axis", text: p + "%" }, f.svg);
+      el("line", { x1: x, x2: x, y1: f.pad.t, y2: f.pad.t + f.ih, class: "gline", "stroke-dasharray": "2 3" }, f.svg);
+    }
+    if (xLabel) el("text", { x: f.pad.l + f.iw, y: f.h - 4, "text-anchor": "end", class: "axis", text: xLabel }, f.svg);
+  }
+  for (const rl of (refLines || [])) {
+    el("line", { x1: f.pad.l, x2: f.pad.l + f.iw, y1: ty(rl.v), y2: ty(rl.v),
+                 stroke: rl.color || "#aab2bb", "stroke-width": 1, "stroke-dasharray": "5 4" }, f.svg);
+    el("text", { x: f.pad.l + f.iw - 4, y: ty(rl.v) - 4, "text-anchor": "end", class: "axis", text: rl.label }, f.svg);
+  }
+  if (lo < 0 && hi > 0)
+    el("line", { x1: f.pad.l, x2: f.pad.l + f.iw, y1: ty(0), y2: ty(0), stroke: "#8b95a0" }, f.svg);
+  for (const s of series) {
+    const pts = [];
+    for (let i = 0; i < n; i++) pts.push([tx(i), ty(s.a[i])]);
+    if (fillTo != null)
+      el("path", { d: pathFrom(pts) + `L${tx(n-1)} ${ty(fillTo)}L${tx(0)} ${ty(fillTo)}Z`,
+                   fill: s.color, "fill-opacity": .12, stroke: "none" }, f.svg);
+    el("path", { d: pathFrom(pts), fill: "none", stroke: s.color, "stroke-width": s.w || 1.7,
+                 "stroke-dasharray": s.dash || "" }, f.svg);
+  }
+  // optional secondary (right) axis with its own scale
+  let tyR = null;
+  if (right) {
+    let rlo = Infinity, rhi = -Infinity;
+    for (const s of right.series) for (let i = 0; i < n; i++) {
+      const v = s.a[i]; if (v < rlo) rlo = v; if (v > rhi) rhi = v; }
+    if (!isFinite(rlo)) { rlo = 0; rhi = 1; }
+    if (rlo > 0 && rlo < rhi * 0.3) rlo = 0;
+    const rspan = rhi - rlo || 1; rhi += rspan * .05; if (rlo !== 0) rlo -= rspan * .05;
+    tyR = v => f.pad.t + f.ih * (1 - (v - rlo) / (rhi - rlo));
+    for (const v of niceTicks(rlo, rhi, 4)) {
+      if (v < rlo - 1e-9 || v > rhi + 1e-9) continue;
+      el("text", { x: f.pad.l + f.iw + 6, y: tyR(v) + 3.5, class: "axis",
+                   text: (right.unitFmt || fmt)(v) }, f.svg);
+    }
+    if (right.label) el("text", { x: f.pad.l + f.iw + 6, y: 11, class: "axis", text: right.label }, f.svg);
+    for (const s of right.series) {
+      const pts = [];
+      for (let i = 0; i < n; i++) pts.push([tx(i), tyR(s.a[i])]);
+      el("path", { d: pathFrom(pts), fill: "none", stroke: s.color, "stroke-width": s.w || 1.5,
+                   "stroke-dasharray": s.dash || "" }, f.svg);
+    }
+  }
+  const ov = el("rect", { x: f.pad.l, y: f.pad.t, width: f.iw, height: f.ih, fill: "transparent",
+                          style: onClick ? "cursor:pointer" : "" }, f.svg);
+  ov.addEventListener("mousemove", ev => {
+    const r = ov.getBoundingClientRect();
+    const i = Math.max(0, Math.min(n - 1, Math.floor((ev.clientX - r.left) / r.width * n)));
+    const head = xMode === "year" ? dayInfo(i).label : xMode === "day" ? "Hour " + i + ":00"
+               : xMode === "months" ? MONTHS_DISP[i] : fmt(i / n * 100, 1) + " % of hours";
+    showTip(ev, `<div class="h">${head}</div>` +
+      series.map(s => tipRow(s.label, unitFmt(s.a[i]), s.color)).join("") +
+      (right ? right.series.map(s => tipRow(s.label, (right.unitFmt || fmt)(s.a[i]), s.color)).join("") : ""));
+  });
+  ov.addEventListener("mouseleave", hideTip);
+  if (onClick) ov.addEventListener("click", ev => {
+    const r = ov.getBoundingClientRect();
+    onClick(Math.max(0, Math.min(n - 1, Math.floor((ev.clientX - r.left) / r.width * n))));
+  });
+  return f;
+}
+
+/* legend builder — click toggles the series via the given hidden-set */
+function buildLegend(parent, items, onToggle, hset = hidden) {
+  const lg = el("div", { class: "legend" }, parent);
+  for (const it of items) {
+    const li = el("span", { class: "li" + (hset.has(it.k) ? " off" : ""), title: "click to toggle" }, lg);
+    el("span", { class: "sw", style: "background:" + it.color }, li);
+    el("span", { text: it.label }, li);
+    li.addEventListener("click", () => {
+      hset.has(it.k) ? hset.delete(it.k) : hset.add(it.k);
+      onToggle();
+    });
+  }
+  return lg;
+}
+
+/* select builder */
+function buildSelect(parent, label, optionsList, value, onChange, labeler) {
+  const wrapd = el("span", {}, parent);
+  el("label", { text: label + " " }, wrapd);
+  const sel = el("select", {}, wrapd);
+  for (const o of optionsList) el("option", { value: o, text: labeler ? labeler(o) : o,
+    ...(o === value ? { selected: "" } : {}) }, sel);
+  sel.addEventListener("change", () => onChange(sel.value));
+  return sel;
+}
+
+/* ============================ sections ============================ */
+const APP = $("#app");
+function section(id, title, subtitle) {
+  let s = document.getElementById(id);
+  if (!s) { s = el("section", { class: "card", id }, APP); }
+  s.innerHTML = "";
+  if (title) { el("h2", { text: title }, s); }
+  if (subtitle) el("p", { class: "sub", html: subtitle }, s);
+  return s;
+}
+
+/* ---------- header & chips ---------- */
+function renderHeader() {
+  const m = D.meta, k = D.kpis || {};
+  $("#hdrSub").textContent = m.scenario;
+  const chips = $("#chips"); chips.innerHTML = "";
+  const chip = (lbl, val) => { if (val == null) return;
+    el("span", { class: "chip", html: `<span class="lbl">${lbl}</span><b>${val}</b>` }, chips); };
+  chip("scenario", m.scenario);
+  chip("year", m.run_year);
+  chip("weather", m.weather_year);
+  chip("zones", (m.zones || []).length);
+  chip("NTC borders", (m.lines || []).length);
+  if (k.focus?.peak_load) chip("peak load CH", fmtP(k.focus.peak_load));
+  if (k.focus?.demand_twh) chip("CH demand", fmt(k.focus.demand_twh, 1) + " TWh");
+  if (k.dh?.demand_twh) chip("DH heat", fmt(k.dh.demand_twh, 1) + " TWh");
+  if (m.model_version) chip("model", "v" + m.model_version);
+  if (m.settings?.eu_policy) chip("EU policy", m.settings.eu_policy);
+  if (m.settings?.ch_policy) chip("CH policy", m.settings.ch_policy);
+  const btn = el("button", { class: "btn", text: "Load another file", style: "margin-left:6px" }, chips);
+  btn.addEventListener("click", () => fileInput.click());
+}
+
+/* ---------- KPI cards ---------- */
+function renderKpis() {
+  let host = document.getElementById("kpis");
+  if (!host) { host = el("div", { id: "kpis" }, APP); }
+  host.innerHTML = "";
+  const k = D.kpis || {}, f = k.focus || {}, cur = D.meta.currency || "CHF";
+  const card = (v, unit, txt) => { if (v == null) return;
+    const c = el("div", { class: "kpi" }, host);
+    el("div", { class: "v", html: v + (unit ? `<small>${unit}</small>` : "") }, c);
+    el("div", { class: "t", text: txt }, c); };
+  card(k.obj != null ? fmtCHF(k.obj) : null, " " + cur, "total system cost (objective value)");
+  card(f.price_avg != null ? fmt(f.price_avg, 1) : null, " " + cur + "/MWh",
+       `mean electricity price ${f.z || ""}` + (f.price_w != null ? ` (load-weighted ${fmt(f.price_w, 1)})` : ""));
+  card(f.price_max != null ? fmt(f.price_max, 0) : null, " " + cur + "/MWh",
+       `peak hourly price ${f.z || ""} (min ${fmt(f.price_min, 0)})`);
+  card(f.nimp_twh != null ? fmt(f.nimp_twh, 1) : null, " TWh",
+       `net imports ${f.z || ""} over the year`);
+  card(f.res_share != null ? fmt(f.res_share * 100, 1) : null, " %",
+       `renewable share of ${f.z || ""} primary generation (excl. storage cycling)`);
+  card(f.added_gw != null ? fmt(f.added_gw, 1) : null, " GW",
+       `new electric capacity built in ${f.z || ""}`);
+  card(k.curt_twh_sys != null ? fmt(k.curt_twh_sys, 1) : null, " TWh",
+       "renewable curtailment, all zones" + (f.curt_twh != null ? ` (${f.z}: ${fmt(f.curt_twh*1000, 0)} GWh)` : ""));
+  card(k.ll_gwh_sys != null ? fmt(k.ll_gwh_sys, 1) : null, " GWh",
+       "lost load (load shedding), all zones");
+  card(k.co2_mt != null ? fmt(k.co2_mt, 1) : null, " Mt", "CO₂ emissions, all zones");
+  card(k.dh?.price_avg_w != null ? fmt(k.dh.price_avg_w, 1) : null, " " + cur + "/MWh",
+       "district heat price (demand-weighted mean)");
+  card(k.dh?.tes_gwh != null ? fmt(k.dh.tes_gwh, 1) : null, " GWh",
+       "thermal storage capacity built (TES)");
+  if (k.costs?.inv != null) card(fmtCHF(k.costs.inv), " " + cur,
+       "annualized investment cost (op: " + fmtCHF(k.costs.op) + ")");
+}
+
+/* ---------- annual heatmap ---------- */
+function heatQuantities() {
+  const H = D.H, q = [];
+  if (H.price) q.push({ id: "price", label: "Electricity price", unit: D.meta.currency + "/MWh",
+    get: z => arr(H.price, z), scale: "seq" });
+  q.push({ id: "resid", label: "Residual load (load − VRE)", unit: "MW",
+    get: z => { const a = Float64Array.from(X.load[z]);
+      for (const g of ["pv","windon","windof","ror"]) { const s = H.gen?.[z]?.[g];
+        if (s) for (let i = 0; i < NH; i++) a[i] -= s[i]; } return a; }, scale: "div" });
+  if (H.nimp) q.push({ id: "nimp", label: "Net imports", unit: "MW",
+    get: z => arr(H.nimp, z), scale: "div" });
+  if (H.gen || H.chg) q.push({ id: "stor", label: "Storage net output (discharge − charge)", unit: "MW",
+    get: z => { const a = zeros(NH);
+      for (const g of ["battery","psp","dam","h2"]) { const s = H.gen?.[z]?.[g];
+        if (s) for (let i = 0; i < NH; i++) a[i] += s[i]; }
+      for (const g of ["battery_c","psp_c","h2_c"]) { const s = H.chg?.[z]?.[g];
+        if (s) for (let i = 0; i < NH; i++) a[i] -= s[i]; } return a; }, scale: "div" });
+  if (H.curt) q.push({ id: "curt", label: "Curtailment", unit: "MW", get: z => arr(H.curt, z), scale: "seq0" });
+  if (H.ll && Object.keys(H.ll).length) q.push({ id: "ll", label: "Lost load", unit: "MW",
+    get: z => arr(H.ll, z), scale: "seq0" });
+  return q;
+}
+function renderHeatmap() {
+  const s = section("sec-heat", "Year at a glance",
+    "Hour-of-day × day-of-year. Click any cell to open that day below.");
+  const ctl = el("div", { class: "ctl" }, s);
+  const qs = heatQuantities();
+  if (!qs.length) { el("div", { class: "missing", text: "No hourly data available." }, s); return; }
+  if (!qs.find(q => q.id === state.hmQ)) state.hmQ = qs[0].id;
+  buildSelect(ctl, "Quantity", qs.map(q => q.id), state.hmQ,
+    v => { state.hmQ = v; renderHeatmap(); }, id => qs.find(q => q.id === id).label);
+  buildSelect(ctl, "Zone", X.zones, state.zone, v => { state.zone = v; renderHeatmap(); renderDispatch(); renderDay(); });
+  const q = qs.find(x => x.id === state.hmQ);
+  const a = q.get(state.zone);
+
+  // robust color range (2nd/98th percentile)
+  const sorted = Float64Array.from(a).sort();
+  const pct = p => sorted[Math.max(0, Math.min(NH - 1, Math.round(p * (NH - 1))))];
+  let lo = pct(.02), hi = pct(.98);
+  if (q.scale === "seq0") { lo = 0; hi = sorted[NH-1] || 1; }
+  if (q.scale === "div") { const m = Math.max(Math.abs(lo), Math.abs(hi), 1e-9); lo = -m; hi = m; }
+  if (hi <= lo) hi = lo + 1;
+
+  const cv = el("canvas", { class: "hm", width: ND, height: 24, style: "height:330px" }, s);
+  const ctx = cv.getContext("2d");
+  const img = ctx.createImageData(ND, 24);
+  for (let d = 0; d < ND; d++) for (let h = 0; h < 24; h++) {
+    const v = a[d*24 + h];
+    let css;
+    if (q.scale === "div") css = scaleDiv(v / hi);
+    else if (q.scale === "seq0") css = v <= 0 ? "rgb(247,247,245)" : scaleSeq(0.15 + 0.85 * v / hi);
+    else css = scaleSeq((v - lo) / (hi - lo));
+    const m2 = css.match(/(\d+),\s*(\d+),\s*(\d+)/);
+    const o = ((23 - h) * ND + d) * 4;
+    img.data[o] = +m2[1]; img.data[o+1] = +m2[2]; img.data[o+2] = +m2[3]; img.data[o+3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  // axis row: months
+  const ax = el("div", { style: "display:flex;justify-content:space-between;font-size:10.5px;color:var(--faint);padding:2px 1px" }, s);
+  for (const mn of MONTHS_DISP) el("span", { text: mn }, ax);
+  // legend gradient
+  const lgw = el("div", { style: "display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11.5px;color:var(--muted)" }, s);
+  el("span", { text: fmt(lo, Math.abs(hi) < 10 ? 1 : 0) + " " + q.unit }, lgw);
+  const gradc = el("canvas", { width: 160, height: 10, style: "border-radius:3px" }, lgw);
+  const gctx = gradc.getContext("2d");
+  for (let i = 0; i < 160; i++) {
+    const t = i / 159;
+    gctx.fillStyle = q.scale === "div" ? scaleDiv(t * 2 - 1) : q.scale === "seq0" ? scaleSeq(0.15 + .85*t) : scaleSeq(t);
+    gctx.fillRect(i, 0, 1, 10);
+  }
+  el("span", { text: fmt(hi, Math.abs(hi) < 10 ? 1 : 0) + " " + q.unit + (q.scale === "seq0" ? "" : "  (2–98 pctl)") }, lgw);
+
+  cv.addEventListener("mousemove", ev => {
+    const r = cv.getBoundingClientRect();
+    const d = Math.max(0, Math.min(ND-1, Math.floor((ev.clientX - r.left) / r.width * ND)));
+    const h = Math.max(0, Math.min(23, 23 - Math.floor((ev.clientY - r.top) / r.height * 24)));
+    showTip(ev, `<div class="h">${dayInfo(d).label}, ${h}:00</div>` +
+      tipRow(q.label, fmt(a[d*24+h], 1) + " " + q.unit));
+  });
+  cv.addEventListener("mouseleave", hideTip);
+  cv.addEventListener("click", ev => {
+    const r = cv.getBoundingClientRect();
+    state.day = Math.max(0, Math.min(ND-1, Math.floor((ev.clientX - r.left) / r.width * ND)));
+    renderDay(true); renderDispatch();
+  });
+}
+
+/* ---------- dispatch builder shared by year/day ---------- */
+function buildDispatchSeries(z, daily) {
+  const H = D.H;
+  const conv = a => daily ? dailyMean(a) : a;
+  const pos = zoneSeries("gen", z, X.supplyOrder).map(s => ({ ...s, a: conv(s.a) }));
+  const neg = zoneSeries("chg", z, X.chargeOrder).map(s => ({ ...s, a: conv(s.a) }));
+  // net imports split into import (supply band) and export (use band)
+  if (has(H.nimp, z)) {
+    const ni = arr(H.nimp, z), imp = zeros(NH), expn = zeros(NH);
+    for (let i = 0; i < NH; i++) { if (ni[i] > 0) imp[i] = ni[i]; else expn[i] = -ni[i]; }
+    pos.push({ k: "_imp", label: "Net import", color: "#aab4be", a: conv(imp) });
+    neg.push({ k: "_exp", label: "Net export", color: "#8b99a8", a: conv(expn) });
+  }
+  if (has(H.curt, z)) neg.push({ k: "_curt", label: "Curtailment", color: "#eddca8", a: conv(arr(H.curt, z)) });
+  if (has(H.ll, z))   pos.push({ k: "_ll", label: "Lost load", color: "#e05252", a: conv(arr(H.ll, z)) });
+  const lines = [{ k: "_load", label: "Inflexible load", color: "#1c2733", a: conv(X.load[z]), w: 1.8 }];
+  return { pos, neg, lines };
+}
+
+/* ---------- annual dispatch ---------- */
+function renderDispatch() {
+  const s = section("sec-dispatch", "Dispatch over the year",
+    "Daily mean generation by technology (stacked up) and consumption by flexible loads, storage charging, exports and curtailment (stacked down). Black line: inflexible load. Click a day to drill down.");
+  if (!D.H.gen) { el("div", { class: "missing", text: "gen.csv missing in this run." }, s); return; }
+  const ctl = el("div", { class: "ctl" }, s);
+  buildSelect(ctl, "Zone", X.zones, state.zone,
+    v => { state.zone = v; renderHeatmap(); renderDispatch(); renderDay(); });
+  const { pos, neg, lines } = buildDispatchSeries(state.zone, true);
+  const chartHost = el("div", {}, s);
+  dispatchChart(chartHost, { pos, neg, lines, n: ND, xMode: "year", clickedIdx: state.day,
+    onClick: d => { state.day = d; renderDay(true); renderDispatch(); } });
+  buildLegend(s, [...pos, ...neg].filter(x => !x.k.startsWith("_load")), () => renderDispatch());
+  el("div", { class: "note", text: "Legend entries toggle technologies on/off (affects this chart and the day view)." }, s);
+}
+
+/* ---------- day detail ---------- */
+function renderDay(scroll) {
+  const s = section("sec-day", null, null);
+  s.id = "daycard"; s.setAttribute("id", "sec-day");
+  const d = state.day, di = dayInfo(d), z = state.zone;
+  const head = el("div", { class: "dnav" }, s);
+  const mk = (t, dd) => { const b = el("button", { class: "btn", text: t }, head);
+    b.addEventListener("click", () => { state.day = (state.day + dd + ND) % ND; renderDay(); renderDispatch(); }); };
+  mk("← prev", -1);
+  el("b", { text: `${di.label} ${D.meta.weather_year || ""} — ${z}` }, head);
+  mk("next →", 1);
+  el("p", { class: "sub", style: "margin-top:8px",
+    text: "Hourly resolution for the selected day. Use the heatmap or the annual dispatch chart to pick another day." }, s);
+
+  const H = D.H, h0 = d * 24, slice = a => a.subarray ? a.subarray(h0, h0 + 24) : a.slice(h0, h0 + 24);
+
+  // dispatch
+  const { pos, neg, lines } = buildDispatchSeries(z, false);
+  const cut = ser => ser.map(x => ({ ...x, a: slice(x.a) }));
+  el("div", { class: "tag", text: "Dispatch (hourly)" }, s);
+  dispatchChart(el("div", {}, s), { pos: cut(pos), neg: cut(neg), lines: cut(lines), n: 24, xMode: "day" });
+
+  const grid = el("div", { class: "grid2", style: "margin-top:16px" }, s);
+
+  // prices
+  if (H.price) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Electricity price" }, c);
+    const nbrs = [...new Set((X.linesByZone[z] || []).map(l => l.frm === z ? l.to : l.frm))]
+      .filter(zz => has(H.price, zz)).slice(0, 5);
+    const palette = ["#9aa5b1","#c2a878","#8aa353","#b07aa1","#76c4e2","#d98ca6"];
+    const series = [{ label: z, color: "#1f407a", a: slice(arr(H.price, z)), w: 2.2 },
+      ...nbrs.map((zz, i) => ({ label: zz, color: palette[i % palette.length], a: slice(arr(H.price, zz)), w: 1.2 }))];
+    lineChart(c, { series, n: 24, w: 560, h: 240, xMode: "day",
+      unitFmt: v => fmt(v, 0), yLabel: D.meta.currency + "/MWh" });
+  }
+  // border flows
+  if (H.flow && (X.linesByZone[z] || []).length) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Border flows (positive = into " + z + ")" }, c);
+    const palette = ["#2e6fad","#c0604d","#8aa353","#b07aa1","#5ab4ac","#e8b04b","#9aa5b1"];
+    const series = (X.linesByZone[z] || []).filter(l => has(H.flow, l.id)).map((l, i) => {
+      const f = slice(arr(H.flow, l.id)), o = zeros(24), sgn = l.to === z ? 1 : -1;
+      for (let i2 = 0; i2 < 24; i2++) o[i2] = sgn * f[i2];
+      return { label: l.frm === z ? l.to : l.frm, color: palette[i % palette.length], a: o, lid: l.id };
+    });
+    const f = lineChart(c, { series, n: 24, w: 560, h: 240, xMode: "day",
+      unitFmt: v => fmt(v, 0), yLabel: "MW" });
+    // binding markers (one row per border)
+    if (H.bind) series.forEach((sr, si) => {
+      const b = D.H.bind[sr.lid]; if (!b) return;
+      for (let hh = 0; hh < 24; hh++) if (b[h0 + hh] !== 0) {
+        const x = f.pad.l + f.iw * (hh + 0.5) / 24;
+        el("circle", { cx: x, cy: f.pad.t + 5 + si * 7, r: 2.2, fill: sr.color, "fill-opacity": .85 }, f.svg);
+      }
+    });
+    el("div", { class: "note", text: "Dots along the top mark hours where this border's NTC is binding." }, c);
+  }
+  // storage SoC
+  if (H.soc && H.soc[z]) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Storage state of charge" }, c);
+    const series = zoneSeries("soc", z, X.socOrder).map(sr => {
+      const cap = D.ann?.socmax?.[z]?.[sr.k];
+      const a24 = slice(sr.a), o = zeros(24);
+      for (let i = 0; i < 24; i++) o[i] = cap ? a24[i] / cap * 100 : a24[i];
+      return { ...sr, a: o, cap };
+    });
+    lineChart(c, { series, n: 24, w: 560, h: 240, xMode: "day",
+      unitFmt: v => fmt(v, 0) + " %", yLabel: "% of capacity" });
+  }
+  // DH for the day (price on left axis, demand on right axis)
+  if (D.dh?.price && state.dhNode && D.dh.price[state.dhNode]) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "District heat — " + state.dhNode }, c);
+    const series = [
+      { label: "heat price", color: "#c0604d", a: slice(arr(D.dh.price, state.dhNode)), w: 2 }];
+    const right = has(D.dh.dem, state.dhNode)
+      ? { series: [{ label: "heat demand", color: "#8b95a0", a: slice(arr(D.dh.dem, state.dhNode)), dash: "4 3" }],
+          unitFmt: v => fmt(v, 0), label: "MW th" }
+      : null;
+    lineChart(c, { series, right, n: 24, w: 560, h: 240, xMode: "day",
+      unitFmt: v => fmt(v, 1), yLabel: D.meta.currency + "/MWh th" });
+  }
+  if (scroll) s.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ---------- prices section ---------- */
+function renderPrices() {
+  if (!D.H.price) return section("sec-prices", "Prices", "").append(
+    el("div", { class: "missing", text: "energy_balance_dual.csv missing - no prices." }));
+  const s = section("sec-prices", "Electricity prices",
+    "Duration curves (hours sorted by price), monthly means, and per-zone statistics. Toggle zones below.");
+  const zlist = X.zones.filter(z => has(D.H.price, z));
+  const chipsBox = el("div", { class: "zchips", style: "margin-bottom:12px" }, s);
+  for (const z of zlist) {
+    const c = el("span", { class: "zc" + (state.priceZones.includes(z) ? " on" : ""), text: z }, chipsBox);
+    c.addEventListener("click", () => {
+      const i = state.priceZones.indexOf(z);
+      if (i >= 0) state.priceZones.splice(i, 1); else state.priceZones.push(z);
+      renderPrices();
+    });
+  }
+  const palette = ["#1f407a","#c0604d","#8aa353","#b07aa1","#5ab4ac","#e8b04b","#76c4e2","#d98ca6","#665c54","#9aa5b1"];
+  const sel = state.priceZones.filter(z => zlist.includes(z));
+  const grid = el("div", { class: "grid2" }, s);
+  // duration curves (downsampled to 730 pts)
+  {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Price duration curve" }, c);
+    const NPT = 730;
+    const series = sel.map((z, i) => {
+      const a = Float64Array.from(arr(D.H.price, z)).sort().reverse();
+      const o = zeros(NPT);
+      for (let j = 0; j < NPT; j++) o[j] = a[Math.min(NH-1, Math.round(j * (NH-1) / (NPT-1)))];
+      return { label: z, color: palette[i % palette.length], a: o };
+    });
+    lineChart(c, { series, n: NPT, w: 560, h: 280, xMode: "pct",
+      unitFmt: v => fmt(v, 0), yLabel: D.meta.currency + "/MWh", xLabel: "share of hours" });
+  }
+  // monthly means
+  {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Monthly mean price" }, c);
+    const series = sel.map((z, i) => {
+      const a = arr(D.H.price, z), agg = zeros(12), cnt = zeros(12), o = zeros(12);
+      for (let h = 0; h < NH; h++) { const m = monthOfDay[Math.floor(h/24)]; agg[m] += a[h]; cnt[m]++; }
+      for (let p = 0; p < 12; p++) { const m = CAL_OF_DISP(p); o[p] = agg[m] / cnt[m]; }
+      return { label: z, color: palette[i % palette.length], a: o };
+    });
+    const f = lineChart(c, { series, n: 12, w: 560, h: 280, xMode: "months",
+      unitFmt: v => fmt(v, 0), yLabel: D.meta.currency + "/MWh" });
+    for (let p = 0; p < 12; p++)
+      el("text", { x: f.pad.l + f.iw*(p+.5)/12, y: f.h - f.pad.b + 14, "text-anchor": "middle",
+                   class: "axis", text: MONTHS_DISP[p] }, f.svg);
+  }
+  // stats table
+  const box = el("div", { class: "scrollbox" }, s);
+  const t = el("table", { class: "tab" }, box);
+  t.innerHTML = "<thead><tr><th>zone</th><th>mean</th><th>load-wgt</th><th>min</th><th>max</th><th>std</th><th>h at 0</th><th>spread vs " + X.focus + "</th></tr></thead>";
+  const tb = el("tbody", {}, t);
+  const pf = arr(D.H.price, X.focus);
+  for (const z of zlist) {
+    const a = arr(D.H.price, z);
+    let mn = 1e99, mx = -1e99, s1 = 0, s2 = 0, z0 = 0, wsum = 0, wl = 0, spr = 0;
+    const ld = X.load[z];
+    for (let i = 0; i < NH; i++) { const v = a[i];
+      s1 += v; s2 += v*v; if (v < mn) mn = v; if (v > mx) mx = v; if (v < .01) z0++;
+      wsum += v * ld[i]; wl += ld[i]; spr += Math.abs(v - pf[i]); }
+    const mean = s1/NH, sd = Math.sqrt(Math.max(0, s2/NH - mean*mean));
+    el("tr", { html: `<td>${z}</td><td>${fmt(mean,1)}</td><td>${wl?fmt(wsum/wl,1):"–"}</td><td>${fmt(mn,1)}</td><td>${fmt(mx,1)}</td><td>${fmt(sd,1)}</td><td>${fmt(z0)}</td><td>${fmt(spr/NH,1)}</td>` }, tb);
+  }
+  el("div", { class: "note", text: "spread = mean absolute hourly difference to " + X.focus + ". All prices in " + D.meta.currency + "/MWh." }, s);
+}
+
+/* ---------- cross-border exchange ---------- */
+function renderExchange() {
+  const s = section("sec-x", "Cross-border exchange",
+    "Annual flows on the " + X.focus + " borders (arrow width ∝ energy), NTC congestion per border, and the full line table.");
+  if (!D.ann?.lines?.length) { el("div", { class: "missing", text: "Export.csv missing - no exchange data." }, s); return; }
+  const L = D.ann.lines;
+  const grid = el("div", { class: "grid2" }, s);
+
+  /* schematic for focus zone */
+  const c1 = el("div", {}, grid);
+  el("div", { class: "tag", text: X.focus + " borders" }, c1);
+  const cw = 560, ch = 430;
+  const svg = el("svg", { viewBox: `0 0 ${cw} ${ch}`, width: "100%" }, c1);
+  const fl = L.filter(l => l.frm === X.focus || l.to === X.focus);
+  const others = [...new Set(fl.map(l => l.frm === X.focus ? l.to : l.frm))];
+  const posMap = { CH00: [cw/2, ch/2] };
+  const fixed = { DE00: [cw/2, 70], FR00: [110, ch/2 - 40], IT00: [cw/2, ch - 60], AT00: [cw - 110, 120] };
+  let angle = -Math.PI/2;
+  for (const z of others) {
+    if (fixed[z]) posMap[z] = fixed[z];
+    else { posMap[z] = [cw/2 + 190*Math.cos(angle), ch/2 + 150*Math.sin(angle)]; angle += Math.PI/3; }
+  }
+  const maxTwh = Math.max(...fl.map(l => Math.max(l.exp_twh || 0, l.imp_twh || 0)), 1);
+  const wScale = v => 1.5 + 11 * Math.sqrt((v || 0) / maxTwh);
+  function arrow(from, to, v, color, off, lObj, dirLabel) {
+    const [x1, y1] = posMap[from], [x2, y2] = posMap[to];
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+    const ux = dx/len, uy = dy/len, nx = -uy, ny = ux;
+    const sx = x1 + ux*46 + nx*off, sy = y1 + uy*46 + ny*off;
+    const ex = x2 - ux*52 + nx*off, ey = y2 - uy*52 + ny*off;
+    const wpx = wScale(v);
+    const g = el("g", { style: "cursor:default" }, svg);
+    el("line", { x1: sx, y1: sy, x2: ex, y2: ey, stroke: color, "stroke-width": wpx,
+                 "stroke-linecap": "round", "stroke-opacity": .75 }, g);
+    el("polygon", { points: `${ex+ux*9},${ey+uy*9} ${ex-nx*5.5},${ey-ny*5.5} ${ex+nx*5.5},${ey+ny*5.5}`, fill: color, "fill-opacity": .85 }, g);
+    el("text", { x: (sx+ex)/2 + nx*(wpx/2+9), y: (sy+ey)/2 + ny*(wpx/2+9) + 3, "text-anchor": "middle",
+                 class: "axis", style: "font-size:11px;fill:#5a6673", text: fmt(v, 1) }, g);
+    g.addEventListener("mousemove", ev => showTip(ev,
+      `<div class="h">${lObj.id}</div>` +
+      tipRow(dirLabel, fmt(v, 2) + " TWh") +
+      (lObj.bh_e != null ? tipRow("binding h " + lObj.frm + "→" + lObj.to, fmt(lObj.bh_e)) +
+                           tipRow("binding h " + lObj.to + "→" + lObj.frm, fmt(lObj.bh_i)) : "") +
+      (lObj.ntc_e != null ? tipRow("NTC " + lObj.frm + "→" + lObj.to + " (max binding flow)", fmtP(lObj.ntc_e)) : "") +
+      (lObj.ntc_i != null ? tipRow("NTC " + lObj.to + "→" + lObj.frm, fmtP(lObj.ntc_i)) : "")));
+    g.addEventListener("mouseleave", hideTip);
+  }
+  for (const l of fl) {
+    const other = l.frm === X.focus ? l.to : l.frm;
+    // into focus
+    const intoV  = l.to === X.focus ? l.exp_twh : l.imp_twh;
+    const outV   = l.to === X.focus ? l.imp_twh : l.exp_twh;
+    arrow(other, X.focus, intoV, "#2e6fad", 9, l, other + " → " + X.focus);
+    arrow(X.focus, other, outV,  "#c0604d", 9, l, X.focus + " → " + other);
+  }
+  for (const [z, [x, y]] of Object.entries(posMap)) {
+    el("circle", { cx: x, cy: y, r: z === X.focus ? 40 : 34, fill: z === X.focus ? "#1f407a" : "#eef1f5",
+                   stroke: z === X.focus ? "none" : "#c9d0d8" }, svg);
+    el("text", { x, y: y + 4.5, "text-anchor": "middle",
+                 style: `font-size:13px;font-weight:600;fill:${z === X.focus ? "#fff" : "#33425a"}`, text: z.replace("00","") }, svg);
+  }
+  el("div", { class: "note", html: "Blue: into " + X.focus + ", red: out of " + X.focus + ". Numbers in TWh/a." }, c1);
+
+  /* congestion chart: binding share per CH border+direction */
+  const c2 = el("div", {}, grid);
+  el("div", { class: "tag", text: "NTC congestion — share of hours binding" }, c2);
+  if (fl.length && fl[0].bh_e != null) {
+    const rows = [];
+    for (const l of fl) {
+      rows.push({ lbl: l.frm + " → " + l.to, v: l.bh_e / NH, n: l.bh_e, ntc: l.ntc_e });
+      rows.push({ lbl: l.to + " → " + l.frm, v: l.bh_i / NH, n: l.bh_i, ntc: l.ntc_i });
+    }
+    rows.sort((a, b) => b.v - a.v);
+    const bw = 560, bh = rows.length * 26 + 30;
+    const f = chartFrame(c2, bw, bh, { l: 130, r: 86, t: 4, b: 22 });
+    const maxv = Math.max(...rows.map(r => r.v), .01);
+    rows.forEach((r, i) => {
+      const y = f.pad.t + i * 26 + 5;
+      el("text", { x: f.pad.l - 7, y: y + 11, "text-anchor": "end", class: "axis",
+                   style: "font-size:11.5px;fill:#33425a", text: r.lbl }, f.svg);
+      el("rect", { x: f.pad.l, y, width: Math.max(1.5, f.iw * r.v / maxv), height: 15,
+                   rx: 3, fill: r.v > .4 ? "#c0604d" : r.v > .15 ? "#e3a45c" : "#7fa8cd" }, f.svg);
+      el("text", { x: f.pad.l + Math.max(1.5, f.iw * r.v / maxv) + 6, y: y + 11.5, class: "axis",
+                   style: "font-size:11px", text: fmt(r.v * 100, 1) + "%  (" + fmt(r.n) + " h)" }, f.svg);
+    });
+    el("div", { class: "note", text: "Direction-specific: share of the 8760 hours in which the NTC limit is binding (nonzero shadow price)." }, c2);
+  } else el("div", { class: "missing", text: "lineATClimit_dual.csv missing - congestion unknown." }, c2);
+
+  /* full table */
+  const box = el("div", { class: "scrollbox" }, s);
+  const t = el("table", { class: "tab" }, box);
+  const hasB = L[0].bh_e != null;
+  const hasN = L.some(l => l.ntc_e != null || l.ntc_i != null);
+  const ntcHdr = L[0].est ? "NTC* " : "NTC ";
+  t.innerHTML = `<thead><tr><th>border</th><th>A→B TWh</th><th>B→A TWh</th>` +
+    (hasB ? "<th>bind h A→B</th><th>bind h B→A</th>" : "") +
+    (hasN ? `<th>${ntcHdr}A→B</th><th>${ntcHdr}B→A</th>` : "") + "</tr></thead>";
+  const tb = el("tbody", {}, t);
+  const rows = [...L].sort((a, b) => ((b.exp_twh||0)+(b.imp_twh||0)) - ((a.exp_twh||0)+(a.imp_twh||0)));
+  for (const l of rows) {
+    el("tr", { html: `<td>${l.frm} – ${l.to}</td><td>${fmt(l.exp_twh,2)}</td><td>${fmt(l.imp_twh,2)}</td>` +
+      (hasB ? `<td>${fmt(l.bh_e)}</td><td>${fmt(l.bh_i)}</td>` : "") +
+      (hasN ? `<td>${l.ntc_e!=null?fmtP(l.ntc_e):"–"}</td><td>${l.ntc_i!=null?fmtP(l.ntc_i):"–"}</td>` : "") }, tb);
+  }
+  el("div", { class: "note", text: L[0].est
+    ? "NTC duals were not exported in this run — NTC columns show the maximum observed flow per direction (a lower bound on the limit). A→B is the line's defined direction."
+    : "NTC columns show the maximum observed flow in binding hours (equals the limit whenever it binds at least once). A→B is the line's defined direction." }, s);
+}
+
+/* ---------- storage ---------- */
+function renderStorage() {
+  const s = section("sec-stor", "Storage",
+    "State of charge over the year (daily mean). Seasonal reservoirs and short-term storage in one view.");
+  if (!D.H.soc) { el("div", { class: "missing", text: "soc.csv missing." }, s); return; }
+  const zlist = X.zones.filter(z => D.H.soc[z]);
+  if (!zlist.length) { el("div", { class: "missing", text: "No storage in any zone." }, s); return; }
+  if (!zlist.includes(state.storZone)) state.storZone = zlist[0];
+  const ctl = el("div", { class: "ctl" }, s);
+  buildSelect(ctl, "Zone", zlist, state.storZone, v => { state.storZone = v; renderStorage(); });
+  const modeBtn = el("button", { class: "btn", text: state.socMode === "abs" ? "show % of capacity" : "show absolute energy" }, ctl);
+  modeBtn.addEventListener("click", () => { state.socMode = state.socMode === "abs" ? "pct" : "abs"; renderStorage(); });
+  const z = state.storZone;
+  const allSeries = zoneSeries("soc", z, X.socOrder).map(sr => {
+    const cap = D.ann?.socmax?.[z]?.[sr.k];
+    const dm = dailyMean(sr.a), o = zeros(ND);
+    for (let i = 0; i < ND; i++) o[i] = (state.socMode === "pct" && cap) ? dm[i] / cap * 100 : dm[i];
+    return { ...sr, a: o, cap };
+  });
+  const series = allSeries.filter(sr => !hiddenStor.has(sr.k));
+  if (state.socMode === "abs") {
+    lineChart(el("div", {}, s), { series, n: ND, xMode: "year", h: 300,
+      unitFmt: v => fmtE(v), yLabel: "stored energy" , fillTo: 0});
+  } else {
+    lineChart(el("div", {}, s), { series, n: ND, xMode: "year", h: 300,
+      unitFmt: v => fmt(v, 0) + " %", yLabel: "% of energy capacity", fillTo: 0 });
+  }
+  buildLegend(s, allSeries, () => renderStorage(), hiddenStor);
+  // capacity + cycling table
+  const t = el("table", { class: "tab", style: "max-width:760px" }, s);
+  t.innerHTML = "<thead><tr><th>storage</th><th>energy capacity</th><th>discharged /a</th><th>charged /a</th><th>full cycles</th></tr></thead>";
+  const tb = el("tbody", {}, t);
+  for (const sr of zoneSeries("soc", z, X.socOrder)) {
+    const cap = D.ann?.socmax?.[z]?.[sr.k];
+    const gname = { dam: "dam", psp: "psp", battery: "battery", h2: "h2", ev: "ev" }[sr.k];
+    const genG = { dam: "dam", psp: "psp", battery: "battery", h2: "h2", ev: "v2g" }[gname];
+    const chgG = { dam: null, psp: "psp_c", battery: "battery_c", h2: "h2_c", ev: "ev_c" }[gname];
+    const dis = genG && D.H.gen?.[z]?.[genG] ? sum(D.H.gen[z][genG]) : null;
+    const chg = chgG && D.H.chg?.[z]?.[chgG] ? sum(D.H.chg[z][chgG]) : null;
+    el("tr", { html: `<td><span class="sw" style="background:${sr.color};display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px"></span>${sr.label}</td>` +
+      `<td>${cap ? fmtE(cap) : "–"}</td><td>${dis != null ? fmtE(dis) : "–"}</td>` +
+      `<td>${chg != null ? fmtE(chg) : "–"}</td><td>${cap && dis ? fmt(dis / cap, 1) : "–"}</td>` }, tb);
+  }
+  el("div", { class: "note", text: "Discharge/charge sums use the dispatch series of the matching technologies; reservoir hydro discharges natural inflow, so it has no charged column." }, s);
+}
+
+/* ---------- investment ---------- */
+function renderInvest() {
+  const s = section("sec-inv", "Capacity & investment",
+    "Installed capacity by technology: pre-existing vs. newly built in this run (optimizer's investment decision).");
+  if (!D.ann?.cap?.length) { el("div", { class: "missing", text: "gen_max.csv / investment data missing." }, s); return; }
+  const zlist = [...new Set(D.ann.cap.map(r => r.z))].sort((a, b) =>
+    a === X.focus ? -1 : b === X.focus ? 1 : a.localeCompare(b));
+  if (!zlist.includes(state.invZone)) state.invZone = zlist[0];
+  const ctl = el("div", { class: "ctl" }, s);
+  buildSelect(ctl, "Zone", zlist, state.invZone, v => { state.invZone = v; renderInvest(); });
+  const rows = D.ann.cap.filter(r => r.z === state.invZone && ((r.ex || 0) + (r.add || 0)) > 0.5)
+    .sort((a, b) => ((b.ex||0)+(b.add||0)) - ((a.ex||0)+(a.add||0)));
+  const bw = 1180, bh = rows.length * 30 + 40;
+  const f = chartFrame(el("div", {}, s), bw, bh, { l: 150, r: 120, t: 8, b: 26 });
+  const maxv = Math.max(...rows.map(r => (r.ex||0)+(r.add||0)));
+  const ticks = niceTicks(0, maxv, 5);
+  for (const v of ticks) {
+    const x = f.pad.l + f.iw * v / maxv;
+    el("line", { x1: x, x2: x, y1: f.pad.t, y2: f.pad.t + f.ih, class: "gline" }, f.svg);
+    el("text", { x, y: f.h - 8, "text-anchor": "middle", class: "axis", text: fmtP(v) }, f.svg);
+  }
+  rows.forEach((r, i) => {
+    const y = f.pad.t + i * 30 + 6;
+    const g = X.gById[r.g] || { label: r.g, color: "#999" };
+    el("text", { x: f.pad.l - 8, y: y + 12, "text-anchor": "end", class: "axis",
+                 style: "font-size:12px;fill:#33425a", text: g.label }, f.svg);
+    const wex = f.iw * (r.ex || 0) / maxv, wad = f.iw * (r.add || 0) / maxv;
+    const rect1 = el("rect", { x: f.pad.l, y, width: Math.max(wex, 0), height: 17, fill: g.color, "fill-opacity": .45, rx: 2 }, f.svg);
+    const rect2 = el("rect", { x: f.pad.l + wex, y, width: Math.max(wad, 0), height: 17, fill: g.color, rx: 2 }, f.svg);
+    el("text", { x: f.pad.l + wex + wad + 7, y: y + 12.5, class: "axis", style: "font-size:11.5px",
+      text: fmtP((r.ex||0)+(r.add||0)) + ((r.add||0) > 0.5 ? "  (+" + fmtP(r.add) + " new)" : "") }, f.svg);
+    for (const [rc, val, kind] of [[rect1, r.ex, "existing"], [rect2, r.add, "newly built"]]) {
+      rc.addEventListener("mousemove", ev => showTip(ev,
+        `<div class="h">${g.label} — ${state.invZone}</div>` + tipRow(kind, fmtP(val || 0))));
+      rc.addEventListener("mouseleave", hideTip);
+    }
+  });
+  el("div", { class: "note", html: "Light bar: pre-existing capacity (incl. exogenous RES). Solid bar: capacity added by the optimizer (investment candidates per <code>P_allinv</code>)." }, s);
+
+  // zones with any additions
+  const added = D.ann.cap.filter(r => (r.add || 0) > 0.5);
+  if (added.length) {
+    el("hr", { class: "sep" }, s);
+    el("div", { class: "tag", text: "All new builds in this run" }, s);
+    const t = el("table", { class: "tab", style: "max-width:680px" }, s);
+    t.innerHTML = "<thead><tr><th>zone</th><th>technology</th><th>added</th></tr></thead>";
+    const tb = el("tbody", {}, t);
+    for (const r of added.sort((a, b) => b.add - a.add))
+      el("tr", { html: `<td>${r.z}</td><td>${(X.gById[r.g]||{label:r.g}).label}</td><td>${fmtP(r.add)}</td>` }, tb);
+  }
+}
+
+/* ---------- curtailment & scarcity ---------- */
+function renderCurtail() {
+  const s = section("sec-curt", "Curtailment & scarcity",
+    "Renewable surplus that could not be absorbed, and any involuntary load shedding.");
+  const H = D.H;
+  if (!H.curt || !Object.keys(H.curt).length) {
+    el("div", { class: "missing", text: "No curtailment data in this run." }, s); return;
+  }
+  // monthly stacked by zone (top 6 + rest)
+  const totals = Object.entries(H.curt).map(([z, a]) => [z, sum(a)]).sort((a, b) => b[1] - a[1]);
+  const topZ = totals.slice(0, 6).map(x => x[0]);
+  const palette = ["#1f407a","#c0604d","#8aa353","#b07aa1","#5ab4ac","#e8b04b","#9aa5b1"];
+  const months = [...Array(12)].map(() => ({}));
+  for (const [z, a] of Object.entries(H.curt)) {
+    const key = topZ.includes(z) ? z : "other";
+    for (let h = 0; h < NH; h++) {
+      const m = monthOfDay[Math.floor(h / 24)];
+      months[m][key] = (months[m][key] || 0) + a[h];
+    }
+  }
+  const keys = [...topZ, "other"].filter(k => months.some(m => m[k]));
+  const bw = 1180, bh = 280, f = chartFrame(el("div", {}, s), bw, bh, { l: 64, r: 10, t: 10, b: 28 });
+  const mtot = months.map(m => Object.values(m).reduce((a, b) => a + b, 0));
+  const maxv = Math.max(...mtot, 1);
+  const ty = yAxis(f, 0, maxv * 1.05, v => fmtE(v).replace(" ", " "), 5);
+  for (let p = 0; p < 12; p++) {
+    const mi = CAL_OF_DISP(p), m = months[mi];
+    const x = f.pad.l + f.iw * (p + 0.12) / 12, wq = f.iw / 12 * 0.74;
+    let acc = 0;
+    keys.forEach((k, ki) => {
+      const v = m[k] || 0; if (v <= 0) return;
+      const r = el("rect", { x, y: ty(acc + v), width: wq, height: ty(acc) - ty(acc + v),
+                             fill: palette[ki % palette.length], "fill-opacity": .9 }, f.svg);
+      r.addEventListener("mousemove", ev => showTip(ev,
+        `<div class="h">${MONTHS[mi]}</div>` + tipRow(k, fmtE(v), palette[ki % palette.length]) +
+        tipRow("month total", fmtE(mtot[mi]))));
+      r.addEventListener("mouseleave", hideTip);
+      acc += v;
+    });
+    el("text", { x: x + wq/2, y: f.h - 8, "text-anchor": "middle", class: "axis", text: MONTHS_DISP[p] }, f.svg);
+  }
+  const lg = el("div", { class: "legend" }, s);
+  keys.forEach((k, ki) => {
+    const li = el("span", { class: "li", style: "cursor:default" }, lg);
+    el("span", { class: "sw", style: "background:" + palette[ki % palette.length] }, li);
+    el("span", { text: k }, li);
+  });
+  // lost load
+  el("hr", { class: "sep" }, s);
+  const llTot = D.kpis?.ll_gwh_sys;
+  if (!llTot) {
+    el("div", { class: "note", text: "✓ No lost load (load shedding) anywhere in this run." }, s);
+  } else {
+    el("div", { class: "tag", text: "Lost load events" }, s);
+    const t = el("table", { class: "tab", style: "max-width:560px" }, s);
+    t.innerHTML = "<thead><tr><th>zone</th><th>energy</th><th>hours</th><th>max MW</th></tr></thead>";
+    const tb = el("tbody", {}, t);
+    for (const [z, aRaw] of Object.entries(D.H.ll || {})) {
+      const a = Float64Array.from(aRaw);
+      let hrs = 0, mx = 0; for (const v of a) { if (v > 1e-3) hrs++; if (v > mx) mx = v; }
+      el("tr", { html: `<td>${z}</td><td>${fmtE(sum(a))}</td><td>${fmt(hrs)}</td><td>${fmt(mx, 0)}</td>` }, tb);
+    }
+  }
+}
+
+/* ---------- district heating ---------- */
+function renderDH() {
+  if (!D.dh || !Object.keys(D.dh.price || D.dh.dem || {}).length) return;
+  const s = section("sec-dh", "District heating",
+    "Heat price, dispatch and thermal storage per DH node. Prices are duals of the thermal energy balance.");
+  const nodes = D.meta.dh_nodes || Object.keys(D.dh.price || D.dh.dem);
+  if (!nodes.includes(state.dhNode)) state.dhNode = nodes[0];
+  const ctl = el("div", { class: "ctl" }, s);
+  buildSelect(ctl, "DH node", nodes, state.dhNode, v => { state.dhNode = v; renderDH(); renderDay(); });
+  const n = state.dhNode;
+  const grid = el("div", { class: "grid2" }, s);
+
+  if (has(D.dh.price, n)) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Heat price (daily mean / min–max band)" }, c);
+    const a = arr(D.dh.price, n), dm = dailyMean(a), dmin = zeros(ND), dmax = zeros(ND);
+    for (let d = 0; d < ND; d++) { let mn = 1e99, mx = -1e99;
+      for (let h = 0; h < 24; h++) { const v = a[d*24+h]; if (v < mn) mn = v; if (v > mx) mx = v; }
+      dmin[d] = mn; dmax[d] = mx; }
+    const f = lineChart(c, { series: [
+        { label: "daily max", color: "#e3c2bb", a: dmax, w: 1 },
+        { label: "daily mean", color: "#c0604d", a: dm, w: 2 },
+        { label: "daily min", color: "#e3c2bb", a: dmin, w: 1 }],
+      n: ND, w: 560, h: 260, xMode: "year", unitFmt: v => fmt(v, 0), yLabel: D.meta.currency + "/MWh th" });
+  }
+  if (D.dh.gen && D.dh.gen[n]) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Heat dispatch (daily mean)" }, c);
+    const pos = X.dhOrder.filter(g => has(D.dh.gen[n], g)).map(g => ({
+      k: "dh_" + g, label: (X.gById[g] || { label: g }).label, color: (X.gById[g] || { color: "#999" }).color,
+      a: dailyMean(arr(D.dh.gen[n], g)) }));
+    const neg = X.dhChgOrder.filter(g => D.dh.chg?.[n]?.[g]).map(g => ({
+      k: "dh_" + g, label: (X.gById[g] || { label: g }).label, color: (X.gById[g] || { color: "#999" }).color,
+      a: dailyMean(arr(D.dh.chg[n], g)) }));
+    const lines = has(D.dh.dem, n) ? [{ label: "heat demand", color: "#1c2733", a: dailyMean(arr(D.dh.dem, n)), w: 1.6 }] : [];
+    dispatchChart(el("div", {}, c), { pos, neg, lines, n: ND, xMode: "year",
+                                      unit: "MW th", w: 560, h: 260, yDiv: 1, hset: hiddenDH });
+    buildLegend(c, [...pos, ...neg], () => { renderDH(); }, hiddenDH);
+  }
+  if (has(D.dh.soc, n)) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Thermal storage state of charge" }, c);
+    const cap = D.dh.socmax?.[n];
+    lineChart(c, { series: [{ label: "TES SoC", color: "#5a9bd5", a: dailyMean(arr(D.dh.soc, n)), w: 1.8 }],
+      n: ND, w: 560, h: 260, xMode: "year", unitFmt: v => fmtE(v), fillTo: 0,
+      refLines: cap ? [{ v: cap, label: "capacity " + fmtE(cap), color: "#aab2bb" }] : [] });
+  }
+  if (D.dh.cap?.length) {
+    const c = el("div", {}, grid);
+    el("div", { class: "tag", text: "Installed thermal capacity — " + n }, c);
+    const rows = D.dh.cap.filter(r => r.n === n && r.mw > 0.05).sort((a, b) => b.mw - a.mw);
+    const bw = 560, bh = rows.length * 28 + 30;
+    const f = chartFrame(c, bw, bh, { l: 150, r: 90, t: 6, b: 20 });
+    const maxv = Math.max(...rows.map(r => r.mw), 1);
+    rows.forEach((r, i) => {
+      const g = X.gById[r.g] || { label: r.g, color: "#999" };
+      const y = f.pad.t + i * 28 + 5;
+      el("text", { x: f.pad.l - 8, y: y + 11, "text-anchor": "end", class: "axis",
+                   style: "font-size:11.5px;fill:#33425a", text: g.label }, f.svg);
+      el("rect", { x: f.pad.l, y, width: Math.max(1.5, f.iw * r.mw / maxv), height: 16, rx: 2, fill: g.color }, f.svg);
+      el("text", { x: f.pad.l + Math.max(1.5, f.iw * r.mw / maxv) + 6, y: y + 11.5, class: "axis",
+                   style: "font-size:11px", text: fmt(r.mw, 1) + " MW" }, f.svg);
+    });
+  }
+  // node overview table
+  const t = el("table", { class: "tab", style: "max-width:880px;margin-top:14px" }, s);
+  t.innerHTML = "<thead><tr><th>node</th><th>demand</th><th>peak demand</th><th>mean price</th><th>max price</th><th>TES capacity</th></tr></thead>";
+  const tb = el("tbody", {}, t);
+  for (const nn of nodes) {
+    const dem = has(D.dh.dem, nn) ? arr(D.dh.dem, nn) : null;
+    const pr  = has(D.dh.price, nn) ? arr(D.dh.price, nn) : null;
+    let pk = null; if (dem) { pk = 0; for (const v of dem) if (v > pk) pk = v; }
+    let pmean = null, pmax = null;
+    if (pr) { pmean = sum(pr)/NH; pmax = -1e99; for (const v of pr) if (v > pmax) pmax = v; }
+    el("tr", { html: `<td>${nn}</td><td>${dem ? fmtE(sum(dem)) : "–"}</td><td>${pk != null ? fmt(pk, 0) + " MW" : "–"}</td>` +
+      `<td>${pmean != null ? fmt(pmean, 1) : "–"}</td><td>${pmax != null ? fmt(pmax, 1) : "–"}</td>` +
+      `<td>${D.dh.socmax?.[nn] ? fmtE(D.dh.socmax[nn]) : "–"}</td>` }, tb);
+  }
+}
+
+/* ---------- footer / meta ---------- */
+function renderFooter() {
+  const s = section("sec-meta", null, null);
+  const m = D.meta;
+  const det = el("details", { class: "meta" }, s);
+  el("summary", { text: "Run details, settings and data provenance" }, det);
+  const info = el("div", { style: "margin-top:10px" }, det);
+  el("p", { html: `Converted <b>${m.created || "?"}</b> from <code>output/${m.scenario}/</code> ` +
+    `(sub-scenario <code>${m.sub_scenario || "–"}</code>, model v${m.model_version || "?"}, branch <code>${m.branch || "?"}</code>). ` +
+    `Hours follow the weather-year ${m.weather_year} calendar; the optimization runs Oct→Sep (hydrological year) and wraps around.` }, info);
+  if (m.missing_files?.length)
+    el("p", { html: "<b>Missing outputs in this run:</b> " + m.missing_files.join(", ") }, info);
+  if (D.kpis?.costs) {
+    const c = D.kpis.costs;
+    el("p", { html: `Cost breakdown: investment ${fmtCHF(c.inv)} · operation ${fmtCHF(c.op)}` +
+      (c.ll ? ` · lost load ${fmtCHF(c.ll)}` : "") + (c.trade ? ` · trade ${fmtCHF(c.trade)}` : "") + " " + m.currency }, info);
+  }
+  const t = el("table", { class: "tab", style: "max-width:740px" }, info);
+  t.innerHTML = "<thead><tr><th>setting</th><th style='text-align:left'>value</th></tr></thead>";
+  const tb = el("tbody", {}, t);
+  for (const [k, v] of Object.entries(m.settings || {}))
+    el("tr", { html: `<td>${k}</td><td style="text-align:left">${String(v).slice(0, 90)}</td>` }, tb);
+}
+
+/* ---------- render all ---------- */
+function renderAll() {
+  $("#drop").style.display = "none";
+  APP.style.display = "block";
+  APP.innerHTML = "";
+  renderHeader();
+  renderKpis();
+  renderHeatmap();
+  renderDispatch();
+  renderDay();
+  renderPrices();
+  renderExchange();
+  renderStorage();
+  renderInvest();
+  renderCurtail();
+  renderDH();
+  renderFooter();
+}
+</script>
+</body>
+</html>

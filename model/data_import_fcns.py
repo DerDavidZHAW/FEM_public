@@ -9,6 +9,7 @@ from model.mappings import (
     nodes_without_offshore_wind,
 )
 from model.structural_parameters import ch_subnode_list, add_additional_batteries, reduce_fr_be_demand
+from model.dh_demand_adjustment import load_dh_adjustment_file, apply_dh_demand_adjustment
 import re
 import json
 from pathlib import Path
@@ -984,8 +985,8 @@ def read_fuel_limit_data(ch_policy, run_year, limit_fuel_import_CH, limited_fuel
 
     return fuel_capacity_annual
 
-def read_demandDH_data(run_year, weather_year, reduce_DH_demand_by):
-    """	
+def read_demandDH_data(run_year, weather_year, reduce_DH_demand_by, DH_demand_adjustment_file=False):
+    """
     Read district heating demand data from csv file and store in dictionary demandDH_data.
 
     Arguments:
@@ -994,6 +995,7 @@ def read_demandDH_data(run_year, weather_year, reduce_DH_demand_by):
     run_year -- integer, year of the run (e.g., 2050)
     weather_year -- integer, year of the weather data (e.g., 1995)
     reduce_DH_demand_by -- float, an amount in MWh by which the inflexible demand is reduced. Each hour is reduced by a certain percentage to reach to total desired reduction.
+    DH_demand_adjustment_file -- False (off) or a CSV filename in input/demand/adjustments/ holding a wide table of signed MW deltas (NodeDH x t_1..t_8760) added to the assembled demand. See PRD #43.
 
     Returns:
     demandDH_data -- dictionary, keys are pairs of (district heating nodes, time steps) and values are corresponding thermal demand in MW
@@ -1053,6 +1055,18 @@ def read_demandDH_data(run_year, weather_year, reduce_DH_demand_by):
     # adjusting the demand for DH demand according to the settings
     factor = (sum(demandDH_data.values()) - reduce_DH_demand_by) / sum(demandDH_data.values())
     demandDH_data = {k: v * factor for k, v in demandDH_data.items()}
+
+    # per-scenario DH demand adjustment overlay (PRD #43): add signed MW deltas
+    # from input/demand/adjustments/<file> to the assembled demand. No-op when
+    # DH_demand_adjustment_file is False.
+    adjustment_df = load_dh_adjustment_file(DH_demand_adjustment_file)
+    if adjustment_df is not None:
+        valid_nodes = {k[0] for k in demandDH_data}
+        valid_hours = {k[1] for k in demandDH_data}
+        demandDH_data = apply_dh_demand_adjustment(
+            demandDH_data, adjustment_df, valid_nodes, valid_hours,
+            reduce_DH_demand_by=reduce_DH_demand_by,
+        )
 
     return demandDH_data
 

@@ -2369,7 +2369,12 @@ def dsrth_thermal_energy_dev_tracking(model, p, t, s):
     # if t == first_hour_week or t == last_hour_week: # fix the deviation at the beginning and end of the week
     #     return model.dsrThDev[p, t, s] == 0
     # else:
-    T_until_now = [t_ for t_ in T_of_corresponding_week if t_ <= t]
+    # NOTE: compare by numeric hour index, NOT by the raw "t_<n>" strings.
+    # String comparison is lexicographic ("t_10" <= "t_3" is True), which
+    # silently pulls the wrong hours into the running sum for any week whose
+    # hour indices span different digit-lengths (e.g. week_1 = t_1..t_168).
+    t_idx = T_of_corresponding_week.index(t)
+    T_until_now = T_of_corresponding_week[: t_idx + 1]
     return sf * model.dsrThDev[p, t, s] == sf * sum(
         model.storage_chargeTh[p, t_, s] - model.genTh[p, t_, s] for t_ in T_until_now
     )
@@ -2722,3 +2727,28 @@ def fixing_capacities_central(model, sub_scenarios_list):
                 plant for plant in model.PDH if Map_plantDH_tech[plant] == "dsrTh" and plant not in model.PDH_allinvTh
             ]
             fix_variables(model.genTh_max, Plant_list_to_fix, PlantDH_capacity, sub_scen)
+
+
+            # fix thermal generation capacity of pre-installed heat pumps to their
+            # electric consumption capacity times the plant efficiency (COP).
+            # NOTE: this fixation is not strictly necessary — heat_electric_profile_heatpump
+            # (genTh == efficiency * storage_charge) together with the pmp_max fixation above
+            # already guarantees that the electric and thermal side of a heat pump stay
+            # consistent. We fix genTh_max explicitly anyway so that the duals are
+            # well-defined: with a free-floating genTh_max the dual of generationTh_limit
+            # is forced to zero and the HP scarcity rent hides on the electric-side
+            # storage_rate_limit constraint; with genTh_max fixed, the rent appears on
+            # generationTh_limit_dual — consistent with all other DH plants — and the
+            # electric-side dual becomes zero instead. Verified on the test scenario:
+            # the rent relocates exactly (rent_el = COP * rent_th after constraint_scaling)
+            # and the optimal objective is unchanged.
+            Plant_list_to_fix = [
+                plant
+                for plant in model.PDH if Map_plantDH_tech[plant] in ["heat_pump"] and plant not in model.P_allinv and plant not in model.PDH_allinvTh
+            ]
+            PlantDH_capacity_th = {
+                (plant, sub_scen): PlantDH_capacity[plant, sub_scen]
+                * PlantDH_data_remaining[plant, "efficiency", sub_scen]
+                for plant in Plant_list_to_fix
+            }
+            fix_variables(model.genTh_max, Plant_list_to_fix, PlantDH_capacity_th, sub_scen)

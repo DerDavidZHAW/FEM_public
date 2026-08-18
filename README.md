@@ -358,6 +358,53 @@ The model includes comprehensive visualization capabilities:
 - **Price analysis**: Electricity and heat price patterns
 - **Interactive HTML plots** with Plotly for detailed analysis
 
+### Standalone Results Dashboard (`viewer.html`)
+
+A self-contained, dependency-free dashboard for exploring a single solved run.
+Two parts:
+
+1. **Converter** — packs one run's outputs into a compact gzipped JSON
+   (written to `plots/`, gitignored):
+
+   ```bash
+   python tools/prepare_viewer.py output/<run_name>      # one run
+   python tools/prepare_viewer.py output --all           # every run in output/
+   python tools/prepare_viewer.py output/<run> --out-dir plots --sub-scenario <name>
+   ```
+
+   Produces `plots/<run_name>_viewer.json.gz` (~5 MB per run). Missing output
+   files are warned about and skipped; the converter checks that the zonal
+   energy balance closes after its technology grouping.
+
+2. **Viewer** — open `viewer.html` in any modern browser (no server, no
+   installation, no internet; the file can be e-mailed) and drag the
+   `*_viewer.json.gz` onto it.
+
+Dashboard contents:
+
+- **Headline KPIs**: system cost, CH prices, net imports, RES share,
+  curtailment, CO2, new capacity, district-heat price
+- **Annual heatmap** (hour × day): price, residual load, net imports, storage
+  output, curtailment — click any cell to open the day
+- **Dispatch stacks**: daily mean over the year and hourly day detail, with
+  load overlay and click-to-toggle legends
+- **Day drill-down**: hourly dispatch, zonal prices, border flows with
+  NTC-binding markers, storage state of charge, district-heat panel
+- **Prices**: duration curves, monthly means, per-zone statistics
+- **Cross-border exchange**: CH border schematic, congestion ranking
+  (share of hours the NTC binds), full line table. If a run was solved
+  without dual export, the maximum observed flow is shown as the NTC
+  estimate (`NTC*`)
+- **Storage**: seasonal state of charge (absolute or % of capacity), cycling
+  statistics
+- **Capacity & investment**: pre-existing vs. newly built per zone/technology
+- **Curtailment & scarcity**: monthly curtailment by zone, lost-load events
+- **District heating**: heat price, dispatch, TES state of charge and
+  capacities per DH node
+
+All annual views follow the model's hydrological year (October–September,
+see `input/timemaps_hydro_year.csv`).
+
 ## Contributing
 
 1. Create feature branches for new developments
