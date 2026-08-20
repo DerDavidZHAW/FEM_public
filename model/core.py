@@ -210,7 +210,7 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     else:
         print("  OK: No unusually large objective coefficients found.")
     
-    solver_parameters = "threads=8"  
+    solver_parameters = "threads=8 method=2 crossover=0"
 
     result = opt.solve(
         model,
