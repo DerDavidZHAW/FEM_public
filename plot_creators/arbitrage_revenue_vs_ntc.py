@@ -84,7 +84,8 @@ def revenue_kchf_per_mw(prices):
     frac = DURATION_H - k
     bot = daily[:, :k].sum(axis=1) + frac * daily[:, k]
     top = daily[:, -k:].sum(axis=1) + frac * daily[:, -(k + 1)]
-    return (ETA_RT * top - bot).sum() * FX_EUR_CHF / 1e3
+    daily_revenue = ETA_RT * top - bot
+    return np.maximum(daily_revenue, 0).sum() * FX_EUR_CHF / 1e3
 
 
 data = {}

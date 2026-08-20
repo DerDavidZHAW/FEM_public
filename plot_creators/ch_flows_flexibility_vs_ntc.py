@@ -1,7 +1,7 @@
 """Net cross-border flows and flexibility operation across NTC levels (primary scenario).
 
 Creates the paper figure showing (top row) Swiss net cross-border flows per border
-plus their total, and (bottom row) battery discharge and pumped-storage pumping,
+plus their total, and (bottom row) battery charging and pumped-storage pumping,
 for 2035 and 2050, averaged over the three weather years. Data comes from the
 aggregated Annual_balance_ch.csv files of the NTC sensitivity runs.
 """
