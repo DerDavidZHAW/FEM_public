@@ -73,6 +73,7 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     winter_limit = {}
     minimum_RES_target_CH = {}
     weight_in_objective_fcn = {}
+    duals_export_all = {}
 
     # Create an empty dictionary to store the settings data
     settings_dict = {}
@@ -89,6 +90,7 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         winter_limit[sub_scen] = settings_scen["winter_limit"]
         minimum_RES_target_CH[sub_scen] = settings_scen["minimum_RES_target_CH"]
         weight_in_objective_fcn[sub_scen] = settings_scen["weight_in_objective_fcn"]
+        duals_export_all[sub_scen] = settings_scen["DUALS_EXPORT_ALL"]
 
         # the settings below are forced to be equal for all sub_scenarios (using the last sub_scenario)
         T_list = settings_scen["T_list"]
@@ -339,8 +341,12 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
 
     if minimum_RES_target_CH[sub_scen]:
         constraint_names_to_export.append("Constraint_investment_res_CH")
-    constraint_list = [v for v in model.component_objects(ctype=Constraint, active=True, descend_into=True)
-                       if v.name in constraint_names_to_export]
+    
+    if any(duals_export_all.values()): # If DUALS_EXPORT_ALL is True for any subscenario, export all duals
+        constraint_list = [v for v in model.component_objects(ctype=Constraint, active=True, descend_into=True)]
+    else:
+        constraint_list = [v for v in model.component_objects(ctype=Constraint, active=True, descend_into=True)
+                        if v.name in constraint_names_to_export]
     
     # export all dual values of constraints in constraint_list
     dual_values_dict = res_export.constraints(constraint_list, scenario_name, model, write_csv=True)
