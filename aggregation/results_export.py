@@ -1,4 +1,5 @@
 import pandas as pd
+import pyomo.environ as pyo
 from pathlib import Path
 
 
@@ -50,22 +51,40 @@ def par_var(var_list, scenario_name):
             result_values.to_csv(output_path)
 
 
+def constraint_scaling_factor(constraint_name, model):
+    """Row-scaling factor the model applied to this constraint (model/constraint_scaling.py).
+
+    A constraint without an entry is not scaled (its rule cannot read a factor), so its factor is 1.
+    """
+    # consume_tot_limit is built as one scalar constraint per plant, named consume_tot_limit_<plant>_<n>_<scenario>
+    key = "consume_tot_limit" if constraint_name.startswith("consume_tot_limit_") else constraint_name
+    if key not in model.constraint_scaling:
+        return 1.0
+    return pyo.value(model.constraint_scaling[key])
+
+
 def constraints(constraint_list, scenario_name, model, write_csv=True):
+    """Export constraint duals in the units of the unscaled constraint.
+
+    Each row is scaled by sf on both sides in the model, so the solver's dual is 1/sf times the
+    dual of the original constraint; the exported value is sf * solver dual.
+    """
     print("Exporting duals...")
     result_duals_dict = {}
     for constraint in constraint_list:
         data = {}
         counter = 0
+        sf = constraint_scaling_factor(constraint.name, model)
         try:
             for index in constraint:
                 if constraint.dim() == 0:
                     data[counter] = [constraint.name] + [
-                        model.dual[constraint[index]]
+                        sf * model.dual[constraint[index]]
                     ]  # NOTE: there will be so may constraints for limited energy plants, because every duration has its own constraint
                 elif constraint.dim() != 1:
-                    data[counter] = [i for i in index] + [model.dual[constraint[index]]]
+                    data[counter] = [i for i in index] + [sf * model.dual[constraint[index]]]
                 else:
-                    data[counter] = [index] + [model.dual[constraint[index]]]
+                    data[counter] = [index] + [sf * model.dual[constraint[index]]]
                 counter += 1
 
             result_duals = pd.DataFrame.from_dict(data, orient="index")
