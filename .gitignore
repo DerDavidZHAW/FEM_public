@@ -166,3 +166,14 @@ input/hydro_WATSA/camels_ch/
 
 # Per-user Poetry config written by the Euler walkthrough — local-only by design
 poetry.toml
+
+# Raw downloads of the historical data pipeline (data_prep/historical); re-created by download.py
+input/historical/raw/*
+# ...except the hand copy of the ENTSO-E web table, which download.py cannot recreate
+!input/historical/raw/entsoe_web/
+# Processed tables (re-created by process.py), local backups, analysis outputs and the local comparison
+# with a parallel data set: kept on disk, not versioned
+input/historical/processed/
+input/historical/snapshots/
+input/historical/analysis/
+input/historical_comparison/

@@ -1,0 +1,2173 @@
+{
+ "bfe/ogd17_fuellungsgrad_speicherseen.csv": {
+  "url": "https://www.bfe-ogd.ch/ogd17/ogd17_fuellungsgrad_speicherseen.csv",
+  "retrieved_at_utc": "2026-10-09T14:44:49+00:00",
+  "bytes": 84046,
+  "sha256": "e365c95db57c890adae5cbc49496febafe716889e0e290fafb273de039e34281",
+  "http_status": 200,
+  "content_type": "text/csv",
+  "last_modified": "Tue, 06 Oct 2026 13:23:31 GMT",
+  "etag": "\"994c94dc0b6e3d81e21816b7bba8cd78\""
+ },
+ "bfe/ogd35_schweizerische_elektrizitaetsbilanz_monatswerte.csv": {
+  "url": "https://www.bfe-ogd.ch/ogd35/ogd35_schweizerische_elektrizitaetsbilanz_monatswerte.csv",
+  "retrieved_at_utc": "2026-10-09T14:44:50+00:00",
+  "bytes": 25956,
+  "sha256": "0b241fa2a28b9cab0f21ffd04996d9c15cc8de5fadf96504601779ea58acbe1f",
+  "http_status": 200,
+  "content_type": "text/csv",
+  "last_modified": "Wed, 07 Oct 2026 07:18:58 GMT",
+  "etag": "\"701a4c7d2b67112b32f73173b30ef377\""
+ },
+ "energy_charts/cbet/cbet_ch_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/cbet?country=ch&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 4465143,
+  "sha256": "63ab15873da693c1ed07ed8741099e733bccea30c9315bdfea899d4009858d3e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:39:28+00:00"
+ },
+ "energy_charts/cbet/cbet_ch_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/cbet?country=ch&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 4445966,
+  "sha256": "7235f00925cf588267f9d469639ce0be8294af8b0dbfb38f99955ef5a914e702",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:43:27+00:00"
+ },
+ "energy_charts/cbet/cbet_ch_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/cbet?country=ch&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 4415231,
+  "sha256": "25cc762b43d375981e589a38a32b6e160e0930055dba2fe4530590090c653a73",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:47:37+00:00"
+ },
+ "energy_charts/cbpf/cbpf_ch_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/cbpf?country=ch&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 4508993,
+  "sha256": "d491b376fdea9541f514e67fd749342eb5e96527be620385aa69f56aaaae3a40",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:39:51+00:00"
+ },
+ "energy_charts/cbpf/cbpf_ch_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/cbpf?country=ch&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 4480813,
+  "sha256": "0b5a8461b4abf16a7ecda999db2feafd74a42a28df0509a205277406039c5a9f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:43:58+00:00"
+ },
+ "energy_charts/cbpf/cbpf_ch_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/cbpf?country=ch&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 4476035,
+  "sha256": "dba5c3cc113cd9c09afb1fe63ab07b8f8aa11b2b908294ac4bb9351304ca79ec",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:48:06+00:00"
+ },
+ "energy_charts/installed_power/installed_power_ch_yearly.json": {
+  "url": "https://api.energy-charts.info/v2/installed_power?country=ch&time_step=yearly",
+  "retrieved_at_utc": null,
+  "bytes": 11146,
+  "sha256": "b4db39aa300607d9c5e737c5687e65e046fb6c93e806bbdee1f614318161cac0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:35:39+00:00"
+ },
+ "energy_charts/price/price_AT_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=AT&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 677253,
+  "sha256": "5714358eef7d1e9dc5454aa8097d633995968000ed0bf1e177e686ecfa73ee28",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:15+00:00"
+ },
+ "energy_charts/price/price_AT_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=AT&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 678037,
+  "sha256": "45855b14c298d7f6f7572fcddbbf1e7edf65efcaeb47ec4d03de0bc990681518",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:42:23+00:00"
+ },
+ "energy_charts/price/price_AT_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=AT&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 2716988,
+  "sha256": "727e7e1aa6d4b65dbd9d7be3aac142443b31ee0c1d4c13aef09f438dcc79be51",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:46:32+00:00"
+ },
+ "energy_charts/price/price_CH_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=CH&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 677411,
+  "sha256": "499c0a78d5850b5b818105e8b101a2934fa6c2c57886d2c8c5593a6b497a94d1",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:12+00:00"
+ },
+ "energy_charts/price/price_CH_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=CH&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 678539,
+  "sha256": "7d296e6a4061f2206170624c02e0640c804580b8ba1875546e82f69375603ed9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:40:19+00:00"
+ },
+ "energy_charts/price/price_CH_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=CH&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 678573,
+  "sha256": "5d3d4d3e1fdd06d8dfbc60d6ee98e34d471faa4db822c08fba14199e8d19a0e9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:44:27+00:00"
+ },
+ "energy_charts/price/price_DE-LU_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=DE-LU&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 677232,
+  "sha256": "c3c5bebc73313c07cee2bb415a0b7dda66b1c0d989b2301c8144c5c2c3f29a2a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:42+00:00"
+ },
+ "energy_charts/price/price_DE-LU_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=DE-LU&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 676986,
+  "sha256": "fe1b29e4697da026f28ecce3e1d8aee30d7816c465a39da9fb44656a2289c9f8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:40:50+00:00"
+ },
+ "energy_charts/price/price_DE-LU_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=DE-LU&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 2711238,
+  "sha256": "284b4cd94381a6185d0acda37c50098098036a304a662263a4a1104724f6dff3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:44:59+00:00"
+ },
+ "energy_charts/price/price_FR_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=FR&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 675504,
+  "sha256": "d5384643df687214786c72b27ef5c36dcba596db454ae78778360edbe9dbe77a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:13+00:00"
+ },
+ "energy_charts/price/price_FR_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=FR&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 674968,
+  "sha256": "184e7deb2a26559353686655dbca8c6d7e4d9976641a7412efb739d004cd0e60",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:41:21+00:00"
+ },
+ "energy_charts/price/price_FR_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=FR&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 2699208,
+  "sha256": "f14ddad86505c44feea92f1cda690074f65bdc2963ede3c0a6fc423c2879345d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:45:31+00:00"
+ },
+ "energy_charts/price/price_IT-North_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=IT-North&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 678915,
+  "sha256": "b2d47443a6d36f09c586caa98a81a7d2a71c1097fcb97adea36281d73a025ef7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:44+00:00"
+ },
+ "energy_charts/price/price_IT-North_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=IT-North&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 678671,
+  "sha256": "ae097395a37a8cf5424869119e996bf85a72e4d0ef8c05babbf6b0e166451fca",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:41:52+00:00"
+ },
+ "energy_charts/price/price_IT-North_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/price?bzn=IT-North&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 2718624,
+  "sha256": "80bfd00f3c0c81d55fb8b7f44d57069477c8dc05c060e397e970700730f7f015",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:46:05+00:00"
+ },
+ "energy_charts/public_power/public_power_ch_2023-10-01_2024-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/public_power?country=ch&start=2023-10-01&end=2024-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 3102317,
+  "sha256": "c0c8779e130988ab3fb916ac4e19479d7132f270526f12445bc483fe5c277f21",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:47+00:00"
+ },
+ "energy_charts/public_power/public_power_ch_2024-10-01_2025-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/public_power?country=ch&start=2024-10-01&end=2025-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 3089866,
+  "sha256": "ddf3e98e906e51eac88735e33839d93c802b324245f5c2d22abca846f8b9ebb9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:42:56+00:00"
+ },
+ "energy_charts/public_power/public_power_ch_2025-10-01_2026-09-30.json": {
+  "url": "https://api.energy-charts.info/v2/public_power?country=ch&start=2025-10-01&end=2026-09-30",
+  "retrieved_at_utc": null,
+  "bytes": 3086622,
+  "sha256": "426c729a2e58875ce5d2be9856f415a740df21a3357797c8bfff090f2a2a497c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:47:12+00:00"
+ },
+ "swissgrid/cross_border_flows/Grenzfluesse-2026.csv": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8f24b41a-6174-4116-b589-cad1e51c7248/Grenzfluesse-2026.csv",
+  "retrieved_at_utc": null,
+  "bytes": 3112515,
+  "sha256": "4ab8783b51d4abb869cef6b7e74cc15cece56a7d0dc265e4a39886486775d5ab",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:17+00:00"
+ },
+ "swissgrid/energy_overview/EnergieUebersichtCH-2023.xlsx": {
+  "url": "https://www.swissgrid.ch/dam/jcr:32576046-3686-4a62-bc32-9b55a89a2142/EnergieUebersichtCH-2023.xlsx",
+  "retrieved_at_utc": null,
+  "bytes": 24237088,
+  "sha256": "b86e0fab5834726a28545bd91dfeba279d751ad34ce2bf33cae0edb52117f0e7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:35:48+00:00"
+ },
+ "swissgrid/energy_overview/EnergieUebersichtCH-2024.xlsx": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4d4ca899-395d-4d3d-9958-5ace16ecbfbf/EnergieUebersichtCH-2024.xlsx",
+  "retrieved_at_utc": null,
+  "bytes": 24366485,
+  "sha256": "3944594e167e6a50762e7c30ad81b3209fc2e9b719a36a9321b477bbaccf8605",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:35:56+00:00"
+ },
+ "swissgrid/energy_overview/EnergieUebersichtCH-2025.xlsx": {
+  "url": "https://www.swissgrid.ch/dam/jcr:bbbbadc6-3656-4dfe-b81e-bbb9ad01be79/EnergieUebersichtCH-2025.xlsx",
+  "retrieved_at_utc": null,
+  "bytes": 26429715,
+  "sha256": "48ba9c57086fc0f00c96ba5cf7f449b0f51fd098451783bc4f3c36628a2944de",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:07+00:00"
+ },
+ "swissgrid/energy_overview/EnergieUebersichtCH-2026.xlsx": {
+  "url": "https://www.swissgrid.ch/dam/jcr:805e525c-44fe-4701-a227-6144193257ac/EnergieUebersichtCH-2026.xlsx",
+  "retrieved_at_utc": null,
+  "bytes": 16344346,
+  "sha256": "3548424e9cbd96d9a776ce4d77f4e5c805362f12dc2a8901506e8c475c943d9c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:15+00:00"
+ },
+ "swissgrid/listings/cross_border_flows.html": {
+  "url": "https://www.swissgrid.ch/en/home/operation/grid-data/cross-border-load-flows.html",
+  "retrieved_at_utc": "2026-10-09T14:45:24+00:00",
+  "bytes": 107540,
+  "sha256": "46ace3080082ade6e37fcc2b390f9a4ec5b4a42ec16601296ba2319ef8cba5aa",
+  "http_status": 200,
+  "content_type": "text/html;charset=UTF-8",
+  "last_modified": "Fri, 09 Oct 2026 14:38:41 GMT",
+  "etag": null
+ },
+ "swissgrid/listings/energy_overview.html": {
+  "url": "https://www.swissgrid.ch/en/home/operation/grid-data/transmission.html",
+  "retrieved_at_utc": "2026-10-09T14:45:24+00:00",
+  "bytes": 128284,
+  "sha256": "d35c26c8956172748cef9ef7966ae52d64f115aa7c01baccd4a57ccf436778f2",
+  "http_status": 200,
+  "content_type": "text/html;charset=UTF-8",
+  "last_modified": "Fri, 09 Oct 2026 14:45:03 GMT",
+  "etag": null
+ },
+ "swissgrid/listings/ntc_d2.html": {
+  "url": "https://www.swissgrid.ch/en/home/customers/topics/congestion-mgmt/ntc/d-2-ntc.html",
+  "retrieved_at_utc": "2026-10-09T14:45:25+00:00",
+  "bytes": 1004651,
+  "sha256": "77f88a64dac0551093e76ffa9fb484d1ca1d9cd2929072feff7ea7ada9b3b1a5",
+  "http_status": 200,
+  "content_type": "text/html;charset=UTF-8",
+  "last_modified": null,
+  "etag": null
+ },
+ "swissgrid/ntc_d2/NTC-20260101.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:97f8dbf6-38be-4ed9-ba50-676ce2825838/NTC-20260101.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25014,
+  "sha256": "7a0eedd336e04cf3148dbd2f1f2c55d7af082c3437ea85591f17674a706ecfa0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:19+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260102.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:635191d1-3ead-4945-a9b9-03dae21f76de/NTC-20260102.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "3ae15a2ca4cae1c8993a3881abe25346e8e37d422c74cc69287d19293176c306",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:19+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260103.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8565afba-cbc2-4f79-961c-d1f0b5b02e49/NTC-20260103.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "9ace437bc5106530e0316c4b81af3cac1916902fb90bae137f30b82ed3838c89",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:20+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260104.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d6509a30-81a1-41eb-83a7-77f2d69e8022/NTC-20260104.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "d0b8edfeb4932583536cd5e45cb517b03d6d757db6bfc3bf290bd86463e1872a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:20+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260105.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:56e9c0eb-aa6b-455e-be91-e1b43f4cbf9a/NTC-20260105.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "5787bcea23306c87fe8add1a1be0720f09ce6e4906086ba27dfbb1b59c6b74d4",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:21+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260106.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d9354870-fa4c-4ec1-801b-2f0b1b9a2f1f/NTC-20260106.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25047,
+  "sha256": "b6ce0bae034c33c3056a4d065ab7011546a9fb46784bc90cf04fb687ba02a6bd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:21+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260107.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7de2eded-55b2-4859-8070-c7281eb37270/NTC-20260107.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "e5300e77a9b242cbdfb061aad352250559fad943f99ba6e67297d29deb74d74a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:22+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260108.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ef763db3-de60-4b85-a3b4-3fb26a79e3f7/NTC-20260108.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "65fbc54a7726aa56ec8369701627eb818df3472ac9341591ff5983d3c98c490f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:22+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260109.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:12927cc2-f04b-44cd-a0f3-acf1a9593780/NTC-20260109.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25055,
+  "sha256": "8ba97916838e509cf13a3bda89ab28590ab1a6b4bda305e09013dd2ef010e12d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:23+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260110.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:49c8c496-5e6c-42a1-a1d7-24b2e95e0f2e/NTC-20260110.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25051,
+  "sha256": "fa672c9ee3959922731c488f2e03dede6a09196dc5fe063f56e2a441541f84e6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:23+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260111.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7b5ee172-31d9-4701-b543-58cec0340d2f/NTC-20260111.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25049,
+  "sha256": "88af59adad0052a94284f4390c675639c340071af86f9b6ed248859deef66c18",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:24+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260112.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:acabd571-bf7f-454a-8f83-edfa66bff8a2/NTC-20260112.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25050,
+  "sha256": "5a52f97b8e03fe34f80559f28dc55c5bb6e9048dcea831d103de08a7086c98cc",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:24+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260113.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:3f05f6af-c584-4521-8449-27f95d24a148/NTC-20260113.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25065,
+  "sha256": "6139d2c761af89b0f375d17c0334e43c08f8a9098d340d88762004d284a39546",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:25+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260114.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ae1989d1-df62-4d3c-b28c-baa9a129fcc5/NTC-20260114.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25039,
+  "sha256": "aea885c96c215d4a438ed00a8441aa4b8e445d08f58484908064ef421ffaad80",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:25+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260115.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b418e073-fd23-482e-824e-87bd70e365d6/NTC-20260115.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "fd0de7816f741d90659df870558d35036d9461af71d87d5fa0cc03b5ff11c69d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:26+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260116.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6ded569a-6c2f-40d5-b766-58b75c7ab35e/NTC-20260116.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25042,
+  "sha256": "c32b416acbd7df8c15f1f37e77bac191bbf5137552f82aef647a0be195ad3616",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:26+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260117.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5cdf7f32-9535-4e22-a338-6bff214056f3/NTC-20260117.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25072,
+  "sha256": "43eccb1e7ad2e1747539374d55c862dd1207d1d6a55ab95d37a6833e4a11465b",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:27+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260118.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f0365e89-677f-47a8-8741-3ee704a98525/NTC-20260118.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25062,
+  "sha256": "cd70787a810c999f50bd26721051cc861a81bb6d91358435a1f0d9a81e819967",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:27+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260119.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f476f556-8bde-483c-a95e-9e3a1d7e0964/NTC-20260119.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25062,
+  "sha256": "2b22d8e13b4eea7ff0b8ca69c70bf93e1dd2682384e93ec2ef2e19647aae8495",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:28+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260120.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a3b8971c-c4c9-41e8-b0cd-87bef3b77735/NTC-20260120.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25068,
+  "sha256": "c16605e88acb45cde5b589e0ce02f54561127f5f8705a32abd9dc1fc1d83933d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:28+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260121.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0b3b6e45-16bd-421a-ae18-2964a9e070e7/NTC-20260121.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25067,
+  "sha256": "e0d1baed970c6236302930752406698a5d8060455b0ed4f9c45cb797a1fbfcf9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:29+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260122.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6b23392d-8eaf-4e85-b7cb-d69b4d4c0d7d/NTC-20260122.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "6a11a1daac85874b4dc5b2eeab9f11b98ce0dfec88462084d60109ee7fa6f25a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:29+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260123.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c369941c-2d7d-4624-859f-e3e256e26067/NTC-20260123.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "a5fce2acc0d4fea205fe5cae87ee4b5ef631b7ce089d57590ed566364d00fe98",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:30+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260124.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9f92e23b-6a26-49aa-98db-984892a7dc0d/NTC-20260124.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25058,
+  "sha256": "8f8190948292a8134690c75d5c431d0f78614553ca75c47e268adb8e023ea5a7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:30+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260125.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0a9b2b31-bb59-440d-952b-eb01f4b5e0d2/NTC-20260125.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25063,
+  "sha256": "d90979380e9597525b80d78d8310ba1844bc02cb591478041f726cea2ebaff4a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:31+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260126.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b86ea457-3095-4ad3-bf54-b248edb22a63/NTC-20260126.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "8aa3426fe7469c8e2ef08409437939d77defaababf5013ea831b30d8e03b30bd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:31+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260127.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:160072ca-ba04-42fe-bf02-feeeb6d296f5/NTC-20260127.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25064,
+  "sha256": "8a204ce6190076ef4fe7f0b2ecb65126a2524e2da5edbd699014e0358f446fa8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:32+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260128.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7d983c2b-ba6a-4d1b-9c1d-08361c2bd522/NTC-20260128.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "3a2c0a62ba5fdc2364c0e176303731b4f3678ee0094185d598f21bbd616ee8df",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:32+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260129.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:590db9e8-452b-43f2-ad6f-1928e0f4159d/NTC-20260129.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "9e1c4027fe5b216ac31e46d14f00916bb12810ff6ad99c839b5a2f59f50939f6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:33+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260130.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9b1417fc-cf29-4ffc-a2ca-ce1bb7b25552/NTC-20260130.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "8dc83b0b90896426f7681459c39b2b91d3d5f7c729b3ab417c72d256bfd933bc",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:33+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260131.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:1659a1c7-adce-47ba-ac8d-17400911e688/NTC-20260131.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "890756d269800d8a3fa181c538436fbbe8d4be7afcf931394926991bb06253ab",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:34+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260201.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:83f5cfd7-38ad-4895-a3a6-bec8b04a2d0c/NTC-20260201.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "e5be1b37b7a731dfe0905cefc4b7a0f4fbbd696e1efb381cafe1de146a9b9c46",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:34+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260202.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c9d30366-048c-4170-bb70-b47610c81697/NTC-20260202.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25044,
+  "sha256": "056fe02cbdb9f33c363425c1221098d0a09f3e39180f3a2ca6b29c801b963bd4",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:35+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260203.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9f2d45d5-0242-4a69-a4bf-b93fd503d75f/NTC-20260203.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "4c858517a4afc3fb603bf7f12c8e99ea1ee96a0cf51eecf151a8a54d33382327",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:35+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260204.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:56e7903a-f133-41b3-8df6-c7824ad6244a/NTC-20260204.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25030,
+  "sha256": "10ea2a2a043cea7d81f057114a1e342e7a0e1bb155dec9aff708c9ccce532375",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:36+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260205.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:1ff74f4e-dbaf-4dc3-8089-9f464993f8c7/NTC-20260205.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25024,
+  "sha256": "3570da5ebb454c0ce9d1f6a00ebc69208323cc36df9eafd4b0469ee947d87fad",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:36+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260206.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b8274347-2a6f-4123-a373-e205529353b1/NTC-20260206.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25055,
+  "sha256": "c970c7b8366fe8e3c7a421adf61652ed08390a053aead4771ead4166532a6179",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:37+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260207.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ae6327ed-e435-45d0-9c43-eaa948a28e7d/NTC-20260207.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25058,
+  "sha256": "1bb2525577ff3591356f39491d34757367d431b03790798bff3c928b2ebe737f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:37+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260208.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2bf26f12-d093-4020-af0c-ecdf4e6b2147/NTC-20260208.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "42ae860725044663266a2b370876860893edbdf5ae68ff86fd63f3bff5b5a69e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:38+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260209.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:dffffc80-3d3e-41b8-985c-1c4a3ac7f2ad/NTC-20260209.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25048,
+  "sha256": "b7d20b0676ea39ae88a10522333d75f3a0098557f716ec75c35540d81cab9acc",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:38+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260210.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:3dd2fd24-adcd-4a99-8051-54b27babb582/NTC-20260210.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25054,
+  "sha256": "ac9a4e45d70e154bd217c03c2c14ad61b21d094845bc76d1268763b60b25b86a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:39+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260211.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:403dbdfe-5506-4b8d-b55f-2d171dec9136/NTC-20260211.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25060,
+  "sha256": "1e0c0bf69cec6f28e7d82a950febe1e238002998fb90257c8c096e0588e6819d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:39+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260212.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4f427eac-f9eb-4fce-ac7a-63c40000f4b3/NTC-20260212.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25053,
+  "sha256": "1ea8da7d52333c26c5b0b29787ed14a1a85a9633c0d016f327b6634f83486a49",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:40+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260213.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a3beadbc-4182-4920-b913-3321a505a05e/NTC-20260213.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25063,
+  "sha256": "65d26f8cb96b991faaff1d195f94aa452c277a0c286b2cc2b8ff72f302e43937",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:40+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260214.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f1c1be63-d94c-4201-bd9c-e9cada842c3b/NTC-20260214.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25066,
+  "sha256": "92467c54401250a69d4317073d0c528da0e2ca202998b6761c11465dba8fb7c3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:41+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260215.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e5f47f56-eae7-4e8d-ba8f-78ea53eb8789/NTC-20260215.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25064,
+  "sha256": "0fb3875e46eba1710e64ddea138a39b244517413b55f087873115c318c0fb93c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:41+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260216.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:3855d6db-1e65-42f9-b3ae-e8377c807ded/NTC-20260216.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25045,
+  "sha256": "7dcdf6721ae9807cb20157cb2985c4cdb0bd33560262507deaac7edabac092f8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:42+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260217.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:90d55a60-2fa4-4648-86c3-c89058d32c7e/NTC-20260217.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "ede3ed3e0a31efe4fb38f46dd5d29a00b5a94ea8d40b9b0c31ca35b5015cb5f5",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:42+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260218.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a79fce8a-63f5-47ff-8e60-9c6faf6060df/NTC-20260218.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25074,
+  "sha256": "bdea17e4565028fe133efc8ad5247da752bf576cea9c4be00a1350861a644cba",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:43+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260219.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:baff2f7b-755d-4f5a-ba98-390e78ad803e/NTC-20260219.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25045,
+  "sha256": "7920d97d45fc8c2fa4497746f34f82e4f943d3bc7cf88cf8536af0ea088e6c76",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:43+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260220.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5f6a6d25-0f86-4f03-91be-36f857057371/NTC-20260220.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25031,
+  "sha256": "ed8938fee883beff04c6ad3627a5e1e5a723156a8e8fe40263fedae7c84324b2",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:44+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260221.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:fc3b3b31-0b7e-4c16-b8f2-6837a1ff2bad/NTC-20260221.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25053,
+  "sha256": "1644ef7ee38ad5cece4208497d04280357c352643b1297691945ea30067f20ea",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:44+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260222.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ef1fa875-3d2e-4fff-8e19-0ae854390082/NTC-20260222.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25047,
+  "sha256": "f0570735765ce570af540562ed76bbb76e610baf0c3c25ccc4fdacbe96f23939",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:45+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260223.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f18ac727-d0d9-4bc9-bf8b-b4cc5f044820/NTC-20260223.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25034,
+  "sha256": "eb43816118a42ce4d2f80bf01ee459a40daa8f3d5a599488cccbd4b8c7eee0bc",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:45+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260224.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:20c431d1-cf25-419d-8f5b-debebf551587/NTC-20260224.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25048,
+  "sha256": "c0b1324622ab286f2241ee16fd84fe3b5a74a61304d8cba0b30a252e6c88be8b",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:46+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260225.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8e2fc8f9-cc64-4ffb-aed6-a638c00e9aa3/NTC-20260225.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25060,
+  "sha256": "3d9c75016b28a7ea9f31fec753380dfceea7c1f3451ac8111d53d14abff34336",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:46+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260226.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:81e7a6fb-f394-4d76-b6c8-9186f84c5a9d/NTC-20260226.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25046,
+  "sha256": "e9d753d86704aad8ade9ddd12ccf6a0b5b08523fbf714951e7d48718f366c249",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:47+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260227.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:da2270d3-2f21-47a7-9d88-d8bb921b4868/NTC-20260227.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "da37a64d0a150be8be936cc46087ba9f6558a225c1ab4446c8c9408ffc1b1ecf",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:47+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260228.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f6914a3c-e6b7-4767-8134-cc1104148c90/NTC-20260228.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25024,
+  "sha256": "699df43e0fa960068730f44e12d75309b608bb2a1c70679b7ffc392c3d4f3b65",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:48+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260301.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:56715b9b-701b-406c-b839-b1fdc288e31e/NTC-20260301.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25035,
+  "sha256": "e66053f93fa084d45ac36e3e6b0fa384ef1832f5c27520e968bd0e80953ff19c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:48+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260302.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c8d8e326-66e1-46ff-b328-b54bbb307d5a/NTC-20260302.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25035,
+  "sha256": "fa451ffa826a49190232ca30d9fa5e200c5b11cc98c3c768534b9526bba6b994",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:49+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260303.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b862ac8a-21e8-4e0d-a816-83bbc42bd5a4/NTC-20260303.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "7f36f79f7561fe6e7a61dd2af05cb5c10b4e191077838d092e7cb08bc74781f7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:49+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260304.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c181e370-3558-4b08-a9be-7dedb6941ec2/NTC-20260304.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "82002e88e13df568a914ba70bf9e51f923eb22819cc0e05917e7781e5de77698",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:50+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260305.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:43c8c6ee-ea8e-49f9-af90-9dedb8fc84e5/NTC-20260305.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25027,
+  "sha256": "e07cf44f9d1d35218d2a270e382cfc52db273e8789ab9781acddce3c7798d7b0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:50+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260306.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:66afadc7-bfa4-4626-836a-587aa9620c06/NTC-20260306.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25045,
+  "sha256": "f1ebe216d6ee37a6643aa612c64e718236dfac5862a1c29b8bc5535a61bcc475",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:51+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260307.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:65aac09d-1247-49ef-bd50-2f0d006f83f1/NTC-20260307.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25063,
+  "sha256": "136af0a47dfe91dd5a40ee6a6ff6fd4a7c73e9cd8363ef42171fec86308b64ac",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:51+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260308.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:00b9cd7d-bbcd-4b65-b417-aa62d4fbe752/NTC-20260308.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25068,
+  "sha256": "6e04b17896a7c041fb1bc0215fde9452a7c61d5a3cc65c3dec60706d9931bdd3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:52+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260309.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0c440033-8d36-4f08-a92d-85b9f43c718b/NTC-20260309.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "e9f54ad48173682089bc9998243523f548d47e8332eae1660778baee5c2f053e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:52+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260310.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:31757995-1ccb-4110-96f6-448acaf0270a/NTC-20260310.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "e3f26f10a6e431c732feb8746ca5a6a125a97d59e4893ed3db2ea7a7a512958a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:53+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260311.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9eb3db05-7a1c-4fbd-9615-fe8b8629436b/NTC-20260311.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25009,
+  "sha256": "dbf9093b2038c08809e710679ac7e3b54f18bbeeb37e1cc19ae8f6ccaf836ccb",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:53+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260312.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b123b30a-2d58-497e-af2d-84d82c8dfcc4/NTC-20260312.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25011,
+  "sha256": "7fe21f08e258463a4808dde352f0f5ba4c5f481717f492ae2a2246a765bf43bf",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:54+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260313.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f02f2c75-247b-4133-8f4a-a0f090e7270f/NTC-20260313.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25009,
+  "sha256": "949b489f8dcd3464176240748333e39e7c6272806103b416ddf7c0b24ad42543",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:54+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260314.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:56ff88a9-c9ca-4328-8abe-feefa2530c40/NTC-20260314.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25033,
+  "sha256": "7fbf7f344d5ebb0623c6f648ebf553a5b018027ae513ba09876f048c31d6cab9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:55+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260315.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:cbffb830-26f1-42f1-88d6-d0292bacc0a8/NTC-20260315.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "97704864ce8541922968be319502a95c6b30feca132cb380a86da3bb2123de9b",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:55+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260316.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:495c2dcd-8587-4167-a7c3-c8ab997c1758/NTC-20260316.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25012,
+  "sha256": "3df9efdad25bcd9b9673c36aa07313f8dea88a6f9e7dcef0dfb00d602c8f9b81",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:56+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260317.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:10002c58-1a53-4607-95ac-b7a7264f04c4/NTC-20260317.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25031,
+  "sha256": "4c8a4b1dcda8f4da5d7e08b1a07a7181be1d6c831e8140dcceae132fc4b11aa0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:56+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260318.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e6ec4665-b6a9-466c-8d46-58316a515ca6/NTC-20260318.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25040,
+  "sha256": "31bda10a6329e0552d61cd4eddce21bb8ac63495de2be2b0f50c7eebe3a1e0cb",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:57+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260319.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7ed60000-dabd-4a9d-91d5-f7164902c0de/NTC-20260319.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25049,
+  "sha256": "325ac192ffe9fad3bde064dc1c6a2c808d226c6567215e179e278971936ee330",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:57+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260320.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:994e2438-091f-45c3-b4ac-84d4c730f0db/NTC-20260320.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25050,
+  "sha256": "8d3e7a8bb9d4b24eb5f678e9f16917c35eb57214419413e70624a2165fe4a5dd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:58+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260321.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:aed43b59-0673-489c-811b-98ad26d71f19/NTC-20260321.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25048,
+  "sha256": "bd930e8a02b0dc548d8506a08f00ddf616041f63ace25a04e594a6233915bc16",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:58+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260322.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:1450a020-ee90-4bb6-8057-0b5c0bad5619/NTC-20260322.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25046,
+  "sha256": "1bf12ce8d2ed647ebc46f9ac50fdbf3e153e78cd8bcbf3bd73c5c41d4082ea4d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:59+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260323.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:12ca2fa2-701e-4e1c-8f5e-cd84f256630a/NTC-20260323.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25068,
+  "sha256": "f4b6a1822de16f63c54b6a4b719eb3f648e52a37fcf26e4bbe1cabbf567492d8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:36:59+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260324.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c08d3543-3a99-4b0a-a4de-651adbe03af2/NTC-20260324.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "fb63880caf9aedfd2bc635fb7d39cabb6ff709af14bc82e9574e157bd4fbc213",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:00+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260325.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7837844d-8d22-4943-92f9-d7d1be086e78/NTC-20260325.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25021,
+  "sha256": "1b9d09cbd281aced8fb33a85183315008b7bc5fe4af00bbf40823d08b37ceea1",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:00+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260326.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8a24d3cf-c6eb-4b13-a11d-25217a0b7e6e/NTC-20260326.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25014,
+  "sha256": "af25e27255adece089a231491953e3e6c3f92a5cc136f04c0d993514d04efdb6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:01+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260327.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:27c97029-94dc-4396-8e2e-86cba75f943d/NTC-20260327.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25031,
+  "sha256": "6807e869a51c21dbcb4bd9f65e3e898e7a4638dc626ecd772e32328e2013b25e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:01+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260328.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6fe752bc-912f-4960-a4cb-049f38107b30/NTC-20260328.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25029,
+  "sha256": "51f4e96c3330716aeb36024147b25bf88fb4873383022911d06b20f90ac030dc",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:02+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260329.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e1901e33-dc8d-44e5-af20-976fbf2a3f08/NTC-20260329.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24162,
+  "sha256": "72b113769db8372acd16952dcfe450a100a05e99d9d4e7c922b8bc541703596d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:02+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260330.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:cd73271b-5109-433c-a992-2abac65a0cd4/NTC-20260330.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "ba5726b22e3448b00e900c214e9591ed126082df344838b05b10c770717d4697",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:03+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260331.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5656052b-b03c-4948-891b-b52fe22ad642/NTC-20260331.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25029,
+  "sha256": "d7395b453305cd539e47f40c62471d5227d3296c7baf9f1474ff6aebff26bf35",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:03+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260401.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:038558dd-cb29-4f82-8f50-8866f39604a1/NTC-20260401.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25046,
+  "sha256": "e73b91aff2432dbe8ffc6bdabeb050f851977e5a1253457027cbedff772ca14e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:04+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260402.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:981aa123-ed51-4714-85c7-a892542ef287/NTC-20260402.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25031,
+  "sha256": "7a58a88daa842434eb674f32897d2a131dc4510688d6915a201cba2db2855b22",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:04+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260403.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:65aff5ba-eaab-4206-a445-9dc7e77dfa0b/NTC-20260403.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "737b965a9ff8658cd61cd137d30779ad13f0a7441960cf4034f19592e763775e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:05+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260404.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0087ce45-ca2e-4b42-a151-34d0b072f6e0/NTC-20260404.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24994,
+  "sha256": "c31a97242e3bb05e90b46198e6ad32c46011006629f327845ee8ed9319615c84",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:05+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260405.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c65130b7-3be1-4ba3-9554-b076dacc54a6/NTC-20260405.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24996,
+  "sha256": "6f22e241ff2f0b07e5c9da0c1688d73488cf5e0640b3bc78309258eee4b3574a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:06+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260406.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:09b79018-9450-4005-bf71-99eedb49bab8/NTC-20260406.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25017,
+  "sha256": "e6f3858095f65740749b015f1504e6fe223d1f360be8528c3fe0a6a5a590413e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:06+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260407.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:70ef5ccb-f4a7-4c43-90c7-be467c29f5a6/NTC-20260407.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25060,
+  "sha256": "a23c13bf83de4fe1d7f8cac68c871dda5e7bae4d0225628512d575019d377391",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:07+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260408.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7b7bef33-8d18-4dbb-a0a1-36890206708b/NTC-20260408.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25034,
+  "sha256": "b595f5fbd3080f49d315ab1df4b71a533e42f1fbfd06e9a1748f7b1a4e33b599",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:07+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260409.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f4987c08-55cd-4b68-865d-c83a8a42be67/NTC-20260409.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "7a89af5b5f2df9d050dfb2d13c3bd071c8310ae26059df0061692fbe98b6d74d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:08+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260410.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2fad3f56-c77a-4b2a-a990-83722a247e7a/NTC-20260410.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25039,
+  "sha256": "98e81791a9cb92aac67d7cd05b453cc15e3ce8d6058119ef5d9e7b40e6e76f46",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:08+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260411.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5bd13d84-b01b-4186-9a45-fffab9dc77dd/NTC-20260411.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25042,
+  "sha256": "eb58d7a001d855476084d78c3b0b38dc2b8d11328e4bb5c2ac87192c045a3fa1",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:09+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260412.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:83a0549e-c015-4786-9c96-4acdce850949/NTC-20260412.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25059,
+  "sha256": "b15f5b4e75a5ea39d1163aeef08ab891b1fe3fdbabee6811b18e7967d880f29d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:09+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260413.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2ba38184-8a1a-4937-8596-a8191ce67d04/NTC-20260413.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25046,
+  "sha256": "3ee64c4975885fa54bc9c961aa4974ccc5a98f07fd58b6274bacf3935156b6e6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:10+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260414.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a9c71f91-2c2b-4341-9d7c-4fcb61c84d57/NTC-20260414.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "2e0bcf3d8390425460d45914493561c66f8b84e01837c120597258d9939dbc15",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:10+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260415.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d9dd5d59-6db6-450b-8c84-41de62e672eb/NTC-20260415.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25022,
+  "sha256": "65bfa6e1a0a7d896891bdf7c4bdb8fb1a8ddbbb616ab88c8e0eb8bbdf12717a3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:11+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260416.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7ba041a7-49b7-4d5c-900e-d1ffe0998c2c/NTC-20260416.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25034,
+  "sha256": "2f7672ce6cfcb219de28c495c0f4e1a0fe3d67725bd869aeb236fa111d1ac34c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:11+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260417.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6a8c3e64-ea19-48ef-b859-e2d5424c0826/NTC-20260417.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25068,
+  "sha256": "cc220292240017ea566ed7541ef8ea9fe25262e234b0b957ee4a0933f5c18072",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:12+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260418.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:fd2dca3c-6470-4a41-9549-2d952ecc6cee/NTC-20260418.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25051,
+  "sha256": "27004268ccd60848a0b4ad3c144ba1467f0a185a4c323079f5db489358e3d947",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:12+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260419.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b321be2f-775a-4aa9-8c29-e8b6bacdf51a/NTC-20260419.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25034,
+  "sha256": "90cf122256ea9e2de50f5107284c7bc081b93e2297ed72887130d92c9d2d6136",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:13+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260420.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0dd31c73-3c92-4cf4-bf35-bdbe9b18ade5/NTC-20260420.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25043,
+  "sha256": "997fcb123cae5752e7aee34e57d6daa3f38cede97036c20802a62d764739da75",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:13+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260421.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:87c5a912-58d4-4e22-b239-8c656840a6b4/NTC-20260421.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25035,
+  "sha256": "05d1a15cce64c159a75306f5d9063a93230277c738bb675a3e563c1eecd08689",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:14+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260422.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:1bcb3791-ddc8-4fd2-aca4-6e2414ca6d5d/NTC-20260422.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25057,
+  "sha256": "d75382bb6e09c25d1c7773b4476322249e14de25eb9f252b20f5434b51a2c734",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:14+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260423.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:93fc6697-9d74-4dc2-9f80-8e79f86ae150/NTC-20260423.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "131eb789ba8ad16f80fb16a548f493d56f9f0bff7b00e97b9db1de00028d82ad",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:15+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260424.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b070cf04-ae1e-4927-98dd-a2923c86e640/NTC-20260424.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "3932c261d8f8dbfe89ded1b19c165ea691df39e8bdd03b38dba22697338da6dd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:15+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260425.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0b85370e-9374-44db-93b0-28862e28ea97/NTC-20260425.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25008,
+  "sha256": "084dbe9760fd903236385b487afd6e3a3632a72594bbe447aa3c8cc9c3d2dc37",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:16+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260426.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8558e574-5b52-4244-b593-37b220686b5f/NTC-20260426.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25028,
+  "sha256": "b94bb6e08b76ddbd1f0447834ba24399c78d26ee508ef32f1685bbcd2297f39f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:16+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260427.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b17783a3-38b0-4326-89ce-70669881b8d6/NTC-20260427.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25046,
+  "sha256": "e0a021079b5d8458972ed16a0d76a803484d74652fada8a6677aed4c914c5bc8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:17+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260428.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:fe426926-aaa9-4c4e-8b52-55df97c69e38/NTC-20260428.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25041,
+  "sha256": "43d928d4615a875f5a8b700c6c4982b48297c65c50f2eca92c7a634c85621a19",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:17+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260429.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:bbf9a11a-93aa-4098-9ccb-adf38c7c922e/NTC-20260429.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25036,
+  "sha256": "cb6c720e06b782cd0538ef67b3923f3f71d9b3bed5bb89efa4299fedf29c4140",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:18+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260430.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c4959c8c-f136-48f2-a4d1-1bce0eb2e749/NTC-20260430.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25022,
+  "sha256": "71466026b8b43ffca2a93c400fb1fa14d078ff5217c26643d1ed998f6df53cc4",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:18+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260501.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7a94c98a-e998-4edb-8532-31af97c3231f/NTC-20260501.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25009,
+  "sha256": "04f7e8a2b9bc9cc17460d4166960cac2ec2e2214aa30481b925901939cf95f6c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:19+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260502.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:91337974-6b6a-4989-8326-f60dc4804dc0/NTC-20260502.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25012,
+  "sha256": "a4313f3167799d990eadf907b2040e5e233a911974ac39b1da71fbd00f00d71e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:19+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260503.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e01df645-8f99-449d-a4c0-fb18ed0f5487/NTC-20260503.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25012,
+  "sha256": "6ac8dd21e50d1e65430310130f8b50cc7acd9f39894d6c2a9080a7cf2c078ec4",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:20+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260504.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:697e946e-31e1-4883-b2ff-b8a0392402b8/NTC-20260504.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25050,
+  "sha256": "d81c3e86f8d3cb1d5ed30f8368f82c5c74fcdc0370365e4f9ad6a4041a2e02f2",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:20+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260505.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7fe6b92d-d14c-4c4f-8169-fd99468d3609/NTC-20260505.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25051,
+  "sha256": "32f3e7ad1d300baf0b8299bcb96d35098262bb2ec9c9250b6cdb3ffe4b4d1f05",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:21+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260506.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0170e9c4-6653-42ef-82d7-22b54286c192/NTC-20260506.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25033,
+  "sha256": "b0a6db763540d67ba0138c4c917426c56bde4454150bea74f215de2211ed01b1",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:21+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260507.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:aae87b92-db7a-407a-8bb9-df3f70d8ee4c/NTC-20260507.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25028,
+  "sha256": "6bcd6b3f4522c0272163fbae54448c7259a1e6d99eefff9d4f827c892ee1d8c0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:22+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260508.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:37fd02bc-237e-4f62-b59a-f5e5e8cd9fd9/NTC-20260508.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "47f6df3dc007261c9ed8fd8845cc5dca1991f6546044cbcee675c7a719f0fe0f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:22+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260509.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d39e0c00-735e-42ba-832d-23f9cb397053/NTC-20260509.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25027,
+  "sha256": "c6377ae01b0042d04c77605d96099ff2d9f6c825c13bffa740191c1e11049268",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:23+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260510.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:02e837ea-5ebb-4dc2-ad1b-a17b2ecf2f40/NTC-20260510.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "45334de9d75bb8a611054e5813a7bad7882f087d9536f2e34c26c96901c0373d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:23+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260511.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c695f7c0-6370-4a2b-b3a7-7d62d887e5eb/NTC-20260511.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25023,
+  "sha256": "9c6657ccbb46da11b9af7f0d116108d7321048b1d789fd3ce93d3b4470e4cb17",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:24+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260512.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:92de8de9-a91b-4726-a38b-79b1c14545eb/NTC-20260512.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24998,
+  "sha256": "f4d02bb14d6602d72abebad75261fd75d4867729bf8d853ea3cd8ed9903fbe1a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:24+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260513.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:266d54f5-e40b-46e0-82bc-5ba2645b6fe6/NTC-20260513.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25007,
+  "sha256": "34403dd4cffe7908c8d949e655f9b578bf1e4f96fe9586ef1f05f9878baf78a9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:25+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260514.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2125c205-d353-4bf2-a9d0-c68e2ba96358/NTC-20260514.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25041,
+  "sha256": "a9d9b364fc312320c6730d0c9ef3224776c32e5b62419616f9850c175529f447",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:25+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260515.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:dfb0e34f-ba11-4b9e-a4cc-d0de4685fe61/NTC-20260515.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "0a090877a69015161239b914d4424341c3a9fa212f7e4342380af06c2190f47e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:26+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260516.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c3559b07-111b-4c19-91d1-52cadded7105/NTC-20260516.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25035,
+  "sha256": "5ad030ee66ce7a78eb31e4a323a65fce406f13804abd194b5fb2246a15703c23",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:26+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260517.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:bbc630d5-9364-46a9-b350-0417e40761e7/NTC-20260517.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "0427e25b8f898ca2e9635ce2d58859a6dbee17e1af8ca500c9db57c683fc3bb5",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:27+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260518.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:852abb87-04f2-4421-a0f8-0df9e40b6b74/NTC-20260518.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25042,
+  "sha256": "e6198e6d52d0a283381e0ee7c9226e3e83dd5b0224925627a17c221f089ccd4f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:27+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260519.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:29f0ec42-a221-45bb-a08e-2c7b05fdd02c/NTC-20260519.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25021,
+  "sha256": "55e812e7e25ee6e9b867145c253924f542ede1e0946d76544febfd6c1b80307b",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:28+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260520.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:346cc814-47f4-4efb-b28d-77f6c4e8f03e/NTC-20260520.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25019,
+  "sha256": "729480a8a7c122b486c1715d80668017fd7489c6ecc6e357a9309f46fe00307f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:28+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260521.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:aa01b927-7a9e-47a9-845b-62bc78ea2713/NTC-20260521.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25044,
+  "sha256": "5e8381ed281604b19f67ae46f17727f12532f1075f0fa4001c7080df0f3591fd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:29+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260522.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9878d84c-560c-4ac7-9257-1e8720e283d2/NTC-20260522.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25050,
+  "sha256": "4f4f306db544332d7c6f449d0dd2181680fa5a1799a0035c02b16b47bde7779f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:29+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260523.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9ea2f9e9-1f4f-47f3-abb9-4519dd2c51b8/NTC-20260523.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25049,
+  "sha256": "b89f75cab985f3d4464b551ccdd6a6f47a3f17a322fea4dbdf27088fc5c93fe7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:30+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260524.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a9f6fe2c-e871-408c-a257-95c0fb072be4/NTC-20260524.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25039,
+  "sha256": "0c5de4ca9d637c131567c93e281741aab98d61f8509890f2bfa969404aa36f39",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:30+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260525.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5791c6d4-11fc-421d-9ef2-e27972fff846/NTC-20260525.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "20290b094603a8cf0464c674c5655b1bdbbff8ab8cc726c9805ab5aaf99653c7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:31+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260526.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7a6cbecf-91cf-4ead-9bad-43e7d603738d/NTC-20260526.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25040,
+  "sha256": "c676473b9b2d1bf166b84202a983134a822c47b08fb620ff8fabb0cc59388428",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:31+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260527.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:52c823e2-c5a0-4445-b883-487d566dbec6/NTC-20260527.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25023,
+  "sha256": "8940f1e6bf0adc82c6dbcc18fc766795387c96c4623ec8b6ef3f2645a34757f7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:32+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260528.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:3be2fd7e-fd7d-479a-acec-b6e58912a396/NTC-20260528.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "7e7c4766aa29cc930b359220a3139e3b0493e46d1006c7f62e7e9b57d92190ac",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:32+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260529.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4de3a876-2998-4025-b829-51bb6d8fff9d/NTC-20260529.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25043,
+  "sha256": "42a8a5876aa52e6dec0d246ca19750944cf1afe03beba214b23f98b6d6ea5b0e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:33+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260530.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a1bf1668-a813-4021-91c5-947d6dc2bd44/NTC-20260530.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25065,
+  "sha256": "e3a3e5c676800d8bd4696de6a7d3b4cda4bd9d10ab90464b9fd89eb0b7201a0c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:33+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260531.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:aa3bceb2-2d20-4a7b-87c5-ced77b194215/NTC-20260531.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25064,
+  "sha256": "39ecc81611cfe4afd8e1109b17d08ce733c245c502440ecd65035666ef607658",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:34+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260601.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e559858c-14ee-4e3c-b40f-392456df6293/NTC-20260601.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25039,
+  "sha256": "6d4d566a1b717dc4d1d4c138bdc1cfd9d45575f2481f7dc650050d2478ab5c94",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:34+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260602.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:267e0501-815c-4991-8f9a-0177a45534de/NTC-20260602.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25019,
+  "sha256": "a221b0f186721b0d31314bd6b95dfc15cb0ee893e03c6806d456e366a10ec9a0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:35+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260603.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6f38017d-63b4-4a5f-942a-9b925be1a807/NTC-20260603.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25022,
+  "sha256": "f38e665ad008841e87dac91b4dcb58455e467598f48392a8d4a492a919d97ec6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:35+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260604.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:600bd0e7-b988-452b-b635-f6d329c20a40/NTC-20260604.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25008,
+  "sha256": "79e13e175fca4bc79813b3ac03d36294da1da320ad0a37fbfc150dc15f1848cf",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:36+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260605.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0a6da071-2a3b-44f7-851a-d49ef73c58f2/NTC-20260605.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25027,
+  "sha256": "9adc093e898bdf6d9e85790a8a55c8f9d87f8bbf991b0b758c81df38e266aaf6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:36+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260606.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:00a1654f-6486-49e9-8145-5a0c1388070e/NTC-20260606.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25053,
+  "sha256": "08b5d437986993350ed8dbbbbe6b2923421c1b400b18886ca56641d02da861de",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:37+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260607.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9c8826dc-e9e5-412c-ab14-0b0cc9022162/NTC-20260607.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "fc1985d8a883aab719cd60c8c1eb8ac6fc19621a55c4380a668fcb7ff718191a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:37+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260608.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:46c3c7d1-79bf-4b0a-8eb2-810ebd03b8ba/NTC-20260608.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "e6d1ad8caf082d03f6cd2160a5be78dde85a9c14de5c6f04d6f2640519f35d69",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:38+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260609.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:087fce2d-ddd3-401e-bf86-9eb311b5db49/NTC-20260609.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25019,
+  "sha256": "2bbb8bd7aead5290ae5a04038fe8bceb99682513f28e5b2a9f8dc48f0d4fb725",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:38+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260610.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c8994bb8-69c2-42fb-938d-354b932e2c50/NTC-20260610.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "5a7005dc15fc363255cd9d392980924bd59d99f5deff6b7428c9fe0b0bf967c6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:39+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260611.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6978ce29-60c3-4901-b166-8375e54dc1de/NTC-20260611.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "c09ad13c55b66c8d53ccf0ab45ab61911d85feb349f936922317b2255d542843",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:39+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260612.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a4556480-141a-4278-a392-d2b452bf3c01/NTC-20260612.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25033,
+  "sha256": "8756128c395fb6cdac01377a5e67c9fabcf9a69d1ba11034addff1c1c62ca5a2",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:40+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260613.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0e4db985-ad95-43e5-888f-a33ce16dc027/NTC-20260613.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "67c8172d41ee82e11da8d898e64ba41088723eff88efe02910d2ab1b1caef811",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:40+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260614.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:44b6ba01-b598-47ad-9205-c5cf705b8e03/NTC-20260614.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "0699e00e7281ee6f36d11031c91bc136ddcc79d71de5665ec34d11204e1311d7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:41+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260615.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2add46de-425d-4f26-8d00-690f04bc4564/NTC-20260615.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "3e89cb736481b4097ff6574ba0f52d21f81fa9a3ef2f74d35626b0c24f68eb24",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:41+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260616.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b90010b0-cf55-44dd-8e29-f8b44c6d3790/NTC-20260616.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25047,
+  "sha256": "fb70d9c624f28d984f9f680fdfb4dc2a8b0b41c89e7a41bc857431d5785b64ec",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:42+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260617.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d8839b9a-aaa3-4a03-8285-6583d0ce49ff/NTC-20260617.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25055,
+  "sha256": "4774561e14df30c225965225abbbafebfa7b1b5ad879653284cb250cb9de30ab",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:42+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260618.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:554fb8ff-e611-4033-a736-0208e8bcfb4a/NTC-20260618.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25055,
+  "sha256": "d7a2d0dd5a41f39ccaa3c2f94656d22117d6a307696f4d6fe365a8ab6a6b0825",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:43+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260619.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7f6d484e-9388-4c3a-bbef-f70af593f866/NTC-20260619.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25065,
+  "sha256": "5b275905b3666e091a7554fb9b13483f0d5b3ae1d66366bbaca710fe94ffe76a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:43+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260620.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:43b43a6e-bb01-402a-b964-e4ea5ae4ef80/NTC-20260620.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25062,
+  "sha256": "a5a6ed35f3aff98586d2802e48c91988c9e5ee5bcf1244d1bab01f24f5190d49",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:44+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260621.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:3913ed0e-b99f-476d-b063-a339470a5194/NTC-20260621.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25067,
+  "sha256": "064b3a1e2c93abdddfc4b0a13ebc8c27432f39ac0508e08ee3bb168ea8b70239",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:44+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260622.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7cea5627-0f10-42b2-8677-32770b1b3dab/NTC-20260622.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25066,
+  "sha256": "97dd721349841745af2385b88b7773cbec47973041d210d24292a9699fe89978",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:45+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260623.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ba92bf25-8568-4b52-b295-60802f91c360/NTC-20260623.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25066,
+  "sha256": "b34d7985c6a0d1e694c3c34f5465c06c732cb757553b9437ed93d122af04b90f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:45+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260624.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8f28e54d-b8a2-4f83-9bf0-d6f82c391f65/NTC-20260624.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25069,
+  "sha256": "0568a43a5275dd878738a28b4c8b9733dd9c3f16a1c8dfe3930aa9d4acdc1472",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:46+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260625.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:953e00cd-4069-4d6e-b673-3525967e37d9/NTC-20260625.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "5172ac03f5459088c04b017777414f96b0d1f3e3fd054e04e58a1bbff72f904a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:46+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260626.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8b5c457e-1659-464c-a221-38e11c8b44a5/NTC-20260626.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "2fc169bbc261809ee94e5fd494725a3b0cec46d172d1e6335c7ff5d25ed0d032",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:47+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260627.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4b60d9e4-1d21-4b97-921b-2de58c9ffd22/NTC-20260627.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25060,
+  "sha256": "c007bbf63cbc7d2d1945774338b41e42b03f272e29ba188005f821e37038098c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:47+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260628.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9b56048d-1fb4-4873-a39f-c374f5737f50/NTC-20260628.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25068,
+  "sha256": "56bbe05704d88cf1896b7aae4fc4b60f032b57e3e6120765b683af83426364af",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:48+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260629.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:df7fdf00-0790-409a-96b2-f9a099dcf8bc/NTC-20260629.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25051,
+  "sha256": "36463ad79fb169b83c6c726e0b3595fb937451da8313b168056356815cd88415",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:48+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260630.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4100904e-0988-41a4-a9ae-9f760a18d347/NTC-20260630.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "1837d51da41aa1999628aadeef9f29bf26bc48956fda6324b4b715cf8c3f6f58",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:49+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260701.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e43f33c1-3b66-4b20-a11d-a88c241ec2ed/NTC-20260701.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "cd6932085ec72b8b571c9522457bd5d97e6b7f7437a7b06e3fbc3b14e161d44a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:49+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260702.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f1c29500-6f08-4302-b539-717ef64b3d62/NTC-20260702.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25060,
+  "sha256": "04c3761d1b04dc0a76bbf158a737fda31b7ca02889e480b2d05a7fecf5977d17",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:50+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260703.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:eb1583aa-6fe7-48e5-850b-1b2fcfbbf140/NTC-20260703.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "b3b7f03c7f736ef8650022c9677f61a64216d67605cf1381ada7a7c47005d754",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:50+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260704.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8efc448c-b067-4b08-9526-4c7ab8a3a01c/NTC-20260704.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25042,
+  "sha256": "f4f4894ee6291f43ba60bc6634f0bd7eae5052437db1355e6c96f81852e88939",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:51+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260705.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:889067aa-a6d8-4bbc-ad7f-09b191769468/NTC-20260705.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25034,
+  "sha256": "c104a6cd1d3855be76ecb8dbb604c2b7da724f09013d8229f1e673a03891f30c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:51+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260706.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:090e1032-087c-412d-b889-36cfc7fdc1e3/NTC-20260706.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25038,
+  "sha256": "462b6b0db74f5391a6a366da7a2ef9a59398ea944811b4588ea438bd31a1c034",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:52+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260707.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:28d6a5e4-31b5-450a-8399-61f0667d0a00/NTC-20260707.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "f2ff49a0e28f678fd9793ab4978145f92e11f2dc3c165cd67bdb55c5d2e26544",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:52+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260708.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:37257f88-4f3d-471d-b699-d8c80c060d70/NTC-20260708.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25044,
+  "sha256": "5476bd4ce5da81c134bb8a785f6dba8edcfdb3d8c85e0ab6f7f9eabd2cdbc6b0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:53+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260709.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:149e676b-f5fd-4384-a453-a631a07e423c/NTC-20260709.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25066,
+  "sha256": "e1efc43e6a562be26e0fe1a71c3b00f4f4fa54754d0884471a5d59e6322229ef",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:53+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260710.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ec40f449-6847-4cdf-b684-a6f87383b11c/NTC-20260710.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25063,
+  "sha256": "24879da8888ef1701a4da00e6ebce1f0ca845c5d35aff2a24fe1c0d1e6103607",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:54+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260711.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ae449187-5720-487c-8f45-4fd81fd0e20c/NTC-20260711.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25066,
+  "sha256": "18c27a6948088b89284ac6674c845f692461f892bc2b91bba01aa480e554c014",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:54+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260712.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b8ac2ddb-73a5-4fbd-9c4b-42ddefb54868/NTC-20260712.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25045,
+  "sha256": "5a1d359a109e770f50b043f625024be0cce4c819f38a5107b45bdde26346fb42",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:55+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260713.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a35d494e-f2e1-4e80-9c96-651fe4400227/NTC-20260713.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25037,
+  "sha256": "7f27bf867cc882b3032708e07e53a731eea450764dbf78ac7c112f9df9101e3c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:55+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260714.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:3a2f833f-a12f-4b26-a2a5-1522260b67d2/NTC-20260714.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25015,
+  "sha256": "7b4c8042ac45037caf545225899164a306b74883b1bfc5789992f7b3958c08d7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:56+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260715.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8d1bb0ed-12a4-464a-9877-0bedaab11d64/NTC-20260715.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "8b8fc8f4d0f766d47bf0f93d25bf1d3f17817e741bcc2b03aee20f80bd1b8f70",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:56+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260716.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:20094a00-4c79-4396-936e-4724135df073/NTC-20260716.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25021,
+  "sha256": "eb07cfbe0e7bdd617d866c0b6b29275c139f04ca611d09157c40b66561e9d0b3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:57+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260717.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:bfabecb5-41a2-42bc-9a42-02c19f94b077/NTC-20260717.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25036,
+  "sha256": "eb1a54873876088e6eb9c9a292b43beec66577cc9ed4e44b76f7a3cd86edba6e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:57+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260718.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9d150057-c903-4a93-8acb-0fcf57e9e6e1/NTC-20260718.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25040,
+  "sha256": "4d8e0e3cd68e63dcde1e45265c6a9bb9967eb32990bfb18a9ba39c3009cc606d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:58+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260719.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8eada789-5c26-4c18-83e1-aacda347a4d7/NTC-20260719.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25036,
+  "sha256": "6693d93ca35698427a7496fdbb82bfe17235e35165de2492b3a52b4b56f4baad",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:58+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260720.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a6668a29-5c96-4f87-9230-7d190a2e4114/NTC-20260720.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25035,
+  "sha256": "36b814720023cbf03dd44f0ef4e0f7b8840f61bf4d2677f96723ddd09e0ced57",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:59+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260721.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2fc5f170-c03d-46e8-b5e6-7ee9c1b0f2e5/NTC-20260721.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25054,
+  "sha256": "1b17ddfd25cb3931b49ac5c83e16eaca6e1cc2dc43ed9678caeca1dcf8dd6120",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:37:59+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260722.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b7509c91-140b-43bf-b82f-6b2b4665d33f/NTC-20260722.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25036,
+  "sha256": "79f907dc9eca9021d5e87adc58f00c82d5926b7b06bbf072f34d08c7924a845f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:00+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260723.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c8b0ab66-5721-4960-a3d8-aea044cb43c4/NTC-20260723.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25043,
+  "sha256": "d3ea88d099a6428de82123029c4fb93005b00c9a4b95280e955df3483ebdcb90",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:00+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260724.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:b3263f37-7469-4e7c-8822-c9372231dc6e/NTC-20260724.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "7f1a3f36892196a4b6ab19b4d4ea1d7f3086b21ed42c9b6b675836c301974098",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:01+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260725.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8050e012-324e-49b7-8599-2552075d1d66/NTC-20260725.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25058,
+  "sha256": "c3c250eb0e8e1657e8453ac572951410eac0212a3f427157453f5a33baf2d807",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:01+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260726.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:417e1eb4-8d25-4604-a382-86c5940e60c3/NTC-20260726.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25049,
+  "sha256": "9781d32336162d100e6b84af15cddb73017e5fdd3c9c4dc879e06ce51609c999",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:02+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260727.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:7571ac62-47c1-4317-aabe-b8f52c43a58b/NTC-20260727.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25023,
+  "sha256": "b108e9611d7d3d7ff50e78a524eba3bb12c7615126860851ce0a1b9b05497a2a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:02+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260728.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:e3a515a7-6e22-4f15-92c1-a8f7a51d7e98/NTC-20260728.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25024,
+  "sha256": "b04f36959ce6228d7714e63d9e9a1b533eee8a55b6407c884eb2cee8334228d3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:03+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260729.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6d17dd6d-6551-4ced-8663-1b818ccd0a88/NTC-20260729.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25046,
+  "sha256": "c59598aa0095286d55fbd9d682325ecf4229632488fb5975df214a2159ec9525",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:03+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260730.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f37ad2f7-a59e-477e-8288-183895ee7cfa/NTC-20260730.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25043,
+  "sha256": "77d42c2cd25f32cd0bb46b37a5c2bf934920b4690e2a28ec83b7acdfacfb6c44",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:04+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260731.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:506befb2-b825-4ca5-a3e9-7c1977964646/NTC-20260731.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25068,
+  "sha256": "1b251f5f6ae1bbbaf7bef5a847d415b0eaf6b0ea5769bd5b5d9464e082c0a416",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:04+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260801.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:987c141b-5dfe-4c7a-a369-fa698373cbdc/NTC-20260801.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25052,
+  "sha256": "a64f9f826d8c3f4983941d723eb3a4c8d20a5783deeb84c027fe962d25b0f12a",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:05+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260802.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4971ee56-8f24-4bea-943f-c9a3e539e6f3/NTC-20260802.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25043,
+  "sha256": "6dc70a5ce11bf29edfe2706d608ccdadca58686978c1e37ad639ca54b7953cf9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:05+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260803.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8715bcb4-4219-461e-9ce1-cab28d1e7be7/NTC-20260803.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25014,
+  "sha256": "00cbc98dc4f1783fecd7eccaed4e3b480a5e7ee21e4e43603f37765a740cd323",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:06+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260804.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0298dc24-dc8d-41ef-b39f-46d0ad1525ee/NTC-20260804.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25013,
+  "sha256": "809f633a405d6636127fc35ef1a4cb8820e67173963a2334f82088204fc9c795",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:06+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260805.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5155326d-ef7f-41b2-9257-fb71943ee7f5/NTC-20260805.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25014,
+  "sha256": "589b51be0ae5edb85d9a49cbda1ac1764e9b60f8ed6f0a7fa219b5953ed01f2d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:07+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260806.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:68032b06-134d-4c98-adfd-b6bd6eb3d866/NTC-20260806.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25026,
+  "sha256": "afd5f98ad196069822c1d390c7275d4b187746a4cc836bebe93a833860bc412b",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:07+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260807.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:635a6170-4a0a-4201-875a-cb5f6f038ebf/NTC-20260807.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "e267c93f5af4d38d81d7715b5cce3e27eb34c622a0b1576957258ad5a1d5c513",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:08+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260808.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:91e20a54-571a-480f-947a-79813198ba34/NTC-20260808.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25051,
+  "sha256": "6a64eb039a3fe749a2bb6a07e141fce93404c2d8313b8fa84180b68cd910c35f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:08+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260809.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6318ae2f-ef02-4a67-bbf8-2dbd550fe2dd/NTC-20260809.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25056,
+  "sha256": "7e25ed10301af05f8cfcdebff20215a5b881ee6ee815a83a854fabec0748e835",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:09+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260810.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:693cc971-7143-4d6f-bf42-4c583fc62e21/NTC-20260810.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25051,
+  "sha256": "8de89ab836c6e71a2ada097141dd34ed548d685aa3f2fecf83c12109ac4c45da",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:09+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260811.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4993cd89-805e-43fb-8a7c-f8f33df5587f/NTC-20260811.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25029,
+  "sha256": "870d2d42ccc3d98397a14f4c353f5d16543ab820f9b812595925df49fb0ad5a0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:10+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260812.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ae401522-5915-455d-b054-b4aefc29bfb8/NTC-20260812.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25021,
+  "sha256": "6fd2737c245dc1d2521c91ee637084823b15e53878f3b775df7282f26e5038e6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:10+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260813.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:720dd18b-a9e3-4a0b-ba1d-97976b1eae52/NTC-20260813.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24999,
+  "sha256": "14c3579866e4d3229ce9e573bb450f345bf518a592690cfd49e22dc523fe05e9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:11+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260814.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4fa60470-9fe1-40cf-8d71-38111c713cf7/NTC-20260814.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24996,
+  "sha256": "9356a3ce7bc9a168d25515bcc54525b44d99faa4d348e05531c792f552b0a3c9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:11+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260815.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:61e88e88-db44-4b88-a58c-c66f1d828c9e/NTC-20260815.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25007,
+  "sha256": "8ba00b5f74b35e7f80b2f4267e6d301d94a7df745eab034a709c3156b9731e89",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:12+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260816.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:377232ab-31fd-4bff-970b-8ed1a255e9d8/NTC-20260816.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25008,
+  "sha256": "6b8ceb9a8d4a03a87a713d264afadc74367b10ee76b16f44652a55bc11ed295c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:12+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260817.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:6e4c1409-eabc-4d94-a4e2-e46c574c9691/NTC-20260817.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24997,
+  "sha256": "1a1611282979ec3b7a8d503ced4b4a4fdb6c682f62dbf6cb0b81c120af9c02fd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:13+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260818.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ae53f29e-4b31-47c1-bad7-907581c89225/NTC-20260818.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25001,
+  "sha256": "cc2eaf0e2f09441530ca91fc11df46139c5145d26d33ccf24ad3792701d6f0c0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:13+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260819.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:586ef2c8-9dd9-4e74-9357-12ac2095f177/NTC-20260819.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24987,
+  "sha256": "b6d46874ad885f731cc48b71b6d7f6cfa83207c642b6774742d3c73b179815a9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:14+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260820.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c7c3eb55-d608-430f-9f44-cf72bbf5d021/NTC-20260820.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25003,
+  "sha256": "8f56a5c9c545148b33fde66df738afaef11d311813557cad18e0a0426a43b385",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:14+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260821.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f86cca8e-0f5d-413d-bcad-c64d237fdb3e/NTC-20260821.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24998,
+  "sha256": "2f4a628b2dbb8150755eb336eb406d97b227a28a5e46597e2210483e3d97f9e5",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:15+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260822.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8e4169c7-d183-44b0-a1d6-5e8bd587060e/NTC-20260822.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24983,
+  "sha256": "cbe9a7a61836b295d9f094774615d1f603e1c3ca901859092b558657d31e1f19",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:15+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260823.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d7cb20da-c6b7-455c-9e7c-62b09b6bd172/NTC-20260823.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24986,
+  "sha256": "eb10ebf78cd4b3e6912d4b43c6fd8f8754248094fe5ee68876aac101a4d8cf10",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:16+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260824.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:befce62f-f388-496d-89ee-3bd9c5fe99c2/NTC-20260824.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24998,
+  "sha256": "e1db33344bb69556924d6f5163c81a682259bc18691b04f050db0a85db5fe42d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:16+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260825.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:840d3036-e87c-43f2-bd1d-db1c8dc996e5/NTC-20260825.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "bfa74a0d028654f8aa553617cfabd18c9b4e38833750e4b16ef7f8290d1ed277",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:17+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260826.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:44db207a-8d58-49c2-96dd-18e554bcb9bf/NTC-20260826.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "e4ba6e61193dcb4de9bf2e59c8b3ea163688fb9779c35bd0e96aa4f2b6d117c0",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:17+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260827.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:cb4c3c33-9945-483f-b24d-d6f30db6f22c/NTC-20260827.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "2f3915deae53bbc9e5e56d6e3ad2c25fc0e49b72016f9da69a1c0cb7a447a788",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:18+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260828.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a7fe3865-9922-4da0-8db2-ca89ff905351/NTC-20260828.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24989,
+  "sha256": "9a3001452cac6b037466c679060f438ae528e9eed8ff6795608c0ce90ea4efd8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:18+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260829.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9e5e1a12-fb10-4d54-b623-1f4c82e340ca/NTC-20260829.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "4347df8752a0e0fe125da6c308fdfeb9b165193e170b736dd4e0101de95d8c5c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:19+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260830.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:4d2d0a41-2b9f-4176-9158-a8582b3d3a8a/NTC-20260830.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24987,
+  "sha256": "980d8f96e772fdbf0db565d0f9576fc59a7852329393637ea234d553deb756f3",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:19+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260831.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:08515368-60b8-4d4e-83af-c1d91378b4a1/NTC-20260831.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24986,
+  "sha256": "45c4025ba615b5ba5fbc8ba804e680180545e15f2d27eda2c29d9386b81eed0d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:20+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260901.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:98a96cb4-f304-457f-b5eb-a15273424c4f/NTC-20260901.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "e4186674113d432fbe8dcd0f6e8c96015e98b2e5aee951defabbc23c2fe645dd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:20+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260902.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:2a50305a-3aa6-4e8e-ba00-9cfe2bfd77a4/NTC-20260902.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24996,
+  "sha256": "178f34191f591cabe20b6fb4afdb5b600bab28163707f2e5d341b409bab5702c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:21+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260903.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:fc889b77-9826-4e4b-bd47-d11682d2e204/NTC-20260903.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24986,
+  "sha256": "49d781c079d65899fcbada0af4cbeab6d6bc78fd01be8a75b48c347386115303",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:21+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260904.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:fa369ebc-6b25-45f3-ac82-73454fe87042/NTC-20260904.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "522fa6376a451e949a58059fca63ac31777c1b3336f018a406232f4b736a82e8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:22+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260905.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:ac70a7f6-eedc-4a9d-bc7e-4f5d4747ee4c/NTC-20260905.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24999,
+  "sha256": "97fc890411348a8e111977e119da33bce323744e23b97b572c2db960681c2c2c",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:22+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260906.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9d96880f-bcc0-41ad-b7e7-4467cd935309/NTC-20260906.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25008,
+  "sha256": "99a5864eb89ee30cbebeda57e27095fb37eac2b74f14f335ac40ca25de8a35a9",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:23+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260907.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:45d8eaf1-fd84-4b34-a393-4690b35b5080/NTC-20260907.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25011,
+  "sha256": "56bfbaf097ed05eff52e2035bd19221102aedff5de3395fea5c078c53cf0d0b4",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:23+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260908.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:a6c7573c-b76d-44fc-b698-6560f8b83907/NTC-20260908.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24998,
+  "sha256": "48a31b3d504891d594b3f2a73eb3acf8ff5e3ea4548ea81377d1cc62ff32b7ae",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:24+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260909.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:eb8c9e20-b848-40e9-a8be-e10c18c715a7/NTC-20260909.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25012,
+  "sha256": "441d1c23284c67c544fd1ad9bf372e7cab30e514f5ea60d1f36aeb7c09b752ae",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:24+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260910.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8d01ecbb-5e57-4ead-8e5a-cf12aafdaa76/NTC-20260910.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24997,
+  "sha256": "17e51ec6f7c33ec76d3d808e933dbb2ddc63352ab7e518cc3e2e398ebffbd7de",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:25+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260911.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9861eb05-c581-44c2-aa6c-f6a6d04aca31/NTC-20260911.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25000,
+  "sha256": "da3c91d3d3c467c4b36f8f00f204ae27741aec4029b6ae689bd3fd73231ec78f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:25+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260912.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:27b3f403-e82a-4fa6-909b-3a163431c98b/NTC-20260912.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24999,
+  "sha256": "f7daf4f006b1d4ce574276aae2a586a0ef47c99912f0ea6f381ab84a4553b0f6",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:26+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260913.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:8a924de4-7e24-4c03-8e65-92c8e80d9235/NTC-20260913.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24986,
+  "sha256": "2b688a67498fa12972e449cd03ef05e82323a55111d5800f4f85a26771cbe83d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:26+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260914.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5fe717db-0075-44b3-9945-bc47247d172b/NTC-20260914.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24997,
+  "sha256": "d00b5627cdc22ec0755091b43595d0aabcf2159a77d7fd1e2570fe4f3f079f0e",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:27+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260915.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:910aee2b-978c-42f0-89ce-1b33034d666e/NTC-20260915.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24993,
+  "sha256": "2bd4a6e0d8d83ba8c63d4e588848634ed2761abb2291d85c63669a056bd3317f",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:27+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260916.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:c19be247-e30f-436b-a617-882fc6724dd4/NTC-20260916.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24980,
+  "sha256": "bbe6ad590a9398fff82d6e2660d6810ca451dc9b366cbc1c3b446b0e7f2faf75",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:28+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260917.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:36c1df18-d980-4a8a-a0f7-4275609c6b07/NTC-20260917.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "e188c69ea5ff258854fb577ab9b2e9b49ad33be4bc71bb19d87883c8ef217e58",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:28+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260918.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f7c44dcb-c3b7-4395-94da-ab72a247a93c/NTC-20260918.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "7359a7851394e9ab9ffdb688c2304886bfc4037881a19504b73e3e680712552d",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:29+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260919.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:98de39cd-b448-467d-b571-510cf9916c4c/NTC-20260919.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "267eec6713ee0776fc2e611a06aa9da75e2e2327b136506558180a4277062b89",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:29+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260920.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:cb94e9f4-a018-460f-b82c-5ea85682774c/NTC-20260920.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24984,
+  "sha256": "24da7153ca5d58ef430db7bbf55a92fa95236bbeb6d22094bc9ba3710ab13ed8",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:30+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260921.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0b693b0e-1911-438d-90f4-d9ee91fb3caa/NTC-20260921.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24985,
+  "sha256": "05c90639a71ea854966ac81e8e0c3f1bc28180f666d9a5360c01cf40c0feb8e7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:30+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260922.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:d549296d-6e4b-4cb1-a4e1-8b132cc6d2e3/NTC-20260922.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24990,
+  "sha256": "9892d3e3f3efe17c6794b542be3703ad6fdcea1ba512dc08741b5fc112cd52bd",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:31+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260923.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:cae96449-ad96-4606-8889-74fe1a2d4cb7/NTC-20260923.xml",
+  "retrieved_at_utc": null,
+  "bytes": 24986,
+  "sha256": "c233cd6ed981ad6f01e83652f947ce05c8fbeb9e584c5cdc0e224eedd7894e84",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:31+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260924.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:dd0f2668-8847-4afa-b031-edd4806fb294/NTC-20260924.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25368,
+  "sha256": "8437181519a5a2f00bf981388c34430c2d5498bc48d3bb31cd702f55ad634ffb",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:32+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260925.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:eb3842ef-8953-494a-95ee-8c12791111d1/NTC-20260925.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "792583b13ab0124baad4f07f36782f8aa451877760413fb6dc5c59c2bb14a1f2",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:32+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260926.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:f06fb223-99cf-4418-9c05-c7339fedf182/NTC-20260926.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25032,
+  "sha256": "ac5b04cb66047df91ecce524f0c0d19b71d159d66c5184d4f250f926ba92e317",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:33+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260927.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:5a45cda8-f52b-493d-95e9-7c7013cca5d9/NTC-20260927.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25039,
+  "sha256": "8a1b5457a50f4bf9dd891be0e735ed5e15bb8486520eab6a90e3685919e4f4be",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:33+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260928.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:0cf9bc28-f78f-4a52-a310-48a6bfece21c/NTC-20260928.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25025,
+  "sha256": "303a88edcfcb85b33226937fa6e088c7c9873d7fa066537cf0aa6f6957b5b8cb",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:34+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260929.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:9648a008-2401-4b1a-a41e-5b88e9128f05/NTC-20260929.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25042,
+  "sha256": "0cf92420a65a2feea62fecb5f58368bcd8b8de76192fb081d4f88a0cc2fb6fc7",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:34+00:00"
+ },
+ "swissgrid/ntc_d2/NTC-20260930.xml": {
+  "url": "https://www.swissgrid.ch/dam/jcr:1372832a-f111-462c-8ed9-9eedaaa80718/NTC-20260930.xml",
+  "retrieved_at_utc": null,
+  "bytes": 25006,
+  "sha256": "a65512de41bfbc4329b0e8f48d3e53db8351cabdd858520b191dc984bc43fbfc",
+  "note": "downloaded before the manifest existed; retrieval time unknown, file modified 2026-10-09T11:38:35+00:00"
+ }
+}

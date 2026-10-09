@@ -12,6 +12,7 @@ HPC setup are in the [main README](../README.md); rules for coding agents are in
 | [duals.md](duals.md) | Which duals are exported, their units, signs and weights; reduced costs | Using prices, rents or any `*_dual.csv` |
 | [multi_weather_year.md](multi_weather_year.md) | Meta-scenarios with several sub-scenarios: setup, shared investment, outputs, memory | Running or reading a multi-weather-year optimisation |
 | [../input/demand/adjustments/README.md](../input/demand/adjustments/README.md) | Overlay files that change district-heating demand per scenario | Perturbing DH demand |
+| [../data_prep/historical/README.md](../data_prep/historical/README.md) | Downloading observed CH and neighbour prices, border NTC, CH generation, load and reservoirs; index of the analyses of that data (e.g. trade versus NTC) | Back-casting a historical year in `CH_only` mode |
 
 Every guide starts with a "Checked against" line: the commit of `main` its statements were
 verified on. A statement about code changed after that commit may be stale; check the code.
