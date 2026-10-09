@@ -27,6 +27,13 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
 - **Interactive visualizations** with Plotly
 - **Comprehensive result analysis** and export capabilities
 
+## Documentation
+
+- [docs/README.md](docs/README.md): guides on running the model, scenario files, output files,
+  duals and multi-weather-year runs.
+- [AGENTS.md](AGENTS.md): rules and entry point for coding agents (Claude Code reads it through
+  `CLAUDE.md`).
+
 ## Installation
 
 ### Prerequisites
@@ -47,18 +54,21 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
 2. **Install dependencies with Poetry:**
 
    ```bash
-   poetry install
+   poetry install --no-root
    ```
 
-3. **Activate the environment:**
+   `--no-root` is required: the repository is not an installable package.
 
-   ```bash
-   poetry shell
-   ```
+3. **Run scripts in the environment:** prefix commands with `poetry run` (e.g.
+   `poetry run python run_scenarios.py`), or activate the environment with the command that
+   `poetry env activate` prints. (`poetry shell` is a plugin since Poetry 2.)
 
-4. **Configure Gurobi license:**
-   - Place your `gurobi.lic` file in the appropriate directory
-   - Or set the `GRB_LICENSE_FILE` environment variable
+4. **Install Gurobi and its license:**
+   - Pyomo calls Gurobi through Gurobi's command-line launcher (`gurobi.bat` on Windows,
+     `gurobi.sh` on Linux), so install the full Gurobi distribution and make sure its `bin`
+     folder is on `PATH`. The Python package `gurobipy` is not needed for local runs.
+   - Place your `gurobi.lic` file in the appropriate directory, or set the `GRB_LICENSE_FILE`
+     environment variable.
 
 ### Installation on HPC Clusters
 
@@ -105,7 +115,7 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 
    ```bash
    curl -sSL https://install.python-poetry.org | python3 -
-   poetry --version   # should print something like "Poetry (version 1.x.x)"
+   poetry --version   # should print something like "Poetry (version 2.x.x)"
    ```
 
 4. **Tell Poetry not to inherit system-site-packages.** Without this, Poetry's `install` step on Euler will try to uninstall numpy from the read-only `python/3.11.6` module directory and crash with `PermissionError`. Run from inside the repo:
@@ -183,9 +193,11 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 3. **Install project dependencies:**
 
    ```bash
-   poetry install
-   poetry shell
+   poetry install --no-root
    ```
+
+   The lock file is written by Poetry 2. If `poetry install` rejects it, use the Poetry
+   installed in step 2 rather than an older `poetry` module.
 
 4. **Ensure required modules in `~/.bashrc`:**
 
@@ -203,6 +215,9 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 
    **Note:** SLURM jobs inherit your `.bashrc` environment, so modules loaded there will be available in parallel jobs automatically.
 
+   The repository has no SciCORE job script: `cluster_runs/parallel_runs_Euler.sh` loads Euler
+   modules and expects the repository at `~/repos/Future_Markets`, so adapt a copy of it.
+
 ## Usage
 
 ### Basic Scenario Execution
@@ -213,13 +228,15 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 python run_scenarios.py
 ```
 
-**Aggregate the results of various scenarios to one folder:**
+**Aggregate the results of various scenarios to one folder** (first set `scenarios_to_agg`
+and `agg_name` at the top of the script; writes `output/aggregated/<agg_name>/`):
 
 ```bash
 python aggregate_results.py
 ```
 
-**Visualize the results of one or various scenarios in different plots:**
+**Visualize the results of one or various scenarios in different plots** (first set
+`scenarios_to_plot` at the top of the script; writes to `plots/`):
 
 ```bash
 python visualization_class.py
@@ -227,9 +244,12 @@ python visualization_class.py
 
 **Modify scenarios:**
 
-- Edit `scenarios/scen_to_run_STORSUPPORT.csv` to define your scenarios
-- Each column represents a scenario with different parameter combinations
-- Parameters include weather years, policy settings, technology costs, etc.
+- The `target_csv =` line in `scenarios/scenarios.py` selects the scenario file
+  (default `scenarios/scen_to_run_STORSUPPORT.csv`)
+- Rows are settings, columns are sub-scenarios; a `sub_secn` row is required, and columns with
+  the same name form one optimisation (e.g. several weather years with shared investment)
+- Settings not in the file take their value from `scenarios/settings_default.py`
+- Details, the quick test run and the unit tests: [docs/running.md](docs/running.md)
 
 ### Parallel Execution on HPC Clusters
 
@@ -283,30 +303,48 @@ Then resubmit `sbatch cluster_runs/parallel_runs_Euler.sh`.
 
 ### Output and Results
 
-Results are saved in the `output/` directory:
+Each run writes `output/<scenario>/`:
 
-- **CSV files** with detailed time series data
-- **Investment results** and capacity additions
-- **Energy balances** and dispatch schedules
-- **Economic indicators** (costs, prices, revenues)
-- **Interactive HTML plots** for visualization
+- **Every model variable and indexed parameter** as a long-format CSV (dispatch, capacities,
+  storage levels, inputs)
+- **Duals** (`*_dual.csv`, e.g. electricity and district-heat prices) and **reduced costs** of
+  investment variables (`*_reduced_cost.csv`)
+- **Cost breakdowns** (`cost_*_dict.csv`), `investment_summary.csv` (Swiss plants),
+  `settings.csv`, `statistics.csv` and the solver log
+
+Plots from `visualization_class.py` and the dashboard data go to `plots/`. How to read the files:
+[docs/outputs.md](docs/outputs.md) and [docs/duals.md](docs/duals.md).
 
 ## Project Structure
 
 ```
-├── scenarios/                 # Scenario definitions and settings
-│   ├── scenarios.py          # Main scenario processing logic
+├── model/                    # The optimization model
+│   ├── core.py              # Run orchestration: build, solve, export
+│   ├── components_common.py # Sets, parameters, variables, constraints, objective
+│   ├── components_central.py # Electrolyzer, winter-import and Swiss RES-target constraints
+│   ├── constraint_scaling.py # Row-scaling factors per constraint
+│   └── data_import_fcns.py  # Input data readers
+├── scenarios/                # Scenario definitions and settings
+│   ├── scenarios.py         # Reads the scenario CSV named in target_csv
 │   ├── scen_to_run_*.csv    # Scenario parameter files
-│   └── settings_default.py   # Default parameter values
+│   └── settings_default.py  # Default parameter values
 ├── data_prep/                # Data import and preprocessing
 ├── input/                    # Input data files
-├── core.py                   # Main optimization model
 ├── run_scenarios.py          # Sequential scenario runner
-├── cluster_runs/             # Parallel execution scripts for Euler
-├── visualization/            # Plotting and analysis tools
-├── aggregation/              # Result aggregation utilities
+├── run_scenarios_hpc.py      # Single-scenario runner for SLURM arrays
+├── cluster_runs/             # Euler job script and setup
+├── aggregation/              # Result export during the run (results_export.py) and aggregation
+├── aggregate_results.py      # Combine several runs
+├── visualization_class.py    # Plots of one or several runs
+├── visualization/            # Further plotting helpers
+├── plot_creators/            # Standalone plotting scripts
+├── tools/prepare_viewer.py   # Converter for the standalone dashboard
+├── viewer.html               # Standalone dashboard
+├── detailed_reporting/       # Optional post-hoc reports
+├── tests/                    # Unit tests (pytest)
 ├── utils/                    # Helper functions
-└── output/                   # Results and outputs
+├── docs/                     # Guides
+└── output/                   # Results (gitignored)
 ```
 
 ## Key Model Components
@@ -372,13 +410,19 @@ Two parts:
    python tools/prepare_viewer.py output/<run> --out-dir plots --sub-scenario <name>
    ```
 
-   Produces `plots/<run_name>_viewer.json.gz` (~5 MB per run). Missing output
+   Produces `plots/<run_name>_viewer.json.gz` (a few MB for a full-year run). Missing output
    files are warned about and skipped; the converter checks that the zonal
    energy balance closes after its technology grouping.
 
 2. **Viewer** — open `viewer.html` in any modern browser (no server, no
    installation, no internet; the file can be e-mailed) and drag the
    `*_viewer.json.gz` onto it.
+
+The converter expects a full-year run: short test runs convert, but the annual views stay
+mostly empty. For a run with several sub-scenarios it takes the first unless
+`--sub-scenario <Scenarios value>` is given, and it shows duals as exported, so prices of a
+multi-weather-year run appear multiplied by the sub-scenario weight
+([docs/duals.md](docs/duals.md)).
 
 Dashboard contents:
 
@@ -392,9 +436,9 @@ Dashboard contents:
   NTC-binding markers, storage state of charge, district-heat panel
 - **Prices**: duration curves, monthly means, per-zone statistics
 - **Cross-border exchange**: CH border schematic, congestion ranking
-  (share of hours the NTC binds), full line table. If a run was solved
-  without dual export, the maximum observed flow is shown as the NTC
-  estimate (`NTC*`)
+  (share of hours the NTC binds), full line table. Unless the run used
+  `DUALS_EXPORT_ALL = True` (which exports the transmission-limit duals), the
+  maximum observed flow is shown as the NTC estimate (`NTC*`)
 - **Storage**: seasonal state of charge (absolute or % of capacity), cycling
   statistics
 - **Capacity & investment**: pre-existing vs. newly built per zone/technology
@@ -409,8 +453,9 @@ see `input/timemaps_hydro_year.csv`).
 
 1. Create feature branches for new developments
 2. Follow existing code structure and naming conventions
-3. Update documentation for new features
-4. Test changes with small scenarios before large-scale runs
+3. Write unit tests in `tests/` for new or changed code; run them with `poetry run pytest`
+4. Check model changes with the quick test run before large-scale runs ([docs/running.md](docs/running.md))
+5. Update the guides in `docs/` when you change behaviour they describe
 
 ## Citation
 
