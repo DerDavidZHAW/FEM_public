@@ -174,7 +174,7 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     print("Applying variable presets from model_variable_presets.csv...")
     preset_summary = apply_variable_presets(model, scenario_name, preset_file_path="input/model_variable_presets.csv", verbose=True)
     applicable_count = len([p for p in read_variable_presets('input/model_variable_presets.csv') if p['scenario_name'] == '' or p['scenario_name'] == scenario_name])
-    print(f"Presets applied: {preset_summary['applied']}, Failed: {preset_summary['failed']}, Total applicable: {applicable_count}")
+    print(f"Presets applied: {preset_summary['applied']}, Total applicable: {applicable_count}")
     if preset_summary['details']:
         print("Preset details:")
         for preset, status, message in preset_summary['details']:

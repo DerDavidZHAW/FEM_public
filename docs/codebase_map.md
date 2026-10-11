@@ -1,6 +1,6 @@
 # Codebase map
 
-Checked against: `main` @ 54d6be28 (2026-10-09).
+Checked against: `main` @ a90496c (2026-10-11).
 
 How one run moves through the code, and which file to change for which task. For folder
 contents, list the folder; this guide records what a listing does not tell you.
@@ -21,7 +21,8 @@ contents, list the folder; this guide records what a listing does not tell you.
      `define_constraints`, then `define_constraints_central` (`model/components_central.py`:
      electrolyzer energy, winter import limit, Swiss RES target) and `fixing_capacities_central`
      (fixes pre-existing capacities);
-   - applies presets from `input/model_variable_presets.csv` (`model/variable_presets.py`);
+   - applies presets from `input/model_variable_presets.csv` (`model/variable_presets.py`); a
+     preset that cannot be applied (variable or index not in the model) stops the run;
    - solves with `pyo.SolverFactory(solver_name)` and the options string `solver_parameters`,
      hard-coded in `core.py`;
    - exports results (see "Exports" below).

@@ -48,6 +48,7 @@
 # - The scenario_name refers to the main scenario (from scenarios/scen_to_run_*.csv), not subscenarios,,,,
 # - Only CAPACITY/INVESTMENT variables can be preset (gen_max, pmp_max, etc.),,,
 # - Do NOT try to preset OPERATIONAL variables like 'gen', 'storage_charge', 'soc', etc.,,
+# - A preset that cannot be applied (variable or index not in the model) stops the run with an error,,
 #
 # Example presets (uncomment and modify as needed):,,,,,
 # gen_max,,CH01_pvrf,,100,
