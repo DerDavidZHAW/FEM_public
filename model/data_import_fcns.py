@@ -1499,6 +1499,11 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
             
         if keep_line:
             line_name = "HVAC_" + start_node + "_" + end_node
+            line_reverse_name = "HVAC_" + end_node + "_" + start_node
+            if line_reverse_name in List_line:
+                raise ValueError(
+                    f"The NTC import file lists both {line_reverse_name} and {line_name}; a node pair must be a single line"
+                )
             List_line.append(line_name)
             Map_line_node[line_name] = {
                 "start_node": start_node,
@@ -1534,7 +1539,7 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
             
         if keep_line:
             line_name = "HVAC_" + start_node + "_" + end_node
-            line_reverse_name = "HVAC_" + start_node + "_" + end_node
+            line_reverse_name = "HVAC_" + end_node + "_" + start_node
 
             if line_name not in List_line:
                 if line_reverse_name not in List_line:
@@ -1545,7 +1550,7 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
                     }
                 else:
                     raise ValueError(
-                        f"Line {line_name} and {line_reverse_name} are both in List_line"
+                        f"The NTC export file lists {line_name}, the reverse of line {line_reverse_name}; a node pair must be a single line"
                     )
 
             for t in T_list:
