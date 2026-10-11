@@ -6,7 +6,6 @@ seetings_default_param = {
     "flex_dem_active_for_consumer": True,
     "share_of_flexibly_charging_EV": 0.5,  # Share of total EV consumption that is flexible (0-1). The remaining (1-share) is inflexible.
     "V2G_share_of_flexibly_charging_EV": 0.5,
-    "reduce_DH_demand_by_[MWh]": 0,
     "CH_only": False,
     "neighbor_countries_for_CH_only_mode": ["DE00", "AT00", "FR00", "IT00"],
     "neighbor_price_scenario_for_CH_only_mode": "default",
