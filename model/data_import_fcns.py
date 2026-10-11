@@ -599,10 +599,12 @@ def read_RES_capacities(
 
     return Plant_list, Map_plant_tech, Res_capacity_dict, Map_plant_node
 
-def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
+def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list, Plant_investment_list):
     """ "
     This function checks if the plants in Plant_capacity_gen_list and Plant_non_hydro_list are the same.
-    If not, it prints the plants that are in Plant_capacity_gen_list, but not in Plant_non_hydro_list and vice versa.
+    It prints the plants that are in Plant_capacity_gen_list, but not in Plant_non_hydro_list. It raises an error for
+    plants that are in Plant_non_hydro_list, but not in Plant_capacity_gen_list, unless they are investment
+    candidates (Plant_investment_list), whose capacity is a decision variable.
     """
     Plant_capacity_gen_common_list = list(
         set(Plant_capacity_gen_list) & set(Plant_non_hydro_list)
@@ -611,9 +613,9 @@ def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
     Plant_capacity_gen_diff_list = list(
         set(Plant_capacity_gen_list) - set(Plant_capacity_gen_common_list)
     )
-    # find values that are in Plant_non_hydro_list, but not Plant_capacity_gen_common_list
-    Plant_non_hydro_diff_list = list(
-        set(Plant_non_hydro_list) - set(Plant_capacity_gen_common_list)
+    # find values that are in Plant_non_hydro_list, but not Plant_capacity_gen_common_list (investment candidates need no capacity)
+    Plant_non_hydro_diff_list = sorted(
+        set(Plant_non_hydro_list) - set(Plant_capacity_gen_common_list) - set(Plant_investment_list)
     )
     # if Plant_capacity_gen_diff_list is not empty, print the values in Plant_capacity_gen_diff_list
     if Plant_capacity_gen_diff_list != []:
@@ -621,20 +623,12 @@ def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
             "The following plants are in capacities_....csv, but not in plants_....csv:"
         )
         print(Plant_capacity_gen_diff_list)
-        # abort running the program and print the message in the brackets
-        # Exception("Some plants cross-mismatch issue (1), see above")
 
-    if (
-        Plant_non_hydro_diff_list != []
-    ):  # if Plant_non_hydro_diff_list is not empty, print the values in Plant_non_hydro_diff_list
-        print(
-            "The following plants are in plants_....csv, but not in capacities_...csv:"
+    if Plant_non_hydro_diff_list != []:
+        raise ValueError(
+            "The following plants are in plants_....csv, but have no capacity for this scenario and year in "
+            f"capacities_....csv and are not investment candidates: {Plant_non_hydro_diff_list}"
         )
-        # sort Plant_non_hydro_diff_list alphabetically
-        print(Plant_non_hydro_diff_list)
-
-        # Exception("Some plants cross-mismatch issue (2), see above")
-    return Plant_non_hydro_diff_list
 
 
 def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investment_nodes_in_addition_to_CH, CH_only=False, weather_year=None, run_year=None, high_resolution_PV=False):

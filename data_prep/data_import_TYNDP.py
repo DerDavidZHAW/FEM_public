@@ -592,12 +592,12 @@ def data_import_TYNDP_fcn(scenario_name):
     # -----------------------------------------------------------------------------------------------
     # cross matching of plants and updating Plant_list
 
-    # check if there is any cross-mismatch issue
-    Plant_capacity_missing = cross_match_plant_list(Plant_list_nonhydro_capacity_gen, Plant_list_nonhydro)
-    # remove all elements of  Plant_capacity_missing from Plant_list_TYNDP
-    print("Plants with no reported capacity in input data are assigned capacity of 0 as default ... \n", Plant_capacity_missing) if Plant_capacity_missing else None
-    for plant in Plant_capacity_missing:
-        Plant_capacity_gen[plant] = 0
+    # check if there is any cross-mismatch issue (raises an error for a plant without capacity, unless it is an investment candidate)
+    cross_match_plant_list(
+        Plant_list_nonhydro_capacity_gen,
+        Plant_list_nonhydro,
+        Plant_investment_RES_CH_list_instance + Plant_investment_non_RES_CH_list_instance,
+    )
 
     dle.extend_list_with_new_elements(Plant_list_TYNDP, Plant_list)
 
