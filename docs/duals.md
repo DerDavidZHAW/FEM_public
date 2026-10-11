@@ -1,6 +1,6 @@
 # Duals and reduced costs
 
-Checked against: `main` @ 54d6be28 (2026-10-09).
+Checked against: `main` @ a90496c (2026-10-11).
 
 Which duals a run exports, and how to turn a value in a `*_dual.csv` into a price or rent.
 
@@ -44,9 +44,10 @@ Written during the run by `constraints` in `aggregation/results_export.py`, call
 | `storageTh_soc_limit_dual.csv` | Thermal storage energy capacity | `PDH_storage, T, Scenarios` |
 | `storageTh_soc_dual.csv` | Value of stored heat | `PDH_storage, T, Scenarios` |
 
-`Constraint_winter_limit_dual.csv` and `Constraint_investment_res_CH_dual.csv` are added when the
-winter import limit or the Swiss RES target is switched on. Note the different index order of
-the two price files.
+`Constraint_winter_limit_dual.csv` and `Constraint_investment_res_CH_dual.csv` are added when a
+sub-scenario switches on the winter import limit or the Swiss RES target. They have one row per
+such sub-scenario; its name is in the first column. Note the different index order of the two
+price files.
 
 **With the setting `DUALS_EXPORT_ALL = True`**, the duals of all active constraints are written,
 e.g. `generation_limit`, `storage_rate_limit` (electric charging, incl. DH heat pumps and

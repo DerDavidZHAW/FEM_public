@@ -334,14 +334,11 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         "storageTh_rate_limit",    # shadow price of charging/pumping rate (MW_th/el) — HP, PTES, RH
         "storageTh_soc_limit",     # shadow price of thermal energy storage capacity (MWh_th) — PTES TTES
         "storageTh_soc",           # shadow price of thermal energy storage level (MWh_th) - PTES TTES
+        # exist only if a sub-scenario switches on the winter import limit or the Swiss RES target (one row per such sub-scenario)
+        "Constraint_winter_limit",
+        "Constraint_investment_res_CH",
     ]
 
-    if winter_limit[sub_scen]["mode"]:
-        constraint_names_to_export.append("Constraint_winter_limit")
-
-    if minimum_RES_target_CH[sub_scen]:
-        constraint_names_to_export.append("Constraint_investment_res_CH")
-    
     if any(duals_export_all.values()): # If DUALS_EXPORT_ALL is True for any subscenario, export all duals
         constraint_list = [v for v in model.component_objects(ctype=Constraint, active=True, descend_into=True)]
     else:
