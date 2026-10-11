@@ -221,12 +221,12 @@ def obj_expression(model):
             ]
         )
 
-        # slack cost
+        # slack cost (the slacks enter the balances of electric and thermal storage, see storeBalance_Constraint)
         if hasattr(model, "slack_soc") and model.slack_soc:
             slack_cost_coeff = 1000000
             model.slack_cost_dict[scen] = model.weight_in_objective_fcn[scen] * slack_cost_coeff * sum(
                 model.slackSOC_POS[p, t, scen] + model.slackSOC_NEG[p, t, scen]
-                for p in model.P_storage
+                for p in model.P_storage | model.PDH_storage
                 for t in model.T
             )
         else:
