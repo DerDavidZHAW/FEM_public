@@ -1,6 +1,6 @@
 # Running the model
 
-Checked against: `main` @ 54d6be28 (2026-10-09).
+Checked against: `main` @ a90496c (2026-10-11).
 
 Installation, Gurobi and the Euler and SciCORE setup are in the [main README](../README.md).
 This guide covers what to run once the environment works.
@@ -54,8 +54,10 @@ A **test run** is the end-to-end check after model changes.
 The test scenario is one meta-scenario `2050_st` with one sub-scenario (`wy1995_aa`, weight 1):
 run year 2050, weather year 1995, 25 hours from 1 October (`t_6553` to `t_6577`). It finishes in
 a few minutes, mostly data import; the solve itself takes seconds. Results go to
-`output/2050_st/` and overwrite the previous test run. `output/2050_st/statistics.csv` should
-report `Termination_Condition` `optimal`.
+`output/2050_st/` and overwrite the previous test run. A solve that does not end optimal stops
+the run with an error before results are exported (Gurobi's log is
+`output/2050_st/solver_log.log`); otherwise `output/2050_st/statistics.csv` reports
+`Termination_Condition` `optimal`.
 
 The test scenario has a single sub-scenario and does not use the DH demand overlay, so it does
 not exercise multi-weather-year logic. To check such a change, put a temporary copy of the test
