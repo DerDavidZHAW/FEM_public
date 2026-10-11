@@ -102,6 +102,17 @@ import pandas as pd
 import os
 
 
+def add_ev_plants(rep_plant_name, Plant_list_TYNDP, Plant_outflow_list, Map_plant_node, Map_plant_tech):
+    """
+    Adds the flexible-EV plant CH00_EV_flex and the V2G plant rep_plant_name to the plant lists and maps.
+    data_import_TYNDP_fcn runs once per sub-scenario; a plant already in a list is not added again.
+    """
+    dle.extend_list_with_new_elements(["CH00_EV_flex", rep_plant_name], Plant_list_TYNDP)
+    Map_plant_node.update({"CH00_EV_flex": "CH00", rep_plant_name: "CH00"})
+    Map_plant_tech.update({"CH00_EV_flex": "ev_flex", rep_plant_name: "v2g"})
+    dle.extend_list_with_new_elements([rep_plant_name], Plant_outflow_list)
+
+
 def data_import_TYNDP_fcn(scenario_name):
     """
     This function imports the data from TYNDP files.
@@ -435,11 +446,9 @@ def data_import_TYNDP_fcn(scenario_name):
     # This is added to the energy balance as a fixed demand, not as a storage_charge plant
     EV_inflexible_demand_TYNDP = read_EV_inflexible_demand_data(run_year, share_of_flexibly_charging_EV, node="CH00")
     
-    # Add flexible EV plant (optimizable within weekly sum constraint)
+    # Add flexible EV plant (optimizable within weekly sum constraint) and the V2G plant
     # Inflexible EV is handled as a parameter in the energy balance, not as a plant
-    Plant_list_TYNDP.append("CH00_EV_flex")
-    Map_plant_node.update({"CH00_EV_flex": "CH00"})
-    Map_plant_tech.update({"CH00_EV_flex": "ev_flex"})
+    add_ev_plants(rep_plant_name, Plant_list_TYNDP, Plant_outflow_list, Map_plant_node, Map_plant_tech)
 
     # Add the raw imported data to the global dictionaries
     dle.update_dict_with_add_dim(EV_weekly_energy_consumption_data_TYNDP, EV_weekly_energy_consumption_data, scenario_name)
@@ -453,12 +462,7 @@ def data_import_TYNDP_fcn(scenario_name):
     V2G_outflow_TYNDP = read_V2G_data_outflow(run_year, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV)
     # V2G_charge_power_rate_TYNDP = read_V2G_charge_power_rate(run_year, rep_plant_name)
     V2G_storage_capacity_scen = read_V2G_storage_capacity(run_year, ch_policy, rep_plant_name, share_of_flexibly_charging_EV, V2G_share_of_flexibly_charging_EV)
-    # add "V2G_CH" to Plant_list
-    Plant_list_TYNDP.extend([rep_plant_name,])
-    Map_plant_node.update({rep_plant_name: "CH00"})
-    Map_plant_tech.update({rep_plant_name: "v2g"})
-    Plant_outflow_list.extend([rep_plant_name])
-    
+
     # Add the raw imported data to the global dictionaries
     dle.update_dict_with_add_dim(V2G_outflow_TYNDP, Outflow_data, scenario_name) # add V2G to dimension Outflow_data?
     dle.update_dict_with_add_dim(V2G_charge_power_rate_TYNDP, V2G_charging_power_rate, scenario_name)
