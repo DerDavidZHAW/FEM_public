@@ -1712,7 +1712,7 @@ def import_avail_plant(
         else:
             print("fieldnames is None!")
 
-    # read data per country
+    # read data per country (a country can have several rows, one per technology)
     with open(r"input/availability_factor_conventional.csv", "r") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=",")
         fieldnames = reader.fieldnames
@@ -1721,13 +1721,17 @@ def import_avail_plant(
             for row in reader:
                 country = row["country"]
                 tech = row["technology"]
-                data_dict[country] = {}
+                if country == "Default":
+                    continue
+                if tech in data_dict.get(country, {}):
+                    raise ValueError(
+                        f"input/availability_factor_conventional.csv has two rows for country {country} and technology {tech}"
+                    )
                 month_value = {}
-                if country != "Default":
-                    for month in fieldnames[2:]:
-                        month_value[month] = float(row[month])
+                for month in fieldnames[2:]:
+                    month_value[month] = float(row[month])
 
-                data_dict[country][tech] = month_value
+                data_dict.setdefault(country, {})[tech] = month_value
 
     # if a country does not have a technology, use the default value
     for country in data_dict:
