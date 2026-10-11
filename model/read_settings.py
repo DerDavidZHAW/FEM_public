@@ -1,9 +1,11 @@
 from scenarios.settings_default import seetings_default_param
-from scenarios.scenarios import scenarios_list
+from scenarios.scenarios import scenarios_list, target_csv
 
 
 def read_scenario_settings(scenario_name):
-    parameters = scenarios_list.get(scenario_name, {})
+    if scenario_name not in scenarios_list:
+        raise KeyError(f"Scenario '{scenario_name}' is not defined in {target_csv} (target_csv in scenarios/scenarios.py)")
+    parameters = scenarios_list[scenario_name]
 
     # Use default parameters if a parameters as stored in seetings_default_param, if it  is missing in the scenarios_list
     scenario_params = {**seetings_default_param, **parameters}
