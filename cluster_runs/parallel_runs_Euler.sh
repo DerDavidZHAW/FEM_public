@@ -6,15 +6,25 @@
 #SBATCH --qos=1day
 #SBATCH --output=/cluster/home/%u/logs_FEM/myrun_%A_%a.out
 #SBATCH --error=/cluster/home/%u/logs_FEM/myrun_%A_%a.err
-#SBATCH --array=0-23   # Update this based on your CSV file
+#SBATCH --array=0-23   # Set to 0-<N-1>, N from: python cluster_runs/get_scenario_names.py
 #SBATCH --mail-type=END,FAIL
 
+
+# The repository is the folder sbatch was called from: submit from the repo root,
+#     cd ~/repos/<clone> && sbatch cluster_runs/parallel_runs_Euler.sh
+# so one script serves every clone, whatever its folder is called.
+REPO_DIR="$SLURM_SUBMIT_DIR"
+if [ ! -f "$REPO_DIR/run_scenarios_hpc.py" ]; then
+    echo "FATAL: sbatch was not called from the repository root (SLURM_SUBMIT_DIR=$REPO_DIR)."
+    echo "       cd into the clone and submit again."
+    exit 1
+fi
 
 # Fail fast if the one-time scratch setup wasn't run.
 # Note: ~/logs_FEM must exist BEFORE submission too — SLURM opens the .out/.err
 # files before the script body runs. If you see this message in stderr only,
 # it means logs_FEM exists but output/ isn't symlinked.
-if [ ! -d "$HOME/logs_FEM" ] || [ ! -L "$HOME/repos/Future_Markets/output" ]; then
+if [ ! -d "$HOME/logs_FEM" ] || [ ! -L "$REPO_DIR/output" ]; then
     echo "FATAL: Euler scratch setup is incomplete."
     echo "       Run the one-time setup first:"
     echo "         bash cluster_runs/setup_euler_scratch.sh"
@@ -34,7 +44,7 @@ export POETRY_VIRTUALENVS_PATH="$HOME/.poetry_venvs"
 export POETRY_CACHE_DIR="/cluster/scratch/$USER/.poetry_cache"
 export POETRY_VIRTUALENVS_IN_PROJECT=false
 
-cd ~/repos/Future_Markets
+cd "$REPO_DIR"
 
 # Venv must already exist — do NOT install from inside an array task.
 # With --array=0-N, all tasks start simultaneously and race to create the
@@ -44,25 +54,29 @@ cd ~/repos/Future_Markets
 #     module load stack/2024-06 python/3.11.6 gurobi/10.0.3
 #     export POETRY_VIRTUALENVS_PATH="$HOME/.poetry_venvs"
 #     export POETRY_CACHE_DIR="/cluster/scratch/$USER/.poetry_cache"
-#     cd ~/repos/Future_Markets
+#     cd "$REPO_DIR"
 #     poetry install --no-interaction --no-root
 #
 # Sanity check — fail fast if the venv is missing/broken instead of crashing
 # 10 minutes into the model run.
-# Fail fast with diagnostic context if something's wrong with poetry/venv/gurobipy.
+# Fail fast with diagnostic context if something's wrong with poetry, the venv or the solver.
 if ! command -v poetry >/dev/null 2>&1; then
     echo "FATAL: 'poetry' not found on PATH. Compute node PATH was: $PATH"
     echo "       Check that ~/.local/bin/poetry exists, and that this script exports PATH correctly."
     exit 1
 fi
-if ! poetry run python -c "import gurobipy; gurobipy.gurobi.version()"; then
-    echo "FATAL: gurobipy import failed via 'poetry run'."
+if ! poetry run python -c "import pyomo, pandas"; then
+    echo "FATAL: the Poetry environment of this clone is missing or broken."
     echo "       POETRY_VIRTUALENVS_PATH=$POETRY_VIRTUALENVS_PATH"
-    echo "       Recover with:"
-    echo "         rm -rf ~/.poetry_venvs/future-markets-* && \\"
-    echo "         cd ~/repos/Future_Markets && \\"
-    echo "         poetry install --no-interaction --no-root"
+    echo "       Recover with (interactively, never from an array task):"
+    echo "         cd $REPO_DIR && poetry install --no-interaction --no-root"
     echo "       Remember: re-SSH after changing ~/.bashrc so SLURM gets the new env."
+    exit 1
+fi
+# Pyomo calls Gurobi through gurobi.sh, so the module must put gurobi_cl on PATH;
+# the Python package gurobipy is not used.
+if ! command -v gurobi_cl >/dev/null 2>&1; then
+    echo "FATAL: gurobi_cl not on PATH; the gurobi module did not load."
     exit 1
 fi
 
@@ -79,4 +93,9 @@ SCENARIO=${SCENARIOS[$SLURM_ARRAY_TASK_ID]}
 export PYTHONUNBUFFERED=1
 echo "$(date): Starting scenario $SCENARIO"
 poetry run python -u run_scenarios_hpc.py --scenario "$SCENARIO"
+STATUS=$?
+if [ "$STATUS" -ne 0 ]; then
+    echo "$(date): Scenario $SCENARIO FAILED with exit code $STATUS (see the .err file)"
+    exit "$STATUS"
+fi
 echo "$(date): Finished scenario $SCENARIO"

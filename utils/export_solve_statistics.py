@@ -3,7 +3,6 @@ import pandas as pd
 from pathlib import Path
 import csv
 from pyomo.core import Constraint, value
-import gurobipy as gp
 from pyomo.repn import generate_standard_repn
 
 def export_fcn(scenario_name, result, model, solve_time):
