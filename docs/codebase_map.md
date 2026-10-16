@@ -7,8 +7,13 @@ contents, list the folder; this guide records what a listing does not tell you.
 
 ## How a run flows
 
-1. **`run_scenarios.py`** loops over `meta_scenarios_list` and calls `model.core.core_main` once
-   per meta-scenario. `run_scenarios_hpc.py --scenario <name>` runs a single one (SLURM).
+1. **`run_scenarios.py`** runs each meta-scenario of `meta_scenarios_list` in its own process by
+   calling `run_scenarios_hpc.py --scenario <name>` (`model/scenario_runner.py`) and stops at the
+   first one that fails. `run_scenarios_hpc.py` runs a single meta-scenario, which is also what each
+   task of the Euler array does. The separate process is required: the data import accumulates
+   plant lists and maps in module-level containers of `data_prep/definitions_common.py` and
+   `definitions_TYNDP.py`, so a second meta-scenario in the same interpreter would inherit the
+   first one's plants and fail or build the wrong plants.
 2. **`scenarios/scenarios.py`** reads the CSV named on its `target_csv =` line and groups its
    columns into meta-scenarios and sub-scenarios (rules in `docs/running.md`).
 3. **`model/core.py`, `core_main`** (about 390 lines, orchestration only):
