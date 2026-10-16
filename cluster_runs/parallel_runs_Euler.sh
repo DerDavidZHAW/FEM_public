@@ -93,4 +93,9 @@ SCENARIO=${SCENARIOS[$SLURM_ARRAY_TASK_ID]}
 export PYTHONUNBUFFERED=1
 echo "$(date): Starting scenario $SCENARIO"
 poetry run python -u run_scenarios_hpc.py --scenario "$SCENARIO"
+STATUS=$?
+if [ "$STATUS" -ne 0 ]; then
+    echo "$(date): Scenario $SCENARIO FAILED with exit code $STATUS (see the .err file)"
+    exit "$STATUS"
+fi
 echo "$(date): Finished scenario $SCENARIO"
