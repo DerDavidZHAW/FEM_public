@@ -1,6 +1,6 @@
 # Multi-weather-year runs
 
-Checked against: `main` @ a90496c (2026-10-11).
+Checked against: `main` @ 5f0e737 (2026-10-16).
 
 One meta-scenario can hold several sub-scenarios, usually one per weather year, solved as a
 single optimisation: dispatch is separate per sub-scenario, investment is shared, and the

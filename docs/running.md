@@ -1,6 +1,6 @@
 # Running the model
 
-Checked against: `main` @ a90496c (2026-10-11).
+Checked against: `main` @ 5f0e737 (2026-10-16).
 
 Installation, Gurobi and the Euler and SciCORE setup are in the [main README](../README.md).
 This guide covers what to run once the environment works.

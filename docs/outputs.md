@@ -1,6 +1,6 @@
 # Output files
 
-Checked against: `main` @ a90496c (2026-10-11).
+Checked against: `main` @ 5f0e737 (2026-10-16).
 
 What a run writes to `output/<meta-scenario>/` and how to read it. Prices and every other dual:
 `docs/duals.md`. A rerun of the same meta-scenario overwrites its folder.

@@ -1,6 +1,6 @@
 # Duals and reduced costs
 
-Checked against: `main` @ a90496c (2026-10-11).
+Checked against: `main` @ 5f0e737 (2026-10-16).
 
 Which duals a run exports, and how to turn a value in a `*_dual.csv` into a price or rent.
 
