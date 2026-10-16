@@ -155,6 +155,8 @@ detailed_reporting/details_on_*
 detailed_reporting/to_consider_from_*
 
 # Outputs
+# model results; on Euler `output` is a symlink to scratch, which `output/` alone would not match
+/output
 output/
 # plot_creators/daily_electricity_costs_*
 # plot_creators/nuclear_breakeven_*

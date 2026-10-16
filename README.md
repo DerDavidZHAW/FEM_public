@@ -47,8 +47,8 @@ The model uses **Pyomo** for mathematical optimization and **Gurobi** as the def
 1. **Clone the repository:**
 
    ```bash
-   git clone <link>
-   cd Future_Markets
+   git clone https://github.com/DerDavidZHAW/FEM_public.git
+   cd FEM_public
    ```
 
 2. **Install dependencies with Poetry:**
@@ -78,13 +78,15 @@ Two clusters are supported. Pick the one you use:
 
 This walkthrough assumes you have an ETH nethz account and SSH access to `euler.ethz.ch`. Read every step; the Poetry-on-Euler setup has a few non-obvious quirks and skipping any of them will cost you hours later.
 
-1. **Clone the repository into `~/repos/Future_Markets`:**
+1. **Clone the repository into `~/repos`:**
 
    ```bash
    mkdir -p ~/repos && cd ~/repos
-   git clone https://github.com/alidrd/Future_Markets.git
-   cd Future_Markets
+   git clone https://github.com/DerDavidZHAW/FEM_public.git
+   cd FEM_public
    ```
+
+   The folder name is free: the job script works from whatever clone it is submitted from.
 
 2. **Set up `~/.bashrc` once.** Use this to configure your interactive Euler shell with the modules and environment variables needed for this project. Batch jobs should still load required modules and re-declare needed environment variables explicitly, because non-login SLURM shells may not source `~/.bashrc` automatically. Append the following block:
 
@@ -121,7 +123,7 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 4. **Tell Poetry not to inherit system-site-packages.** Without this, Poetry's `install` step on Euler will try to uninstall numpy from the read-only `python/3.11.6` module directory and crash with `PermissionError`. Run from inside the repo:
 
    ```bash
-   cd ~/repos/Future_Markets
+   cd ~/repos/FEM_public
    poetry config virtualenvs.options.system-site-packages false --local
    ```
 
@@ -135,15 +137,16 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 
    **Do this interactively, not from inside a SLURM array job.** Array tasks all race to create the venv simultaneously and corrupt it. See the [troubleshooting note](#troubleshooting-on-euler) at the end of this section if you ever need to recover.
 
-6. **Verify the environment.** Both lines should succeed:
+6. **Verify the environment.** All three lines should succeed:
 
    ```bash
-   poetry run python -c "import gurobipy; print('gurobipy', gurobipy.gurobi.version(), 'OK')"
-   du -sh $HOME/.poetry_venvs/  # expect ~500 MB
+   poetry run python -c "import pyomo, pandas; print('pyomo', pyomo.__version__, 'OK')"
+   gurobi_cl --version           # Pyomo calls Gurobi through the module's gurobi.sh; gurobipy is not needed
+   du -sh $HOME/.poetry_venvs/   # expect ~500 MB per clone
    lquota                        # confirm you're well under the 45 GB home quota
    ```
 
-   If the `gurobipy` line prints a version tuple followed by `OK`, you're done. SLURM jobs will inherit the same modules and Poetry env vars and use this venv automatically.
+   SLURM jobs load the same modules and Poetry env vars themselves and use this venv.
 
 7. **(Required for parallel runs) Redirect outputs to scratch and logs to a dedicated home folder.** Run once:
 
@@ -165,15 +168,25 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
 
    **Caveat:** scratch is purged after 15 days of file inactivity. Pull important results off `/cluster/scratch/$USER/FEM/output/` to your laptop, ETH Polybox, or a group `/cluster/project/...` space before then. SLURM logs in `~/logs_FEM/` are never purged.
 
-   The parallel-execution script (`cluster_runs/parallel_runs_Euler.sh`) refuses to submit unless this setup has been done, so a forgetful user gets a clear error instead of writing outputs back onto home.
+   The parallel-execution script (`cluster_runs/parallel_runs_Euler.sh`) refuses to run unless this setup has been done, so a forgetful user gets a clear error instead of writing outputs back onto home.
+
+8. **Submit from the clone's root.** The script takes the repository from the folder `sbatch` is called in:
+
+   ```bash
+   cd ~/repos/FEM_public
+   python cluster_runs/get_scenario_names.py      # N meta-scenarios of the CSV named in target_csv
+   sbatch --array=0-<N-1> cluster_runs/parallel_runs_Euler.sh
+   ```
+
+   `--array` on the command line overrides the value in the script's header; so do `--cpus-per-task`, `--mem-per-cpu` and `--time` when a run needs less or more than the defaults (8 CPUs x 16 GB, 24 hours).
 
 #### SciCORE (University of Basel)
 
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/alidrd/Future_Markets.git
-   cd Future_Markets
+   git clone https://github.com/DerDavidZHAW/FEM_public.git
+   cd FEM_public
    ```
 
 2. **Install Poetry (one-time):**
@@ -216,7 +229,7 @@ This walkthrough assumes you have an ETH nethz account and SSH access to `euler.
    **Note:** SLURM jobs inherit your `.bashrc` environment, so modules loaded there will be available in parallel jobs automatically.
 
    The repository has no SciCORE job script: `cluster_runs/parallel_runs_Euler.sh` loads Euler
-   modules and expects the repository at `~/repos/Future_Markets`, so adapt a copy of it.
+   modules and runs in the clone it is submitted from, so adapt a copy of it to SciCORE's modules.
 
 ## Usage
 
@@ -265,12 +278,13 @@ For running multiple scenarios in parallel:
 
    Note the total number of scenarios printed.
 
-2. **Update the SLURM array bounds.** Edit `cluster_runs/parallel_runs_Euler.sh` and set `#SBATCH --array=0-N` where `N = (total scenarios − 1)`. No other paths in the script need editing — it points at `~/repos/Future_Markets` by default.
+2. **Set the SLURM array bounds** to `0-N` where `N = (total scenarios − 1)`, either on the command line as below or on the `#SBATCH --array` line of `cluster_runs/parallel_runs_Euler.sh`. Nothing else in the script needs editing: it runs in the clone it is submitted from.
 
-3. **Submit the job:**
+3. **Submit the job from the repository root:**
 
    ```bash
-   sbatch cluster_runs/parallel_runs_Euler.sh
+   cd ~/repos/FEM_public
+   sbatch --array=0-N cluster_runs/parallel_runs_Euler.sh
    ```
 
 4. **Monitor execution:**
@@ -281,6 +295,9 @@ For running multiple scenarios in parallel:
    ```
 
    On Euler, log files will be stored in `~/logs_FEM` (as set in `cluster_runs/parallel_runs_Euler.sh`) `myrun_<jobid>_<arrayid>.out` and `.err`.
+
+   A task whose scenario crashes ends with the run's exit code and prints `Scenario <name> FAILED with
+   exit code <n>`, so `sacct -j <jobid>` shows it as `FAILED`; the traceback is in its `.err` file.
 
 See `cluster_runs/parallel_runs_Euler.sh` for the full SLURM configuration. The script does **not** run `poetry install` — it relies on the venv prepared during initial setup. If the venv is missing or broken, the job will fail fast with a clear error message pointing to the recovery steps below.
 
@@ -294,9 +311,9 @@ See `cluster_runs/parallel_runs_Euler.sh` for the full SLURM configuration. The 
 
 ```bash
 rm -rf ~/.poetry_venvs/future-markets-*
-cd ~/repos/Future_Markets
+cd ~/repos/FEM_public
 poetry install --no-interaction --no-root
-poetry run python -c "import gurobipy; print(gurobipy.gurobi.version())"
+poetry run python -c "import pyomo; print(pyomo.__version__)"
 ```
 
 Then resubmit `sbatch cluster_runs/parallel_runs_Euler.sh`.

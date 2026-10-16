@@ -103,8 +103,10 @@ The Euler setup is in the main README. Facts the script does not make obvious:
   `target_csv`, each through `run_scenarios_hpc.py`, the same per-process call `run_scenarios.py`
   makes locally. Set `#SBATCH --array=0-<N-1>` to the count printed by
   `python cluster_runs/get_scenario_names.py`.
-- The script loads the Euler modules and expects the repo at `~/repos/Future_Markets`. There is
-  no SciCORE job script in the repo.
+- The script loads the Euler modules itself and runs in the clone `sbatch` was called from
+  (`SLURM_SUBMIT_DIR`), so submit from the repository root; its pre-flight checks need `poetry`
+  on `PATH`, a venv that imports `pyomo`, and `gurobi_cl` from the gurobi module. There is no
+  SciCORE job script in the repo.
 - A meta-scenario with three full-year sub-scenarios needs well over 32 GB of RAM, with the peak
   when results are read back into Pyomo after the solve; run it on Euler (8 CPUs × 16 GB in the
   job script). For such runs, `method=2` (barrier only) in `solver_parameters` in
