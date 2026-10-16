@@ -8,7 +8,7 @@ contents, list the folder; this guide records what a listing does not tell you.
 ## How a run flows
 
 1. **`run_scenarios.py`** runs each meta-scenario of `meta_scenarios_list` in its own process by
-   calling `run_scenarios_hpc.py --scenario <name>` (`model/scenario_runner.py`) and stops at the
+   calling `run_scenarios_hpc.py --scenario <name>` (`run_all` in the same file) and stops at the
    first one that fails. `run_scenarios_hpc.py` runs a single meta-scenario, which is also what each
    task of the Euler array does. The separate process is required: the data import accumulates
    plant lists and maps in module-level containers of `data_prep/definitions_common.py` and
