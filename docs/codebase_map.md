@@ -1,6 +1,6 @@
 # Codebase map
 
-Checked against: `main` @ 5f0e737 (2026-10-16).
+Checked against: `main` @ 96a3203 (2026-10-16).
 
 How one run moves through the code, and which file to change for which task. For folder
 contents, list the folder; this guide records what a listing does not tell you.
