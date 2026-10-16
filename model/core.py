@@ -7,8 +7,6 @@ _MODEL_VERSION = MODEL_VERSION  # Alias for backwards compatibility
 #%% import data definitions and vlues -----------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------
 
-import data_prep.definitions_common
-import data_prep.definitions_TYNDP
 
 from data_prep.definitions_common import *
 from data_prep.definitions_TYNDP import *
@@ -17,7 +15,6 @@ from data_prep.data_import_TYNDP import data_import_TYNDP_fcn
 from model.components_common import *
 from model.components_central import *
 from model.read_settings import read_scenario_settings
-from model.reset_items import get_lists_and_dicts
 from pyomo.opt import ProblemFormat
 import model.data_import_fcns as data_import_fcns
 #import tariff_calibration.tariff_adjustments as tariff_adjustments
@@ -373,13 +370,6 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     #     model,
     #     dual_values_dict,
     # )
-
-    list_of_lists_common, list_of_dicts_common = get_lists_and_dicts(
-        data_prep.definitions_common, []
-    )
-    list_of_lists_tyndp, list_of_dicts_tyndp = get_lists_and_dicts(
-        data_prep.definitions_TYNDP, []
-    )
 
     investment_summary.investment_summary(r"output/" + scenario_name + "/")
     
