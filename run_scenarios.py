@@ -1,9 +1,5 @@
-# import model.monkey_patch # Activate this to have all imported files printed in the end
+"""Run every meta-scenario of the scenario CSV named in scenarios/scenarios.py, one process each."""
 from scenarios.scenarios import meta_scenarios_list
-import model.core as core
+from model.scenario_runner import run_meta_scenarios
 
-for scenario_name, sub_scenarios_list in meta_scenarios_list.items():
-    print(70 * "-")
-    print(f"Running scenario: {scenario_name}")
-    print(70 * "-")
-    core.core_main(scenario_name, sub_scenarios_list)
+run_meta_scenarios(list(meta_scenarios_list))

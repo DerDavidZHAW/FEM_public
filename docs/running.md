@@ -48,7 +48,10 @@ A **test run** is the end-to-end check after model changes.
 
 1. In `scenarios/scenarios.py`, note the current `target_csv` value, then set it to
    `"scenarios/scen_to_run_test.csv"`.
-2. Run `poetry run python run_scenarios.py`.
+2. Run `poetry run python run_scenarios.py`. It starts one Python process per meta-scenario of
+   the CSV (through `run_scenarios_hpc.py --scenario <name>`) and stops at the first failure. To
+   run a single meta-scenario, call `poetry run python run_scenarios_hpc.py --scenario <name>`
+   yourself; `python cluster_runs/get_scenario_names.py` lists the names.
 3. Restore `target_csv` to the value from step 1.
 
 The test scenario is one meta-scenario `2050_st` with one sub-scenario (`wy1995_aa`, weight 1):
@@ -58,6 +61,10 @@ a few minutes, mostly data import; the solve itself takes seconds. Results go to
 the run with an error before results are exported (Gurobi's log is
 `output/2050_st/solver_log.log`); otherwise `output/2050_st/statistics.csv` reports
 `Termination_Condition` `optimal`.
+
+`scenarios/scen_to_run_test_three_meta.csv` holds three 24-hour meta-scenarios with different
+plant sets (investment on, investment off, weather year 2009); pointing `target_csv` at it checks
+that `run_scenarios.py` runs several meta-scenarios one after the other, in a minute or two.
 
 The test scenario has a single sub-scenario and does not use the DH demand overlay, so it does
 not exercise multi-weather-year logic. To check such a change, put a temporary copy of the test
@@ -71,7 +78,8 @@ poetry run pytest
 ```
 
 `pyproject.toml` puts the repo root on the import path. The tests cover helpers that need no
-solver: the DH demand overlay, its generator, and the dual export. Nothing tests building or
+solver: the DH demand overlay, its generator, the dual export and the per-process scenario
+runner. Nothing tests building or
 solving the model, which is what the test run is for.
 
 Every new or changed function gets unit tests in `tests/` that fail on the old code. Prefer
@@ -92,7 +100,8 @@ Both scripts start with a hard-coded list of run folders under `output/`; edit i
 The Euler setup is in the main README. Facts the script does not make obvious:
 
 - `cluster_runs/parallel_runs_Euler.sh` runs one array task per **meta-scenario** of the CSV in
-  `target_csv`. Set `#SBATCH --array=0-<N-1>` to the count printed by
+  `target_csv`, each through `run_scenarios_hpc.py`, the same per-process call `run_scenarios.py`
+  makes locally. Set `#SBATCH --array=0-<N-1>` to the count printed by
   `python cluster_runs/get_scenario_names.py`.
 - The script loads the Euler modules and expects the repo at `~/repos/Future_Markets`. There is
   no SciCORE job script in the repo.
