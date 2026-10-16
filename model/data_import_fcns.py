@@ -599,10 +599,12 @@ def read_RES_capacities(
 
     return Plant_list, Map_plant_tech, Res_capacity_dict, Map_plant_node
 
-def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
+def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list, Plant_investment_list):
     """ "
     This function checks if the plants in Plant_capacity_gen_list and Plant_non_hydro_list are the same.
-    If not, it prints the plants that are in Plant_capacity_gen_list, but not in Plant_non_hydro_list and vice versa.
+    It prints the plants that are in Plant_capacity_gen_list, but not in Plant_non_hydro_list. It raises an error for
+    plants that are in Plant_non_hydro_list, but not in Plant_capacity_gen_list, unless they are investment
+    candidates (Plant_investment_list), whose capacity is a decision variable.
     """
     Plant_capacity_gen_common_list = list(
         set(Plant_capacity_gen_list) & set(Plant_non_hydro_list)
@@ -611,9 +613,9 @@ def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
     Plant_capacity_gen_diff_list = list(
         set(Plant_capacity_gen_list) - set(Plant_capacity_gen_common_list)
     )
-    # find values that are in Plant_non_hydro_list, but not Plant_capacity_gen_common_list
-    Plant_non_hydro_diff_list = list(
-        set(Plant_non_hydro_list) - set(Plant_capacity_gen_common_list)
+    # find values that are in Plant_non_hydro_list, but not Plant_capacity_gen_common_list (investment candidates need no capacity)
+    Plant_non_hydro_diff_list = sorted(
+        set(Plant_non_hydro_list) - set(Plant_capacity_gen_common_list) - set(Plant_investment_list)
     )
     # if Plant_capacity_gen_diff_list is not empty, print the values in Plant_capacity_gen_diff_list
     if Plant_capacity_gen_diff_list != []:
@@ -621,20 +623,12 @@ def cross_match_plant_list(Plant_capacity_gen_list, Plant_non_hydro_list):
             "The following plants are in capacities_....csv, but not in plants_....csv:"
         )
         print(Plant_capacity_gen_diff_list)
-        # abort running the program and print the message in the brackets
-        # Exception("Some plants cross-mismatch issue (1), see above")
 
-    if (
-        Plant_non_hydro_diff_list != []
-    ):  # if Plant_non_hydro_diff_list is not empty, print the values in Plant_non_hydro_diff_list
-        print(
-            "The following plants are in plants_....csv, but not in capacities_...csv:"
+    if Plant_non_hydro_diff_list != []:
+        raise ValueError(
+            "The following plants are in plants_....csv, but have no capacity for this scenario and year in "
+            f"capacities_....csv and are not investment candidates: {Plant_non_hydro_diff_list}"
         )
-        # sort Plant_non_hydro_diff_list alphabetically
-        print(Plant_non_hydro_diff_list)
-
-        # Exception("Some plants cross-mismatch issue (2), see above")
-    return Plant_non_hydro_diff_list
 
 
 def read_plant_non_hydro_data(allow_res_investment, Node_list, battery_investment_nodes_in_addition_to_CH, CH_only=False, weather_year=None, run_year=None, high_resolution_PV=False):
@@ -1499,6 +1493,11 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
             
         if keep_line:
             line_name = "HVAC_" + start_node + "_" + end_node
+            line_reverse_name = "HVAC_" + end_node + "_" + start_node
+            if line_reverse_name in List_line:
+                raise ValueError(
+                    f"The NTC import file lists both {line_reverse_name} and {line_name}; a node pair must be a single line"
+                )
             List_line.append(line_name)
             Map_line_node[line_name] = {
                 "start_node": start_node,
@@ -1534,7 +1533,7 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
             
         if keep_line:
             line_name = "HVAC_" + start_node + "_" + end_node
-            line_reverse_name = "HVAC_" + start_node + "_" + end_node
+            line_reverse_name = "HVAC_" + end_node + "_" + start_node
 
             if line_name not in List_line:
                 if line_reverse_name not in List_line:
@@ -1545,7 +1544,7 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
                     }
                 else:
                     raise ValueError(
-                        f"Line {line_name} and {line_reverse_name} are both in List_line"
+                        f"The NTC export file lists {line_name}, the reverse of line {line_reverse_name}; a node pair must be a single line"
                     )
 
             for t in T_list:
@@ -1712,7 +1711,7 @@ def import_avail_plant(
         else:
             print("fieldnames is None!")
 
-    # read data per country
+    # read data per country (a country can have several rows, one per technology)
     with open(r"input/availability_factor_conventional.csv", "r") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=",")
         fieldnames = reader.fieldnames
@@ -1721,13 +1720,17 @@ def import_avail_plant(
             for row in reader:
                 country = row["country"]
                 tech = row["technology"]
-                data_dict[country] = {}
+                if country == "Default":
+                    continue
+                if tech in data_dict.get(country, {}):
+                    raise ValueError(
+                        f"input/availability_factor_conventional.csv has two rows for country {country} and technology {tech}"
+                    )
                 month_value = {}
-                if country != "Default":
-                    for month in fieldnames[2:]:
-                        month_value[month] = float(row[month])
+                for month in fieldnames[2:]:
+                    month_value[month] = float(row[month])
 
-                data_dict[country][tech] = month_value
+                data_dict.setdefault(country, {})[tech] = month_value
 
     # if a country does not have a technology, use the default value
     for country in data_dict:

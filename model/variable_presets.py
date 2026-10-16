@@ -88,6 +88,7 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
     2. Finding the variable in the model
     3. Matching specified indices to model components
     4. Fixing or initializing variables to the specified values
+    A preset that cannot be applied (variable or index not in the model) raises a ValueError.
     
     Parameters:
     -----------
@@ -106,7 +107,6 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
         Summary of applied presets with keys:
         - 'total_presets': total number of presets read
         - 'applied': number of successfully applied presets
-        - 'failed': number of failed applications
         - 'details': list of (preset, status, message) tuples
     """
     presets = read_variable_presets(preset_file_path)
@@ -114,7 +114,7 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
     if not presets:
         if verbose:
             logger.info("No variable presets to apply.")
-        return {'total_presets': 0, 'applied': 0, 'failed': 0, 'details': []}
+        return {'total_presets': 0, 'applied': 0, 'details': []}
     
     # Filter presets by scenario: only apply if scenario_name is empty (all scenarios) or matches the current scenario
     matching_presets = [
@@ -128,7 +128,6 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
     summary = {
         'total_presets': len(presets),
         'applied': 0,
-        'failed': 0,
         'details': []
     }
     
@@ -141,11 +140,7 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
         try:
             # Check if variable exists in model
             if not hasattr(model, var_name):
-                msg = f"Variable '{var_name}' not found in model"
-                summary['failed'] += 1
-                summary['details'].append((preset, 'FAILED', msg))
-                logger.warning(msg)
-                continue
+                raise ValueError(f"Variable '{var_name}' not found in model")
             
             var = getattr(model, var_name)
             
@@ -153,11 +148,7 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
             applied_count = 0
             
             if not isinstance(var, pyo.Var):
-                msg = f"'{var_name}' is not a Pyomo Var object"
-                summary['failed'] += 1
-                summary['details'].append((preset, 'FAILED', msg))
-                logger.warning(msg)
-                continue
+                raise ValueError(f"'{var_name}' is not a Pyomo Var object")
             
             # Get variable dimensions
             var_dim = var.dim()
@@ -260,11 +251,7 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
                                 except KeyError:
                                     pass
             else:
-                msg = f"Variable '{var_name}' has {var_dim} dimensions, which is not yet supported"
-                summary['failed'] += 1
-                summary['details'].append((preset, 'FAILED', msg))
-                logger.warning(msg)
-                continue
+                raise ValueError(f"Variable '{var_name}' has {var_dim} dimensions, which is not yet supported")
             
             if applied_count > 0:
                 scenario_info = f" (scenario: {scen_spec})" if scen_spec else " (all scenarios)"
@@ -274,19 +261,13 @@ def apply_variable_presets(model, scenario_name, preset_file_path="input/model_v
                 if verbose:
                     logger.info(msg)
             else:
-                msg = f"No matching indices found for '{var_name}' with specification {indices}. Please check that the indices exist in the model."
-                summary['failed'] += 1
-                summary['details'].append((preset, 'FAILED', msg))
-                logger.error(msg)
-                raise ValueError(msg)
+                raise ValueError(f"No matching indices found for '{var_name}' with specification {indices}. Please check that the indices exist in the model.")
                 
         except Exception as e:
-            msg = f"Error applying preset for '{var_name}': {str(e)}"
-            summary['failed'] += 1
-            summary['details'].append((preset, 'ERROR', msg))
-            logger.error(msg)
+            # a preset that cannot be applied stops the run: otherwise the scenario would be solved without it
+            raise ValueError(f"Error applying preset {preset}: {str(e)}") from e
     
     if verbose:
-        logger.info(f"\nPreset Summary: {summary['applied']} applied, {summary['failed']} failed out of {len(matching_presets)} applicable presets")
+        logger.info(f"\nPreset Summary: {summary['applied']} applied out of {len(matching_presets)} applicable presets")
     
     return summary

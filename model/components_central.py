@@ -38,49 +38,55 @@ def define_constraints_central(
                         == sf * energy_limit
                     ),
                 )
-    for scen in model.Scenarios:
-        if winter_limit[scen]["mode"]:
-            # limit the sum of import to CH00 in the given time window winter_limit[scen]["window"] to the given value winter_limit[scen]["energy_MWh"]
-            n="CH00"
+    # Both limits below are switched per sub-scenario: each constraint is indexed by the sub-scenarios that switch it on
+    # (a scalar constraint per sub-scenario would be replaced by the next sub-scenario's).
+    winter_limit_scenarios = [scen for scen in model.Scenarios if winter_limit[scen]["mode"]]
+    if winter_limit_scenarios:
+        # limit the sum of import to CH00 in the given time window winter_limit[scen]["window"] to the given value winter_limit[scen]["energy_MWh"]
+        n="CH00"
 
-            t_start = winter_limit[scen]["window"][0] 
+        T_winter_lists = {}
+        for scen in winter_limit_scenarios:
+            t_start = winter_limit[scen]["window"][0]
             t_end = winter_limit[scen]["window"][1]
             if t_start > t_end:
-                T_winter_list = ["t_" + str(t) for t in range(t_start, 8760 + 1)] + [
+                T_winter_lists[scen] = ["t_" + str(t) for t in range(t_start, 8760 + 1)] + [
                     "t_" + str(t) for t in range(1, t_end + 1)
-                ]  
+                ]
             else:
-                T_winter_list = ["t_" + str(t) for t in range(t_start, t_end + 1)]  
+                T_winter_lists[scen] = ["t_" + str(t) for t in range(t_start, t_end + 1)]
 
-            model.T_winter = Set(within=model.T, initialize=T_winter_list) 
+        model.T_winter = Set(winter_limit_scenarios, within=model.T, initialize=T_winter_lists)
 
+        def winter_limit_rule(model, scen):
             export_as_starting_node = sum(
-                model.Export[l, t, scen] for l in model.lineATC & model.Map_node_exportinglineATC[n] for t in model.T_winter
-            )   
+                model.Export[l, t, scen] for l in model.lineATC & model.Map_node_exportinglineATC[n] for t in model.T_winter[scen]
+            )
             # positive means import, negative means export
             import_as_ending_node = sum(
-                model.Export[l, t, scen] for l in model.lineATC & model.Map_node_importinglineATC[n] for t in model.T_winter
+                model.Export[l, t, scen] for l in model.lineATC & model.Map_node_importinglineATC[n] for t in model.T_winter[scen]
             )
+            return import_as_ending_node - export_as_starting_node <= winter_limit[scen]["energy_MWh"]
 
-            model.Constraint_winter_limit = Constraint(
-                expr=import_as_ending_node - export_as_starting_node <= winter_limit[scen]["energy_MWh"] 
-            )
+        model.Constraint_winter_limit = Constraint(winter_limit_scenarios, rule=winter_limit_rule)
 
-        if minimum_RES_target_CH[scen]:
+    RES_target_scenarios = [scen for scen in model.Scenarios if minimum_RES_target_CH[scen]]
+    if RES_target_scenarios:
+        def RES_target_rule(model, scen):
             # limit infeed and generatino from pvrf and wind generation in CH00 to the given value minimum_RES_target_CH
             # sum value of infeeds for all nodes in CH, i.e., CH00, CH01, CH02, ..., CH07 and all techs, i.e., pvrf, windon, pv
             infeed_CH = sum(
                 model.infeed[n, tech, t, scen] for n in model.Map_node_consumer["CH00"] for t in model.T for tech in model.Tech_infeed if tech != "ror"
             )
-            
+
             # keep only the plants that are in market CH00
             plants_res_investable_ch = intersection(Plant_investment_RES_CH_list, model.Map_node_plant["CH00"])
             infeed_investment_res_CH = sum(
                 model.gen_max[plant, scen]*model.avail_plant[plant,t, scen] for plant in plants_res_investable_ch for t in model.T
             )
 
-            # create a constraint to ensure sume of infeed_CH and infeed_investment_res_CH is greater than or equal to minimum_RES_target_CH
-            model.Constraint_investment_res_CH = Constraint(
-                expr=infeed_CH + infeed_investment_res_CH >= minimum_RES_target_CH[scen]
-            )
+            # ensure sume of infeed_CH and infeed_investment_res_CH is greater than or equal to minimum_RES_target_CH
+            return infeed_CH + infeed_investment_res_CH >= minimum_RES_target_CH[scen]
+
+        model.Constraint_investment_res_CH = Constraint(RES_target_scenarios, rule=RES_target_rule)
     return model

@@ -1,6 +1,6 @@
 # Multi-weather-year runs
 
-Checked against: `main` @ 54d6be28 (2026-10-09).
+Checked against: `main` @ a90496c (2026-10-11).
 
 One meta-scenario can hold several sub-scenarios, usually one per weather year, solved as a
 single optimisation: dispatch is separate per sub-scenario, investment is shared, and the
@@ -25,8 +25,10 @@ weather_year,1995,2008,2009
 - **Settings that must be identical** across the sub-scenarios: `t_start`, `t_end`, `CH_only`,
   `Node_list_setting`, `NodeDH_list`, `slack_soc` and `solver_name`. The model takes them from the
   last sub-scenario without checking the others. `resistive_heater_investment_cap_MW_total` is
-  checked and raises an error if it differs. The winter import limit and the Swiss RES target are
-  switched per sub-scenario, but whether their duals are exported follows the last sub-scenario.
+  checked and raises an error if it differs.
+- **Winter import limit and Swiss RES target** (`winter_limit`, `minimum_RES_target_CH`) are set
+  per sub-scenario. `Constraint_winter_limit` and `Constraint_investment_res_CH` are indexed by
+  the sub-scenarios that switch them on, and their duals are exported if any sub-scenario does.
 - District-heating demand exists for weather years 1995, 2008 and 2009.
 
 ## Shared investment

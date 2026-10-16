@@ -1,6 +1,6 @@
 # Output files
 
-Checked against: `main` @ 54d6be28 (2026-10-09).
+Checked against: `main` @ a90496c (2026-10-11).
 
 What a run writes to `output/<meta-scenario>/` and how to read it. Prices and every other dual:
 `docs/duals.md`. A rerun of the same meta-scenario overwrites its folder.
@@ -20,7 +20,7 @@ What a run writes to `output/<meta-scenario>/` and how to read it. Prices and ev
 | File | Content |
 |---|---|
 | `settings.csv` | All settings, one column per sub-scenario, plus `model_version` |
-| `statistics.csv` | Termination condition, solver status, objective value, solve time, numbers of variables and constraints |
+| `statistics.csv` | Termination condition (`optimal`: any other outcome stops the run before results are exported), solver status, objective value, solve time, numbers of variables and constraints |
 | `solver_log.log` | Gurobi log |
 | `weight_in_objective_fcn.csv` | Weight of each sub-scenario in the objective |
 | `constraint_scaling.csv` | Row-scaling factor per constraint name (`docs/duals.md`) |

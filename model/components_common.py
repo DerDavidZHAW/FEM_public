@@ -139,6 +139,9 @@ def obj_expression(model):
     model.trade_cost_dict = {}
     # CO2 emissions per plant and scenario (for reporting, not in objective)
     model.emissions_dict = {}
+    # thermal curtailment penalty defined over scenarios
+    model.thermal_curtailment_penalty_dict = {}
+    thermal_curtailment_penalty_rate = 1.1 # non-zero to avoid curtailment of thermal energy in district heating  which eventually may distor RES curtailment / should be higher than operational cost[s] of STES
 
     for scen in model.Scenarios:
         # part 1: -------------------------------------------------------------------------------------------------------------------------------------
@@ -218,12 +221,12 @@ def obj_expression(model):
             ]
         )
 
-        # slack cost
+        # slack cost (the slacks enter the balances of electric and thermal storage, see storeBalance_Constraint)
         if hasattr(model, "slack_soc") and model.slack_soc:
             slack_cost_coeff = 1000000
             model.slack_cost_dict[scen] = model.weight_in_objective_fcn[scen] * slack_cost_coeff * sum(
                 model.slackSOC_POS[p, t, scen] + model.slackSOC_NEG[p, t, scen]
-                for p in model.P_storage
+                for p in model.P_storage | model.PDH_storage
                 for t in model.T
             )
         else:
@@ -291,17 +294,16 @@ def obj_expression(model):
         else:
             model.trade_cost_dict[scen] = 0
 
-    # add thermal curtailment penalty, to avoid curtailment of thermal energy in district heating plants if not necessary
-    thermal_curtailment_penalty_rate = 1.1 # non-zero to avoid curtailment of thermal energy in district heating  which eventually may distor RES curtailment / should be higher than operational cost[s] of STES 
-    # # add thermal curtailment penalty, to avoid curtailment of thermal energy in district heating plants if not necessary
-    thermal_curtailment_penalty = thermal_curtailment_penalty_rate * sum(
-        [
-            model.curtailmentTh[n, t, scen] 
-            for n in model.NodeDH
-            for t in model.T
-        ]
-    )        
-    return sum(model.cost_inv_dict.values()) + sum(model.cost_op_dict.values()) + sum(model.lostload_cost_dict.values()) + sum(model.slack_cost_dict.values()) + sum(model.cost_inv_thermal_dict.values()) + sum(model.cost_op_thermal_dict.values()) + sum(model.cost_inv_fuel_storage_dict.values()) + sum(model.trade_cost_dict.values()) + thermal_curtailment_penalty  #+ thermal_curtailment_penalty
+        # part 5: thermal curtailment penalty, to avoid curtailment of thermal energy in district heating plants if not necessary
+        model.thermal_curtailment_penalty_dict[scen] = model.weight_in_objective_fcn[scen] * thermal_curtailment_penalty_rate * sum(
+            [
+                model.curtailmentTh[n, t, scen]
+                for n in model.NodeDH
+                for t in model.T
+            ]
+        )
+
+    return sum(model.cost_inv_dict.values()) + sum(model.cost_op_dict.values()) + sum(model.lostload_cost_dict.values()) + sum(model.slack_cost_dict.values()) + sum(model.cost_inv_thermal_dict.values()) + sum(model.cost_op_thermal_dict.values()) + sum(model.cost_inv_fuel_storage_dict.values()) + sum(model.trade_cost_dict.values()) + sum(model.thermal_curtailment_penalty_dict.values())
 
 
 # -----------------------------------------------------------------------------------------------------------
