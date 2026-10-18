@@ -107,9 +107,14 @@ The Euler setup is in the main README. Facts the script does not make obvious:
   (`SLURM_SUBMIT_DIR`), so submit from the repository root; its pre-flight checks need `poetry`
   on `PATH`, a venv that imports `pyomo`, and `gurobi_cl` from the gurobi module. There is no
   SciCORE job script in the repo.
-- A meta-scenario with three full-year sub-scenarios needs well over 32 GB of RAM, with the peak
-  when results are read back into Pyomo after the solve; run it on Euler (8 CPUs × 16 GB in the
-  job script). For such runs, `method=2` (barrier only) in `solver_parameters` in
-  `model/core.py` lowers solver memory. It can return a different one of several optimal dual
+- Measured on Euler with the job script's 8 CPUs × 16 GB (October 2026, run year 2050, full
+  hydrological year): a meta-scenario with one weather year (9.4 million variables) peaks at about
+  40 GB and takes 45 to 55 minutes; with three weather years (28 million variables) it peaks at
+  113 GB and takes about 2 hours 50 minutes, so the 128 GB of the default request are needed.
+  Roughly: data import under a minute (two with three years), objective 4 (13) minutes,
+  constraints 12 (40) minutes, solve 21 to 30 (95) minutes, of which Gurobi's barrier is 7 to 15
+  (50) minutes and the rest is Pyomo writing the LP file and reading the solution back, export 5
+  to 7 (19) minutes. `method=2` (barrier only) in `solver_parameters` in `model/core.py` lowers
+  solver memory. It can return a different one of several optimal dual
   solutions than the default method (`docs/duals.md`).
 - Euler scratch is purged after 15 days without access (per the README); copy results off it.
