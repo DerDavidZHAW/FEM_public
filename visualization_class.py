@@ -13,19 +13,14 @@ target_node = "CH00"  # a node name ("CH_00"), or "all"
 
 
 scenarios_to_plot =[
-    "20260311/2035_100_070_EUbat",
-    "20260311/2035_090_070_EUbat",
-    "20260311/2035_080_070_EUbat",
-    "20260311/2035_070_inv_EUbat",
-    "20260311/2035_060_070_EUbat",
-    "20260311/2035_050_070_EUbat",
-    "20260311/2035_040_070_EUbat",
-    "20260311/2035_030_070_EUbat",
+    "2035_GA_NRT_NF",
+    "2050_GA_NRT_NN_NF",
 ]
 
 # ========== PLOT SWITCHES ==========
 # Set to True to enable each plot, False to disable
 PLOT_PRICE = True
+PLOT_PRICE_ALL_NODES = True  # Price time series of all nodes in one figure (target node and its neighbours highlighted)
 PLOT_DISPATCH = True
 PLOT_MERGED_DISPATCH = False  # Merged dispatch figure (combines similar technologies) - works only if PLOT_DISPATCH is True
 PLOT_THERMAL_DISPATCH = True  # Plot thermal dispatch for each NodeDH individually
@@ -67,6 +62,7 @@ class DemandTimeSeriesPlotter:
         self.soc_all = pd.DataFrame()
         self.sum_assets = True
         self.fig_price = go.Figure()
+        self.fig_price_all_nodes = go.Figure()
         self.fig_sum_gen = go.Figure()
         self.fig_ind_gen = go.Figure()
         self.fig_agg_gen = go.Figure()
@@ -1101,6 +1097,47 @@ class DemandTimeSeriesPlotter:
                 )
             )
 
+    def plot_price_all_nodes(self, mode):
+        """
+        Price time series (dual of the energy balance, CHF/MWh) of every node in one figure.
+        Trace order and line width: target node first (thick), its direct neighbours (nodes sharing an ATC line
+        with the target node) second, all remaining nodes after that (thin). The annual average price is added
+        to the legend label so that nodes can be compared at a glance.
+        """
+        all_nodes = self.price_all.index.tolist()
+
+        # neighbours = nodes that appear in the name of a line connected to the target node (e.g. "HVAC_AT00_CH00")
+        neighbours = set()
+        for line in list(self.exportATC_list) + list(self.importATC_list):
+            for part in str(line).split("_"):
+                if part in all_nodes and part != self.target_node:
+                    neighbours.add(part)
+
+        ordered_nodes = (
+            ([self.target_node] if self.target_node in all_nodes else [])
+            + sorted(neighbours)
+            + sorted(n for n in all_nodes if n != self.target_node and n not in neighbours)
+        )
+
+        for node in ordered_nodes:
+            price_node = self.price_all.loc[node, :]
+            if node == self.target_node:
+                line_width = 3
+            elif node in neighbours:
+                line_width = 2
+            else:
+                line_width = 1
+            self.fig_price_all_nodes.add_trace(
+                go.Scatter(
+                    x=price_node.index,
+                    y=price_node,
+                    mode=mode,
+                    line=dict(width=line_width),
+                    name=f"{self.scenario_name}_{node} (avg {price_node.mean():.1f})",
+                    hovertemplate="%{x}<br>" + node + ": %{y:.1f} CHF/MWh<extra></extra>",
+                )
+            )
+
     def plot_soc(self, mode):
         # plants with soc are defined as plants that are in self.plant_list and self.soc_all.index
         plants_with_soc = [
@@ -1362,6 +1399,10 @@ class DemandTimeSeriesPlotter:
             print("Plotting price time series...")
             self.plot_price(mode)
 
+        if PLOT_PRICE_ALL_NODES:
+            print("Plotting price time series of all nodes...")
+            self.plot_price_all_nodes(mode)
+
         if PLOT_SUM_GEN:
             print("Plotting total generation time series...")
             self.plot_sum_gen(mode)
@@ -1406,6 +1447,14 @@ class DemandTimeSeriesPlotter:
             self.fig_price.update_layout(yaxis_title="CHF/MWh")
             self.fig_price.update_layout(xaxis_title="Time [hour in year]")
             self.fig_price.show()
+
+        if PLOT_PRICE_ALL_NODES:
+            self.fig_price_all_nodes.update_xaxes(range=self.plot_range)
+            self.fig_price_all_nodes.update_layout(title="Price (all nodes)")
+            self.fig_price_all_nodes.update_layout(yaxis_title="CHF/MWh")
+            self.fig_price_all_nodes.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_price_all_nodes.update_layout(legend_title_text="Node (annual average, CHF/MWh)")
+            self.fig_price_all_nodes.show()
 
         if PLOT_SUM_GEN:
             self.fig_sum_gen.update_xaxes(range=self.plot_range)
@@ -1533,6 +1582,14 @@ class DemandTimeSeriesPlotter:
             self.fig_price.update_xaxes(range=self.plot_range)
             self.fig_price.update_layout(title="Price")
             self.fig_price.write_html(f"plots/Price_{self.scenario_name}.html")
+
+        if PLOT_PRICE_ALL_NODES:
+            self.fig_price_all_nodes.update_xaxes(range=self.plot_range)
+            self.fig_price_all_nodes.update_layout(title="Price (all nodes)")
+            self.fig_price_all_nodes.update_layout(yaxis_title="CHF/MWh")
+            self.fig_price_all_nodes.update_layout(xaxis_title="Time [hour in year]")
+            self.fig_price_all_nodes.update_layout(legend_title_text="Node (annual average, CHF/MWh)")
+            self.fig_price_all_nodes.write_html(f"plots/Price_all_nodes_{self.scenario_name}.html")
 
         if PLOT_SUM_GEN:
             self.fig_sum_gen.update_xaxes(range=self.plot_range)

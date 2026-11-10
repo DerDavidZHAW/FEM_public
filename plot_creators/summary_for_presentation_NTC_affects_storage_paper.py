@@ -86,24 +86,18 @@ def parse_args():
 default_year = "2035"
 
 DEFAULT_SCENARIOS = [
-    f"20260311/{default_year}_100_inv_EUbat",
-    f"20260311/{default_year}_090_inv_EUbat",
-    f"20260311/{default_year}_080_inv_EUbat",
-    f"20260311/{default_year}_070_inv_EUbat",
-    f"20260311/{default_year}_060_inv_EUbat",
-    f"20260311/{default_year}_050_inv_EUbat",
-    f"20260311/{default_year}_040_inv_EUbat",
-    f"20260311/{default_year}_030_inv_EUbat",
+    "20260305_MIP3_v5/2035_GA_NRT_NF",
+    "20260305_MIP3_v5/2035_GA_NRT_WF",
+    "20260305_MIP3_v5/2035_GA_WRT_NF",
+    "20260305_MIP3_v5/2035_GA_WRT_WF",
+    "20260119/2035_aa",
 ]
 DEFAULT_DISPLAY_NAMES = [
-    'NTC 100%',
-    'NTC 90%',
-    'NTC 80%',
-    'NTC 70%',
-    'NTC 60%',
-    'NTC 50%',
-    'NTC 40%',
-    'NTC 30%',
+    "2035_GA_NRT_NF",
+    "2035_GA_NRT_WF",
+    "2035_GA_WRT_NF",
+    "2035_GA_WRT_WF",
+    "2035_aa",
 ]
 
 args = parse_args()
@@ -134,13 +128,13 @@ PLOT_WIDTH = 800  # ≈ 21.7 cm at 200 DPI
 PLOT_HEIGHT = 400  # ≈ 15.4 cm at 200 DPI
 
 # Axes limits
-added_power_max = 5.5  # GW
+added_power_max = 40  # GW
 pit_tes_max = 670  # GWh
 
 name_output = "investment_summary_for_presentation.csv"
 
-rows = ["battery", "TTES", "PTES", "pvrf", "windon", "CCGT", "SCGT",  "dam", "electrolyzer", "hydrogen", "nuclear", "oil", "psp_close", "biomass", "other",  "V2G_", "fossilmethane", "resmethane", "_CHPNew", "_HPG", "_HPNew",  "dsrTh", "resistive", "thermal"]
-# NOTE: Use "_CHPNew", "_HPG", "_HPNew" with underscore prefix to avoid substring matching issues
+rows = ["battery", "TTES", "PTES", "pvrf", "windon", "CCGT", "SCGT",  "dam", "electrolyzer", "hydrogen", "nuclear", "oil", "psp_close", "biomass", "other",  "V2G_", "fossilmethane", "resmethane", "_CHPNew", "_EGSNew", "_HPG", "_HPNew",  "dsrTh", "resistive", "thermal"]
+# NOTE: Use "_CHPNew", "_EGSNew", "_HPG", "_HPNew" with underscore prefix to avoid substring matching issues
 # (e.g., "HPNew" would incorrectly match "CHPNew" because "HPNew" is a substring of "CHPNew")
 row_renaming = {
      "CCGT" : "CCGT",
@@ -160,6 +154,7 @@ row_renaming = {
      "fossilmethane" : "Fossil Methane",
      "resmethane" : "RES Methane",
      "_CHPNew" : "CHP",
+     "_EGSNew" : "EGS",
      "_HPG" : "HPG", # HP Large
      "_HPNew" : "Heat pump", # HP Large
      "TTES" : "Tank TES",

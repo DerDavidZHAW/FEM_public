@@ -43,6 +43,8 @@ constraint_scaling = {
     'heat_electric_profile_resistiveheater': 1.0,
     'heat_electric_profile_heatpump': 1.0,
     'heat_electric_profile_CHP': 1.0,
+    'heat_electric_profile_EGS': 1.0,  # Enhanced Geothermal Systems
+    'genTh_max_gen_max_coupling_EGS': 1.0,  # NOT REQUIRED FOR RESULTS - only for EGS reduced cost calculation
     'energy_balancethermal': 1.0,
     'storageTh_soc': 1.0,
     'storageTh_soc_limit': 1.0,

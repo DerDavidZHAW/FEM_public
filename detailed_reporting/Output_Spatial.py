@@ -79,11 +79,12 @@ GEN_RENEWABLE_PLANTS = [
     'CH04_pvrf', 'CH04_windon',
     'CH05_pvrf', 'CH05_windon',
     'CH06_pvrf', 'CH06_windon',
-    'CH07_pvrf', 'CH07_windon'
+    'CH07_pvrf', 'CH07_windon',
+    'CH00_pvalpine'  # Alpine PV
 ]
 
 # Technologies to include from infeed for net load (only PV and wind, not ror)
-INFEED_VRE_TECHS = ["windon", "pvrf", "pv"]
+INFEED_VRE_TECHS = ["windon", "pvrf", "pvalpine", "pv"]
 
 
 def _pyomo_to_dataframe(pyomo_obj, expected_cols: Optional[List[str]] = None) -> pd.DataFrame:
@@ -439,7 +440,7 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
         ("Total capacity wind power", "GW", "CH01-CH07"),
         ("Total capacity bioenergy", "GW", "CH00 and CH01-CH07"),
         ("Total capacity geothermal", "GW", ""),
-        ("Total capacity waste incineration", "GW", ""),
+        ("Total capacity waste incineration", "GW", "CH01-CH07"),
         ("Total capacity gas", "GW", "CH00 and CH01-CH07"),
         ("Total capacity nuclear", "GW", "CH00 and CH01-CH07"),
         ("Total capacity hydro dams", "GW", "CH00"),
@@ -452,7 +453,7 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
         ("Annual generation wind power", "GWh/yr", "CH00 and CH01-CH07"),
         ("Annual generation bioenergy", "GWh/yr", "CH00 and CH01-CH07"),
         ("Annual generation geothermal", "GWh/yr", ""),
-        ("Annual generation waste incineration", "GWh/yr", ""),
+        ("Annual generation waste incineration", "GWh/yr", "CH01-CH07"),
         ("Annual generation gas", "GWh/yr", "CH00 and CH01-CH07"),
         ("Annual generation nuclear", "GWh/yr", "CH00 and CH01-CH07"),
         ("Annual generation hydro dam", "GWh/yr", "CH00"),
@@ -468,6 +469,8 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
         ("Curtailment solar PV - Agri", "GWh/yr", ""),
         ("Curtailment solar PV - Alpine", "GWh/yr", ""),
         ("Curtailment wind power", "GWh/yr", ""),
+        ("Curtailment solar PV + wind (optional)", "GWh/yr", ""),
+        ("Total capacity battery (from storage_charge)", "GW", "CH00 and CH01-CH07"),
         ("Average netload WINTER", "GWh", "CH00"),
         ("Average netload SUMMER", "GWh", "CH00"),
     ]
@@ -558,7 +561,10 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result  # empty
 
         if param == "Total capacity solar PV - Alpine":
-            return result  # empty
+            # CH00_pvalpine - investment candidate only
+            alpine_val = _gen_max_for_plant(df_gen_max, "CH00_pvalpine") / 1000.0
+            result["Location independent"] = f"{alpine_val:.3f}"
+            return result
 
         if param == "Total capacity wind power":
             # CH01-CH07 only
@@ -579,10 +585,19 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Total capacity geothermal":
-            return result  # empty
+            # Sum EGS plants (Enhanced Geothermal Systems) across DH regions
+            egs_plants = [p for p in df_gen["P_gen"].unique() if p.endswith("_EGSNew")] if not df_gen.empty else []
+            egs_total = sum(_gen_max_for_plant(df_gen_max, p) for p in egs_plants) / 1000.0
+            result["Location independent"] = f"{egs_total:.3f}"
+            return result
 
         if param == "Total capacity waste incineration":
-            result["Location independent"] = "Grouped with other technologies in 'other'."
+            # ASSUMPTION: "other" tech is assumed to represent waste incineration (KVA).
+            # This has not been independently verified against original data sources.
+            # CH01-CH07: other plants (regional waste incineration)
+            for zone in CH_ZONES:
+                val = _gen_max_for_plant(df_gen_max, f"{zone}_other") / 1000.0
+                result[zone] = f"{val:.3f}"
             return result
 
         if param == "Total capacity gas":
@@ -607,13 +622,12 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Total capacity hydro dams":
-            # CH00 only: medium_reservior, small_reservior, CH00_dam + large_psp, CH00_psp_close (combined)
+            # CH00 only: medium_reservior, small_reservior, CH00_dam + large_psp
             dam_val = (_gen_max_for_plant(df_gen_max, "medium_reservior") +
                        _gen_max_for_plant(df_gen_max, "small_reservior") +
-                       _gen_max_for_plant(df_gen_max, "CH00_dam"))
-            psp_val = (_gen_max_for_plant(df_gen_max, "large_psp") +
-                       _gen_max_for_plant(df_gen_max, "CH00_psp_close"))
-            val = (dam_val + psp_val) / 1000.0
+                       _gen_max_for_plant(df_gen_max, "CH00_dam") +
+                       _gen_max_for_plant(df_gen_max, "large_psp"))
+            val = dam_val / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
@@ -624,8 +638,9 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Total capacity pumped hydro":
-            # Combined with hydro dams in FEM
-            result["Location independent"] = "The capacity of hydro pumped storage and hydro dam in FEM is considered as one."
+            # CH00 only: closed-loop pumped hydro
+            val = _gen_max_for_plant(df_gen_max, "CH00_psp_close") / 1000.0
+            result["Location independent"] = f"{val:.3f}"
             return result
 
         if param == "Total capacity battery":
@@ -651,7 +666,10 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result  # empty
 
         if param == "Annual generation solar PV - Alpine":
-            return result  # empty
+            # CH00_pvalpine - investment candidate only, no CH00 infeed for pvalpine
+            alpine_val = _gen_for_plant(df_gen, "CH00_pvalpine") / 1000.0
+            result["Location independent"] = f"{alpine_val:.3f}"
+            return result
 
         if param == "Annual generation wind power":
             # CH00 (infeed): windon; CH01-CH07: gen per zone
@@ -673,10 +691,19 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Annual generation geothermal":
-            return result  # empty
+            # Sum EGS plants (Enhanced Geothermal Systems) across DH regions
+            egs_plants = [p for p in df_gen["P_gen"].unique() if p.endswith("_EGSNew")] if not df_gen.empty else []
+            egs_total = sum(_gen_for_plant(df_gen, p) for p in egs_plants) / 1000.0
+            result["Location independent"] = f"{egs_total:.3f}"
+            return result
 
         if param == "Annual generation waste incineration":
-            result["Location independent"] = "Grouped with other technologies in 'other'."
+            # ASSUMPTION: "other" tech is assumed to represent waste incineration (KVA).
+            # This has not been independently verified against original data sources.
+            # CH01-CH07: other plants (regional waste incineration)
+            for zone in CH_ZONES:
+                val = _gen_for_plant(df_gen, f"{zone}_other") / 1000.0
+                result[zone] = f"{val:.3f}"
             return result
 
         if param == "Annual generation gas":
@@ -704,7 +731,8 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             # CH00 only
             val = (_gen_for_plant(df_gen, "medium_reservior") +
                    _gen_for_plant(df_gen, "small_reservior") +
-                   _gen_for_plant(df_gen, "CH00_dam")) / 1000.0
+                 _gen_for_plant(df_gen, "CH00_dam") +
+                 _gen_for_plant(df_gen, "large_psp")) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
@@ -716,15 +744,13 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
 
         if param == "Annual discharge pumped hydro":
             # CH00 only
-            val = (_gen_for_plant(df_gen, "large_psp") +
-                   _gen_for_plant(df_gen, "CH00_psp_close")) / 1000.0
+            val = _gen_for_plant(df_gen, "CH00_psp_close") / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
         if param == "Annual charge pumped hydro":
             # CH00 only
-            val = (_storage_charge_for_plant(df_storage_charge, "large_psp") +
-                   _storage_charge_for_plant(df_storage_charge, "CH00_psp_close")) / 1000.0
+            val = _storage_charge_for_plant(df_storage_charge, "CH00_psp_close") / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
@@ -752,19 +778,26 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Charge pumped hydro WINTER":
-            val = (_storage_charge_for_plant_season(df_storage_charge, "large_psp", "winter") +
-                   _storage_charge_for_plant_season(df_storage_charge, "CH00_psp_close", "winter")) / 1000.0
+            val = _storage_charge_for_plant_season(df_storage_charge, "CH00_psp_close", "winter") / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
         if param == "Charge pumped hydro SUMMER":
-            val = (_storage_charge_for_plant_season(df_storage_charge, "large_psp", "summer") +
-                   _storage_charge_for_plant_season(df_storage_charge, "CH00_psp_close", "summer")) / 1000.0
+            val = _storage_charge_for_plant_season(df_storage_charge, "CH00_psp_close", "summer") / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
         if param.startswith("Curtailment"):
             return result  # empty
+
+        if param == "Total capacity battery (from storage_charge)":
+            # Sum of gen_max for CH00_battery, CH01_battery, ..., CH07_battery
+            ch00_val = _gen_max_for_plant(df_gen_max, "CH00_battery") / 1000.0
+            result["Location independent"] = f"{ch00_val:.3f}"
+            for zone in CH_ZONES:
+                val = _gen_max_for_plant(df_gen_max, f"{zone}_battery") / 1000.0
+                result[zone] = f"{val:.3f}"
+            return result
 
         if param == "Average netload WINTER":
             avg = _average_netload(df_demand, df_infeed, df_gen, df_full_ev, df_full_hp, "winter")
@@ -788,7 +821,7 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
         sum_val = 0.0
         for key in ["Location independent", "CH01", "CH02", "CH03", "CH04", "CH05", "CH06", "CH07"]:
             try:
-                if values[key] and values[key] not in ["", "Grouped with other technologies in 'other'."]:
+                if values[key] and values[key] not in ["", "Grouped with other technologies."]:
                     sum_val += float(values[key])
             except (ValueError, TypeError):
                 pass
@@ -796,7 +829,7 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
         sum_str = f"{sum_val:.3f}" if sum_val != 0.0 or any(values[k] for k in values) else ""
 
         rows.append({
-            "Model": f"FEM v{model_version}",
+            "Model": f"FEM",
             "Scenario Name": subscenario if subscenario is not None else scenario_name,
             "Output-Parameter": param,
             "Unit": unit,

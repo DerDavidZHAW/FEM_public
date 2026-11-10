@@ -139,6 +139,7 @@ def data_import_TYNDP_fcn(scenario_name):
     merge_some_countries = settings_scen["merge_some_countries"]
     target_merge_countries = settings_scen["target_merge_countries"]
     RES_EU_coefficient = settings_scen["RES_EU_coefficient"]
+    RES_EU_coefficient_other_nodes = settings_scen.get("RES_EU_coefficient_other_nodes", None)  # 2026-09-29 (MIP3): PV/wind coefficient for all nodes except AT, DE, FR, IT (None = RES_EU_coefficient)
     electrolyzer_demand_reduction_coefficient = settings_scen["electrolyzer_demand_reduction_coefficient"]
     RES_CH_coefficient = settings_scen["RES_CH_coefficient"]
     PVRF_CH_coefficient = settings_scen["PVRF_CH_coefficient"]
@@ -229,6 +230,7 @@ def data_import_TYNDP_fcn(scenario_name):
         RES_CH_coefficient,
         PVRF_CH_coefficient,
         Windon_CH_coefficient,
+        RES_EU_coefficient_other_nodes=RES_EU_coefficient_other_nodes,
     )
     
     dle.extend_list_with_new_elements(Infedplant_list_instance, Infeedplant_list) #NOTE: Infedplant_list_instance not used at all elsewhere

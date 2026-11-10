@@ -16,6 +16,7 @@ from detailed_reporting.constants import (
     CHF_TO_EUR, is_winter_t, is_summer_t, get_run_year, get_weather_year,
     get_flexible_household_heatpump_share, get_eu_policy, HP_PLANTS,
     read_full_ev_demand, read_full_hp_demand, PROJECT_ROOT,
+    swiss_curtailment_hourly,
     get_subscenario_weight
 )
 
@@ -331,7 +332,16 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
     bio_gen = _sum_hourly_gen_for_plants(df_gen, [f"CH0{i}_biomass" for i in range(1, 8)])
     hourly_bio = (bio_gen / 1000.0).reindex(template["T"]).fillna(0.0)
     
-    # Gas: CCGTCCS + SCGTfossil + CHP plants
+    # Waste incineration (ASSUMPTION: "other" tech = KVA, not independently verified)
+    waste_gen = _sum_hourly_gen_for_plants(df_gen, [f"CH0{i}_other" for i in range(1, 8)])
+    hourly_waste = (waste_gen / 1000.0).reindex(template["T"]).fillna(0.0)
+
+    # EGS (Enhanced Geothermal Systems): geothermal electricity generation
+    egs_plants = [p for p in df_gen["P_gen"].unique() if p.endswith("_EGSNew")] if not df_gen.empty else []
+    egs_gen = _sum_hourly_gen_for_plants(df_gen, egs_plants)
+    hourly_egs = (egs_gen / 1000.0).reindex(template["T"]).fillna(0.0)
+    
+    # Gas: CCGTCCS + SCGTfossil + CHP plants (note: EGS is NOT included here as it's not gas-based)
     gas_plants = [f"CH0{i}_CCGTCCS" for i in range(8)] + ["CH00_SCGTfossil"]
     # Add CHP plants (DH, ILLT, ILHT regions)
     chp_plants = [p for p in df_gen["P_gen"].unique() if p.endswith("_CHPNew")] if not df_gen.empty else []
@@ -343,14 +353,11 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
     nuclear_gen = _sum_hourly_gen_for_plants(df_gen, ["CH00_nuclear", "CH03_nuclear"])
     hourly_nuclear = (nuclear_gen / 1000.0).reindex(template["T"]).fillna(0.0)
     
-    # Hydro dam: medium_reservior + small_reservior + CH00_dam + large_psp + CH00_psp_close (combined)
-    dam_plants = ["medium_reservior", "small_reservior", "CH00_dam"]
-    psp_plants = ["large_psp", "CH00_psp_close"]
+    # Hydro dam: medium_reservior + small_reservior + CH00_dam + large_psp
+    dam_plants = ["medium_reservior", "small_reservior", "CH00_dam", "large_psp"]
+    psp_plants = ["CH00_psp_close"]
     dam_gen = _sum_hourly_gen_for_plants(df_gen, dam_plants)
-    psp_gen = _sum_hourly_gen_for_plants(df_gen, psp_plants)
-    # Combined: dam + psp
-    combined_hydro_gen = dam_gen.add(psp_gen, fill_value=0)
-    hourly_hydro_dam = (combined_hydro_gen / 1000.0).reindex(template["T"]).fillna(0.0)
+    hourly_hydro_dam = (dam_gen / 1000.0).reindex(template["T"]).fillna(0.0)
     
     # Hydro run of river: infeed ror
     ror_infeed = _sum_hourly_infeed_for_tech(df_infeed, ["ror"])
@@ -359,6 +366,10 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
     # Hydro pumped storage demand (charge)
     psp_charge = _sum_hourly_storage_charge_for_plants(df_storage_charge, psp_plants)
     hourly_hydro_psp_demand = (psp_charge / 1000.0).reindex(template["T"]).fillna(0.0)
+
+    # Hydro pumped storage generation (discharge)
+    psp_gen = _sum_hourly_gen_for_plants(df_gen, psp_plants)
+    hourly_hydro_psp_gen = (psp_gen / 1000.0).reindex(template["T"]).fillna(0.0)
     
     # Battery generation and charge
     battery_plants = [f"CH0{i}_battery" for i in range(8)]
@@ -529,50 +540,12 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
     
     def calc_curtailment_ch_hourly(df_curtailment: pd.DataFrame, df_dual: pd.DataFrame,
                                     df_export: pd.DataFrame) -> pd.Series:
-        """Calculate hourly actual curtailment in Switzerland."""
-        if df_curtailment.empty:
+        """Hourly Swiss curtailment in MWh. Zero-price hours follow constants.swiss_curtailment_hourly
+        (Switzerland uses its own generation first within the zero-price area)."""
+        hourly = swiss_curtailment_hourly(df_curtailment, df_dual, df_export)
+        if hourly.empty:
             return pd.Series(0.0, index=template["T"])
-        
-        ch_curt = df_curtailment[df_curtailment["Consumer_with_infeed"] == "CH00_fixedconsumer"].copy()
-        ch_curt["value"] = pd.to_numeric(ch_curt["value"], errors="coerce").fillna(0.0)
-        
-        if ch_curt.empty:
-            return pd.Series(0.0, index=template["T"])
-        
-        # Get hours where CH price is near zero
-        if not df_dual.empty:
-            ch_prices = df_dual[df_dual["Node"] == "CH00"].copy()
-            ch_prices["value"] = pd.to_numeric(ch_prices["value"], errors="coerce").fillna(0.0)
-            zero_price_hours = ch_prices[ch_prices["value"] < 0.01][["T", "Scenarios"]].drop_duplicates()
-            
-            if not zero_price_hours.empty and not df_export.empty:
-                ch_export = df_export[df_export["lineATC"].isin(CH_LINES)].copy()
-                ch_export["value"] = pd.to_numeric(ch_export["value"], errors="coerce").fillna(0.0)
-                
-                # Net export per T, Scenarios
-                net_export = ch_export.groupby(["T", "Scenarios"])["value"].sum().reset_index()
-                net_export["net_export"] = -net_export["value"]  # Make exports positive
-                
-                # Merge with curtailment for zero-price hours
-                merged = pd.merge(ch_curt, zero_price_hours, on=["T", "Scenarios"], how="inner")
-                merged = pd.merge(merged, net_export[["T", "Scenarios", "net_export"]],
-                                 on=["T", "Scenarios"], how="left")
-                merged["net_export"] = merged["net_export"].fillna(0.0)
-                merged["actual_curt"] = (merged["value"] - merged["net_export"]).clip(lower=0)
-                
-                # Non-zero price hours
-                non_zero = ch_curt[~ch_curt.set_index(["T", "Scenarios"]).index.isin(
-                    zero_price_hours.set_index(["T", "Scenarios"]).index)].copy()
-                non_zero["actual_curt"] = non_zero["value"]
-                
-                # Combine and sum by T
-                combined = pd.concat([merged[["T", "actual_curt"]], non_zero[["T", "actual_curt"]]])
-                hourly = combined.groupby("T")["actual_curt"].sum()
-                return hourly.reindex(template["T"]).fillna(0.0)
-        
-        # Fallback: just sum reported curtailment
-        hourly = ch_curt.groupby("T")["value"].sum()
-        return hourly.reindex(template["T"]).fillna(0.0)
+        return hourly.groupby("T")["value"].sum().reindex(template["T"]).fillna(0.0)
     
     hourly_curt_ch = (calc_curtailment_ch_hourly(df_curtailment, df_dual, df_export) / 1000.0).values
     
@@ -943,9 +916,16 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
         # Determine NTC file suffix based on eu_policy
         policy_suffix = "GlobalAmbition" if eu_policy == "GA" else "DistributedEnergy"
         
-        # Load NTC limits
-        ntc_import_path = PROJECT_ROOT / "input" / "NTC" / f"NTC_import_{policy_suffix}_2050.csv"
-        ntc_export_path = PROJECT_ROOT / "input" / "NTC" / f"NTC_export_{policy_suffix}_2050.csv"
+        # Load NTC limits - try run_year first, fall back to 2050
+        ntc_year = run_year
+        ntc_import_path = PROJECT_ROOT / "input" / "NTC" / f"NTC_import_{policy_suffix}_{ntc_year}.csv"
+        ntc_export_path = PROJECT_ROOT / "input" / "NTC" / f"NTC_export_{policy_suffix}_{ntc_year}.csv"
+        
+        # Fall back to 2050 if files for run_year don't exist
+        if not ntc_import_path.exists() or not ntc_export_path.exists():
+            ntc_year = 2050
+            ntc_import_path = PROJECT_ROOT / "input" / "NTC" / f"NTC_import_{policy_suffix}_{ntc_year}.csv"
+            ntc_export_path = PROJECT_ROOT / "input" / "NTC" / f"NTC_export_{policy_suffix}_{ntc_year}.csv"
         
         if not ntc_import_path.exists() or not ntc_export_path.exists():
             return pd.Series(0.0, index=template["T"])
@@ -1020,13 +1000,13 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
         ("Hourly generation solar PV - Alpine", "GWh", None),  # Placeholder
         ("Hourly generation wind power", "GWh", hourly_wind.values),
         ("Hourly generation bioenergy", "GWh", hourly_bio.values),
-        ("Hourly generation geothermal", "GWh", None),  # Placeholder
-        ("Hourly generation waste incineration", "GWh", "Grouped with other technologies and not reported separately."),
+        ("Hourly generation geothermal", "GWh", hourly_egs.values),  # EGS (Enhanced Geothermal Systems)
+        ("Hourly generation waste incineration", "GWh", hourly_waste.values),  # ASSUMPTION: "other" = KVA
         ("Hourly generation gas", "GWh", hourly_gas.values),
         ("Hourly generation nuclear", "GWh", hourly_nuclear.values),
         ("Hourly generation hydro dam", "GWh", hourly_hydro_dam.values),
         ("Hourly generation hydro run of river", "GWh", hourly_hydro_ror.values),
-        ("Hourly generation hydro pumped storage", "GWh", "The generation of hydro pumped storage and hydro dam in FEM is considered as one."),
+        ("Hourly generation hydro pumped storage", "GWh", hourly_hydro_psp_gen.values),
         ("Hourly demand hydro pumped storage", "GWh", hourly_hydro_psp_demand.values),
         ("Hourly generation battery", "GWh", hourly_battery_gen.values),
         ("Hourly charge battery", "GWh", hourly_battery_charge.values),
@@ -1065,7 +1045,7 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
     rows = []
     for param, unit, values in output_params:
         row = {
-            "Model": f"FEM v{model_version}",
+            "Model": f"FEM",
             "Scenario Name": subscenario if subscenario is not None else scenario_name,
             "Output-Parameter": param,
             "Unit": unit,

@@ -14,7 +14,9 @@ import pandas as pd
 from model.version import MODEL_VERSION
 from detailed_reporting.constants import (
     CHF_TO_EUR, is_winter_t, is_summer_t, get_run_year, get_flexible_household_heatpump_share,
-    HP_PLANTS, INV_COST_PLANTS, OP_COST_PLANTS, EMISSIONS_PLANTS, GEN_PLANTS,
+    HP_PLANTS, INV_COST_PLANTS, OP_COST_PLANTS, EMISSIONS_PLANTS,
+    OP_COST_PLANTS_ELECTRICITY_ONLY, GEN_PLANTS_ELECTRICITY_ONLY,
+    swiss_curtailment_hourly,
     get_subscenario_weight
 )
 
@@ -24,6 +26,8 @@ from detailed_reporting.constants import (
 _WEIGHT_DIVIDE_COST_FILES = {
     "cost_inv_dict.csv": "cost_CHF",
     "cost_op_dict.csv": "cost_CHF",
+    "cost_inv_thermal_dict.csv": "cost_CHF",
+    "cost_op_thermal_dict.csv": "cost_CHF",
 }
 
 
@@ -194,17 +198,30 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
     df_gen_max_infeedp = _get_data(model, scenario_name, "gen_max_infeedp", "gen_max_infeedp.csv",
                                    ["Infeedp", "Scenarios", "value"], subscenario=subscenario)
 
-    # Load cost dictionaries (route through _read_csv so subscenario filter + weight
-    # division are applied for cost_inv_dict / cost_op_dict, emissions left unweighted).
-    df_cost_inv = _read_csv(scenario_name, "cost_inv_dict.csv", subscenario=subscenario)
-    df_cost_op = _read_csv(scenario_name, "cost_op_dict.csv", subscenario=subscenario)
+    # Load cost dictionaries (route through _read_csv so the subscenario filter and weight
+    # division are applied to the cost dicts, emissions left unweighted).
+    # The _thermal_ dicts hold heating-side plants (HP, resistive, thermalNew, PTES, TTES);
+    # CHPNew appears in BOTH files with identical values, so we drop duplicates on (plant, scenario)
+    # to avoid double-counting.
+    def _concat_cost_files(*filenames: str) -> pd.DataFrame:
+        frames = [_read_csv(scenario_name, name, subscenario=subscenario) for name in filenames]
+        frames = [df for df in frames if not df.empty]
+        if not frames:
+            return pd.DataFrame()
+        combined = pd.concat(frames, ignore_index=True)
+        dedup_cols = [c for c in ("plant", "scenario") if c in combined.columns]
+        if dedup_cols:
+            combined = combined.drop_duplicates(subset=dedup_cols, keep="first")
+        return combined.reset_index(drop=True)
+
+    df_cost_inv = _concat_cost_files("cost_inv_dict.csv", "cost_inv_thermal_dict.csv")
+    df_cost_op = _concat_cost_files("cost_op_dict.csv", "cost_op_thermal_dict.csv")
     df_emissions = _read_csv(scenario_name, "emissions_dict.csv", subscenario=subscenario)
     
     # Use hardcoded plant lists from constants
     inv_plants = INV_COST_PLANTS
     op_plants = OP_COST_PLANTS
     emissions_plants = EMISSIONS_PLANTS
-    gen_plants = GEN_PLANTS
     
     run_year = _get_run_year(scenario_name, subscenario)
     
@@ -252,7 +269,13 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
         return prices
     
     def calc_import_cost(df_export: pd.DataFrame, df_dual: pd.DataFrame, season: str = None) -> float: # type: ignore
-        """Calculate import cost: sum of (import_MWh * CH_price) — Option 1, uses Swiss market price."""
+        """Calculate import cost: sum of (import_MWh * CH_price).
+
+        Imports are valued at the Swiss price, the same price basis as the export revenue
+        (calc_export_revenue), so that Trading cost = import cost - export revenue is consistent.
+        Until 2026-10 the imports were valued at the neighbour price (MIP3 v5 already contained the
+        Swiss-price import cost, the FEM code on this branch did not).
+        """
         if df_export.empty or df_dual.empty:
             return 0.0
 
@@ -338,56 +361,6 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
             "max": float(values.max()),
         }
     
-    def calc_import_price_stats_for_line(df_export: pd.DataFrame, df_dual: pd.DataFrame,
-                                         line: str) -> Dict[str, float]:
-        """Calculate import price statistics for a specific line."""
-        if df_export.empty or df_dual.empty:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        neighbor = LINE_TO_NEIGHBOR.get(line)
-        if not neighbor:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        line_df = df_export[(df_export["lineATC"] == line)].copy()
-        line_df["value"] = pd.to_numeric(line_df["value"], errors="coerce").fillna(0.0)
-        # Only imports (positive)
-        line_df = line_df[line_df["value"] > 0]
-        
-        if line_df.empty:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        neighbor_prices = get_neighbor_prices(df_dual, neighbor)
-        merged = pd.merge(line_df, neighbor_prices[["T", "Scenarios", "value"]],
-                         on=["T", "Scenarios"], suffixes=("_export", "_price"))
-        
-        if merged.empty:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        return calc_price_stats(merged, "value_price")
-    
-    def calc_export_price_stats_for_line(df_export: pd.DataFrame, df_dual: pd.DataFrame,
-                                         line: str) -> Dict[str, float]:
-        """Calculate export price statistics for a specific line (CH price when exporting)."""
-        if df_export.empty or df_dual.empty:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        line_df = df_export[(df_export["lineATC"] == line)].copy()
-        line_df["value"] = pd.to_numeric(line_df["value"], errors="coerce").fillna(0.0)
-        # Only exports (negative)
-        line_df = line_df[line_df["value"] < 0]
-        
-        if line_df.empty:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        ch_prices = get_ch_prices(df_dual)
-        merged = pd.merge(line_df, ch_prices[["T", "Scenarios", "value"]],
-                         on=["T", "Scenarios"], suffixes=("_export", "_price"))
-        
-        if merged.empty:
-            return {"average": 0.0, "p5": 0.0, "p95": 0.0, "min": 0.0, "max": 0.0}
-        
-        return calc_price_stats(merged, "value_price")
-    
     def calc_load_shedding(df_lostload: pd.DataFrame, season: str = None) -> float: # type: ignore
         """Calculate load shedding for CH00_fixedconsumer."""
         if df_lostload.empty:
@@ -404,51 +377,9 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
     
     def calc_curtailment_ch(df_curtailment: pd.DataFrame, df_dual: pd.DataFrame,
                             df_export: pd.DataFrame) -> float:
-        """Calculate actual curtailment in Switzerland considering exports during zero-price hours."""
-        if df_curtailment.empty:
-            return 0.0
-        
-        # Get CH00 curtailment
-        ch_curt = df_curtailment[df_curtailment["Consumer_with_infeed"] == "CH00_fixedconsumer"].copy()
-        ch_curt["value"] = pd.to_numeric(ch_curt["value"], errors="coerce").fillna(0.0)
-        
-        if ch_curt.empty:
-            return _sum_values(ch_curt)
-        
-        # Get hours where CH price is near zero
-        if not df_dual.empty:
-            ch_prices = df_dual[df_dual["Node"] == "CH00"].copy()
-            ch_prices["value"] = pd.to_numeric(ch_prices["value"], errors="coerce").fillna(0.0)
-            zero_price_hours = ch_prices[ch_prices["value"] < 0.01][["T", "Scenarios"]].drop_duplicates()
-            
-            # For zero price hours, adjust curtailment by net exports
-            # actual_curtailment = reported_curtailment - net_exports (exports - imports)
-            if not zero_price_hours.empty and not df_export.empty:
-                ch_export = df_export[df_export["lineATC"].isin(CH_LINES)].copy()
-                ch_export["value"] = pd.to_numeric(ch_export["value"], errors="coerce").fillna(0.0)
-                
-                # Sum exports per T, Scenarios (negative = export from CH)
-                net_export = ch_export.groupby(["T", "Scenarios"])["value"].sum().reset_index()
-                # Negative means export from CH (we want net import)
-                net_export["net_export"] = -net_export["value"]  # Make exports positive
-                
-                # Merge with curtailment for zero-price hours
-                merged = pd.merge(ch_curt, zero_price_hours, on=["T", "Scenarios"], how="inner")
-                merged = pd.merge(merged, net_export[["T", "Scenarios", "net_export"]],
-                                 on=["T", "Scenarios"], how="left")
-                merged["net_export"] = merged["net_export"].fillna(0.0)
-                
-                # Actual curtailment = reported - net_export
-                merged["actual_curt"] = merged["value"] - merged["net_export"]
-                merged["actual_curt"] = merged["actual_curt"].clip(lower=0)  # Can't be negative
-                
-                # Non-zero price hours: use reported curtailment
-                non_zero = ch_curt[~ch_curt.set_index(["T", "Scenarios"]).index.isin(
-                    zero_price_hours.set_index(["T", "Scenarios"]).index)]
-                
-                return float(merged["actual_curt"].sum() + _sum_values(non_zero))
-        
-        return _sum_values(ch_curt)
+        """Swiss curtailment in MWh/yr. Zero-price hours follow constants.swiss_curtailment_hourly
+        (Switzerland uses its own generation first within the zero-price area)."""
+        return _sum_values(swiss_curtailment_hourly(df_curtailment, df_dual, df_export))
     
     def calc_curtailment_abroad(df_curtailment: pd.DataFrame, ch_curtailment: float) -> float:
         """Calculate total curtailment abroad (all nodes except CH)."""
@@ -794,16 +725,19 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
     ch_prices = get_ch_prices(df_dual)
     ch_price_stats = calc_price_stats(ch_prices)
     
-    # Import/export price stats per country
-    at_import_stats = calc_import_price_stats_for_line(df_export, df_dual, "HVAC_AT00_CH00")
-    de_import_stats = calc_import_price_stats_for_line(df_export, df_dual, "HVAC_DE00_CH00")
-    fr_import_stats = calc_import_price_stats_for_line(df_export, df_dual, "HVAC_FR00_CH00")
-    it_import_stats = calc_import_price_stats_for_line(df_export, df_dual, "HVAC_IT00_CH00")
-    
-    at_export_stats = calc_export_price_stats_for_line(df_export, df_dual, "HVAC_AT00_CH00")
-    de_export_stats = calc_export_price_stats_for_line(df_export, df_dual, "HVAC_DE00_CH00")
-    fr_export_stats = calc_export_price_stats_for_line(df_export, df_dual, "HVAC_FR00_CH00")
-    it_export_stats = calc_export_price_stats_for_line(df_export, df_dual, "HVAC_IT00_CH00")
+    # Import/export price stats per country: statistics of the neighbour's price over ALL hours of the
+    # year (2026-10). The other MIP3 models report Price_electricity_import_from_XX as the full-year
+    # price of XX (EXPANSE also Price_electricity_export_from_XX). Until 2026-10 FEM used only the
+    # hours with imports from XX (neighbour price) and the hours with exports to XX (Swiss price).
+    at_import_stats = calc_price_stats(get_neighbor_prices(df_dual, "AT00"))
+    de_import_stats = calc_price_stats(get_neighbor_prices(df_dual, "DE00"))
+    fr_import_stats = calc_price_stats(get_neighbor_prices(df_dual, "FR00"))
+    it_import_stats = calc_price_stats(get_neighbor_prices(df_dual, "IT00"))
+
+    at_export_stats = at_import_stats
+    de_export_stats = de_import_stats
+    fr_export_stats = fr_import_stats
+    it_export_stats = it_import_stats
     
     # Capacity
     capacity_pv_wind = calc_capacity_pv_wind(df_gen_max, df_gen_max_infeedp)
@@ -813,10 +747,15 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
     op_costs_chf = calc_operation_costs(df_cost_op, op_plants)
     inv_costs_eur = inv_costs_chf * CHF_TO_EUR / 1e6  # to Mio EUR
     op_costs_eur = op_costs_chf * CHF_TO_EUR / 1e6
-    
-    # Total generation for operational cost per unit
-    total_gen = calc_total_gen_for_plants(df_gen, gen_plants) / 1e6  # to TWh
-    op_cost_per_twh = (op_costs_eur * 1e6) / total_gen if total_gen > 0 else 0.0  # EUR/TWh
+
+    # "Operational costs per unit of generated energy" is defined as
+    # op-cost(electricity) / generated-electricity, so both numerator and
+    # denominator are restricted to the electricity-only plant set. This avoids
+    # mixing in Swiss heat-providing assets (whose ops would distort the ratio).
+    op_costs_elec_chf = calc_operation_costs(df_cost_op, OP_COST_PLANTS_ELECTRICITY_ONLY)
+    op_costs_elec_eur = op_costs_elec_chf * CHF_TO_EUR / 1e6
+    total_gen_elec = calc_total_gen_for_plants(df_gen, GEN_PLANTS_ELECTRICITY_ONLY) / 1e6  # to TWh
+    op_cost_per_twh = (op_costs_elec_eur * 1e6) / total_gen_elec if total_gen_elec > 0 else 0.0  # EUR/TWh
     
     # Emissions
     total_emissions = calc_total_emissions(df_emissions, emissions_plants)
@@ -912,7 +851,7 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
         ("Investment costs annualised All", "Mio EUR", f"{inv_costs_eur:.3f}", "", "", "", "", ""),
         ("Operation costs anualised All", "Mio EUR", f"{op_costs_eur:.3f}", "", "", "", "", ""),
         ("Total annualised costs All (with trading costs)", "Mio EUR",
-         f"{inv_costs_eur + op_costs_eur + import_cost_annual * CHF_TO_EUR}", "", "", "", "", ""),
+         f"{inv_costs_eur + op_costs_eur + (import_cost_annual - export_revenue_annual) * CHF_TO_EUR:.3f}", "", "", "", "", ""),  # 2026-10: trading costs (import cost - export revenue), before only the import cost was added
         ("Operational costs per unit of generated energy", "EUR/TWh", f"{op_cost_per_twh:.3f}", "", "", "", "", ""),
         ("Transmission grid expansion investment costs", "Mio EUR", "FEM does not expand the transmission grid.", "", "", "", "", ""),
         ("Grid Expansion within CH", "GW", "", "", "", "", "", ""),
@@ -926,7 +865,7 @@ def export_output_system(model, scenario_name: str, model_version: str = None, #
     data = []
     for row in rows:
         data.append({
-            "Model": f"FEM v{model_version}",
+            "Model": f"FEM",
             "Scenario Name": subscenario if subscenario is not None else scenario_name,
             "Output-Parameter": row[0],
             "Unit": row[1],

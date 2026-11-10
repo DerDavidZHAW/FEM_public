@@ -247,7 +247,14 @@ def obj_expression(model):
         # part 2: Thermal side (if they didn't have a electric side ------------------------------------------------------------------------------------------------------------------------------------
         # thermal side investment cost
         # for p_thermal in model.PDH_costExclusivelyOnThermalSide: 
+        # Note: EGS plants are excluded below because their investment cost is on the electrical 
+        # side (gen_max), not the thermal side. Additionally, genTh_max is coupled to gen_max via
+        # the constraint genTh_max_gen_max_coupling_EGS (which exists only for reduced cost calculation).
+        # Including EGS here would double-count investment costs.
+        # If the genTh_max_gen_max_coupling_EGS constraint is removed, this exclusion should also be removed.
         for p_thermal in model.PDH_allinvTh:
+            if p_thermal in model.PDH_EGS:
+                continue  # Skip EGS - investment cost is on electrical side only (see note above)
             tech_typ_gen_e = Map_plant_tech_cost_component[Map_plant_tech[p_thermal]]
             if tech_typ_gen_e == "cap_op":
                 model.cost_inv_thermal_dict[p_thermal, scen] = model.weight_in_objective_fcn[scen] * model.investment_genmax_slpTh[p_thermal,scen] * model.genTh_max[p_thermal,scen]
@@ -645,8 +652,14 @@ def define_sets(
     )
 
     model.PDH_CHP = Set(
-        initialize=[pdh for pdh in model.PDH if PlantDH_data_remaining[pdh,"CHPDH", list(model.Scenarios)[0]]==True],	
+        initialize=[pdh for pdh in model.PDH if PlantDH_data_remaining[pdh,"CHPDH", list(model.Scenarios)[0]]==True and Map_plantDH_tech[pdh] != "EGS"],	
         doc="set of CHP plants in district heating",
+        within=model.PDH,
+    )
+
+    model.PDH_EGS = Set(
+        initialize=[pdh for pdh in model.PDH if Map_plantDH_tech[pdh] == "EGS"],
+        doc="set of EGS (Enhanced Geothermal Systems) plants in district heating",
         within=model.PDH,
     )
 
@@ -794,11 +807,11 @@ def define_params_op(model, resistive_heater_investment_cap_MW_total):
         doc = "operation costs on the thermal side of assets with thermal consumption capability - mainly to be used in the objective function to avoid unwanted dsrTh and TES operation",
     )
 
-    model.operation_qdr = Param(
-        model.P_gen,
-        model.Scenarios,
-        initialize={(p,scen): cost_data_opr_qdr[Map_plant_tech[p]] for p in model.P_gen for scen in model.Scenarios},
-    )
+    # model.operation_qdr = Param(
+    #     model.P_gen,
+    #     model.Scenarios,
+    #     initialize={(p,scen): cost_data_opr_qdr[Map_plant_tech[p]] for p in model.P_gen for scen in model.Scenarios},
+    # )
     # in reading parameter above, scen is not used as it is the same for all scenarios
 
     # Emission factor per MWh of electricity output (tCO2/MWh_elec)
@@ -1763,6 +1776,28 @@ def define_constraints(model):
         model.PDH_CHP, model.T, model.Scenarios, rule=heat_electric_profile_CHP_Constraint
     )
 
+    # EGS (Enhanced Geothermal Systems) plants - simultaneous electricity and heat generation
+    model.heat_electric_profile_EGS = Constraint(
+        model.PDH_EGS, model.T, model.Scenarios, rule=heat_electric_profile_EGS_Constraint
+    )
+
+    # ============================================================================
+    # EGS REDUCED COST CONSTRAINT (NOT REQUIRED FOR MODEL RESULTS)
+    # ============================================================================
+    # This constraint is NOT necessary for the model to produce correct results.
+    # It can be removed without affecting dispatch, investments, or any other outputs.
+    # 
+    # PURPOSE: This constraint exists ONLY to ensure that the reduced costs of gen_max 
+    # for EGS plants properly reflect both electricity AND heat value. Without this 
+    # constraint, genTh_max is an independent variable, and the reduced cost of gen_max 
+    # would only capture electricity value (similar to how CHP reduced costs behave).
+    #
+    # The constraint couples: genTh_max = gen_max / power_to_heat_ratio
+    # ============================================================================
+    model.genTh_max_gen_max_coupling_EGS = Constraint(
+        model.PDH_EGS, model.Scenarios, rule=genTh_max_gen_max_coupling_EGS_Constraint
+    )
+
     # thermal energy balance (thermal balance) for district heating systems
     model.energy_balancethermal = Constraint(
         model.NodeDH, model.T, model.Scenarios, rule=energy_balancethermal_Constraint
@@ -2325,6 +2360,35 @@ def heat_electric_profile_CHP_Constraint(model, p, t, s):
     """
     sf = model.constraint_scaling['heat_electric_profile_CHP']
     return sf * model.genTh[p, t, s] == sf * (model.gen[p, t, s]/PlantDH_data_remaining[p, "power_to_heat_ratio", s])
+
+
+def heat_electric_profile_EGS_Constraint(model, p, t, s):
+    """
+    EGS (Enhanced Geothermal Systems) plants generate electricity and heat simultaneously.
+    The heat generation is equal to electrical generation divided by power_to_heat_ratio.
+    For EGS, power_to_heat_ratio = 1.0 means 1 MW_el = 1 MW_th operating simultaneously.
+    Unlike CHP, EGS does not consume fuel - geothermal heat is the energy source.
+    """
+    sf = model.constraint_scaling['heat_electric_profile_EGS']
+    return sf * model.genTh[p, t, s] == sf * (model.gen[p, t, s]/PlantDH_data_remaining[p, "power_to_heat_ratio", s])
+
+
+def genTh_max_gen_max_coupling_EGS_Constraint(model, p, s):
+    """
+    NOT REQUIRED FOR MODEL RESULTS - ONLY FOR REDUCED COST CALCULATION.
+    
+    For EGS plants, this constraint couples thermal capacity to electrical capacity:
+        genTh_max = gen_max / power_to_heat_ratio
+    
+    Without this constraint, the model still runs correctly because the hourly constraint
+    (heat_electric_profile_EGS) already ensures proper operation. However, the reduced cost
+    of gen_max would only reflect electricity value, not the combined electricity + heat value.
+    
+    This constraint can be removed if reduced cost analysis for EGS is not needed.
+    Note: CHP plants do NOT have this constraint, so their reduced costs only show electricity value.
+    """
+    sf = model.constraint_scaling['genTh_max_gen_max_coupling_EGS']
+    return sf * model.genTh_max[p, s] == sf * (model.gen_max[p, s] / PlantDH_data_remaining[p, "power_to_heat_ratio", s])
 
 
 # thermal energy balance (thermal balance) for district heating systems

@@ -5,6 +5,7 @@ Map_plant_tech_cost_component = {  # cap_op (only generation capacity and operat
     
     # non-district heating technologies - investment and operation
     "pvrf": "cap_op",
+    "pvalpine": "cap_op",  # Alpine PV
     "windon": "cap_op",
     "battery": "cap_op_energy",
     "oil": "cap_op",
@@ -37,6 +38,7 @@ Map_plant_tech_cost_component = {  # cap_op (only generation capacity and operat
     "TTES_medium": "cap_op_energy",
     "PTES_large": "cap_op_energy",
     "gas_boiler": "cap_op",
+    "EGS": "cap_op",  # Enhanced Geothermal Systems - simultaneous el/th generation
 
     # district heating technologies - only operation
     "dsrTh": "cap_op",
@@ -76,7 +78,7 @@ tech_store_list = [
 
 
 # distrcit heating technologies that are connected to the electric grid
-techDH_connected_to_electric_grid_list = ["resistive_heater", "heat_pump", "combined_heatpower"]
+techDH_connected_to_electric_grid_list = ["resistive_heater", "heat_pump", "combined_heatpower", "EGS"]
 
 # if a technology has pumping capability, i.e., if energy can be added/consumed
 tech_store_pump_list = [
@@ -99,7 +101,7 @@ tech_store_equal_pump_max_gen_max_list = ["battery", "v2g", "hydrogen", "TES", "
 # if a technology has no electric generation capability (e.g. EVs)]
 tech_p_no_gen = ["ev_flex", "electrolyzer", "resistive_heater", "heat_pump", "TES", "TTES_medium", "PTES_large", "heat_pump_households", "dsrTh", "gas_boiler"]
 # if a technology has an infeed for utility scale plants (e.g. pvrf) #NOTE: add technologies here, if needed, eg. pvap (PV Alpine ...)
-tech_infeed_all_list = ["pvrf", "windon", "windof", "ror", "pv"]
+tech_infeed_all_list = ["pvrf", "pvalpine", "windon", "windof", "ror", "pv"]
 # if a technology has an infeed only for consumers  (e.g. pv)
 tech_infeed_consumers_list = [
     "pv",

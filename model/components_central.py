@@ -73,8 +73,8 @@ def define_constraints_central(
     RES_target_scenarios = [scen for scen in model.Scenarios if minimum_RES_target_CH[scen]]
     if RES_target_scenarios:
         def RES_target_rule(model, scen):
-            # limit infeed and generatino from pvrf and wind generation in CH00 to the given value minimum_RES_target_CH
-            # sum value of infeeds for all nodes in CH, i.e., CH00, CH01, CH02, ..., CH07 and all techs, i.e., pvrf, windon, pv
+            # limit infeed and generation from pvrf, pvalpine, wind, and EGS in CH00 to the given value minimum_RES_target_CH
+            # sum value of infeeds for all nodes in CH, i.e., CH00, CH01, CH02, ..., CH07 and all techs, i.e., pvrf, pvalpine, windon, pv
             infeed_CH = sum(
                 model.infeed[n, tech, t, scen] for n in model.Map_node_consumer["CH00"] for t in model.T for tech in model.Tech_infeed if tech != "ror"
             )
@@ -85,8 +85,16 @@ def define_constraints_central(
                 model.gen_max[plant, scen]*model.avail_plant[plant,t, scen] for plant in plants_res_investable_ch for t in model.T
             )
 
-            # ensure sume of infeed_CH and infeed_investment_res_CH is greater than or equal to minimum_RES_target_CH
-            return infeed_CH + infeed_investment_res_CH >= minimum_RES_target_CH[scen]
+            # EGS (Enhanced Geothermal Systems) electricity generation - EGS plants are DH plants that also produce electricity
+            # EGS plants end with "_EGSNew" and are in model.PDH. A model without district-heating plants
+            # (no PDH) has no EGS plants, so zero EGS generation is exact there.
+            egs_plants_ch = [p for p in getattr(model, "PDH", []) if p.endswith("_EGSNew")]
+            gen_egs_CH = sum(
+                model.gen[plant, t, scen] for plant in egs_plants_ch for t in model.T
+            ) if egs_plants_ch else 0
+
+            # ensure the sum of infeed_CH, infeed_investment_res_CH and EGS generation is greater than or equal to minimum_RES_target_CH
+            return infeed_CH + infeed_investment_res_CH + gen_egs_CH >= minimum_RES_target_CH[scen]
 
         model.Constraint_investment_res_CH = Constraint(RES_target_scenarios, rule=RES_target_rule)
     return model

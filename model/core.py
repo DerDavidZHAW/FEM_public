@@ -182,10 +182,19 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     # This ensures meaningful reduced costs are computed for break-even analysis
     # Using 1e-2 MW (10 kW) - negligible vs nuclear scale (1000+ MW) but numerically safe
     first_scen = list(model.Scenarios)[0]
-    nuclear_plant = 'CH00_nuclear'
-    if nuclear_plant in model.P_gen and (nuclear_plant, first_scen) in model.gen_max:
-        model.gen_max[nuclear_plant, first_scen].setlb(1e-2)
-        print(f"Set lower bound for gen_max[{nuclear_plant}, {first_scen}] = 1e-2 MW (prevents presolve fixing)")
+    investment_plants_with_lb = ['CH00_nuclear', 'CH00_pvalpine']
+    for plant in investment_plants_with_lb:
+        if plant in model.P_gen and (plant, first_scen) in model.gen_max:
+            model.gen_max[plant, first_scen].setlb(1e-2)
+            print(f"Set lower bound for gen_max[{plant}, {first_scen}] = 1e-2 MW (prevents presolve fixing)")
+    
+    # Set tiny lower bound for EGS (Enhanced Geothermal Systems) investment to prevent presolve from fixing it to 0
+    # This ensures meaningful reduced costs are computed for break-even analysis
+    # egs_plants = [p for p in model.PDH if p.endswith('_EGSNew')]
+    # for egs_plant in egs_plants:
+    #     if (egs_plant, first_scen) in model.gen_max:
+    #         model.gen_max[egs_plant, first_scen].setlb(1e-2)
+    #         print(f"Set lower bound for gen_max[{egs_plant}, {first_scen}] = 1e-2 MW (prevents presolve fixing)")
 
     # %% solve model -------------------------------------------------------------------------------------
     # export_model_to_txt("before_solve" + scenario_name, model, scenario_name) # Exporting the model (debugging purposes)
@@ -210,8 +219,23 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     else:
         print("  OK: No unusually large objective coefficients found.")
     
-    solver_parameters = "threads=8 method=2 crossover=0"
-
+    # Solver settings optimized for reliable reduced costs
+    # - Crossover: setting "solver_crossover" (settings_default.py). Default since 2026-09-29 is 0 = off, the barrier solution
+    #   is returned without crossover (same objective, duals and reduced costs from the barrier solution, no basis). -1 = Gurobi default (on)
+    # - Method=2: Barrier method (good for large LPs)
+    # - BarConvTol=1e-10: Tighter barrier convergence for better numerical precision
+    # - OptimalityTol=1e-8: Slightly tighter than default (1e-6) for better reduced costs
+    # - FeasibilityTol=1e-7: Slightly tighter than default for constraint satisfaction
+    # - NumericFocus=1: Mild numeric focus (0=off, 1=mild, 2=moderate, 3=aggressive)
+    # Note: We do NOT use ScaleFlag or extreme NumericFocus to avoid slowing down too much
+    solver_parameters = "threads=8 Method=2 BarHomogeneous=1 NumericFocus=1"
+    crossover = settings_scen.get("solver_crossover", -1)  # 2026-09-29
+    if "gurobi" in str(settings_scen["solver_name"]).lower() and int(float(str(crossover))) != -1:
+        solver_parameters += f" Crossover={int(float(str(crossover)))}"
+    print("Solver parameters:", solver_parameters)
+    # original settings: solver_parameters = "threads=8 Method=2 BarConvTol=1e-10 OptimalityTol=1e-8 FeasibilityTol=1e-7 NumericFocus=1"
+    # simpler fallback: solver_parameters = "threads=8"
+    
     result = opt.solve(
         model,
         tee=True,                           # tee: prints solver statements (summary)

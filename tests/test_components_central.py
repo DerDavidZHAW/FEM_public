@@ -77,3 +77,16 @@ def test_each_sub_scenario_keeps_its_own_swiss_res_target(monkeypatch):
     for s in SCENARIOS:
         assert pyo.value(m.Constraint_investment_res_CH[s].lower) == target[s]
         assert _indices_of_variables(m.Constraint_investment_res_CH[s]) == [("CH01_pvrf", s)]
+
+
+def test_egs_generation_counts_towards_the_swiss_res_target(monkeypatch):
+    monkeypatch.setattr(components_central, "Plant_investment_RES_CH_list", ["CH01_pvrf"])
+    m = _model()
+    m.PDH = pyo.Set(initialize=["DH_Mittelland_EGSNew", "DH_Mittelland_HPNew"])
+    m.gen = pyo.Var(m.PDH, m.T, m.Scenarios)
+    target = {"2050_x_wy1995": 100, "2050_x_wy2008": 200}
+    define_constraints_central(m, False, {s: _winter_limit(False, [1, 3], 0) for s in SCENARIOS}, target)
+    for s in SCENARIOS:
+        assert sorted(_indices_of_variables(m.Constraint_investment_res_CH[s])) == sorted(
+            [("CH01_pvrf", s)] + [("DH_Mittelland_EGSNew", t, s) for t in ["t_1", "t_2", "t_3"]]
+        )

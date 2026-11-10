@@ -3,6 +3,7 @@ seetings_default_param = {
     "consumer_based_on_tariff": False,
     "consumer_connection_limit": False,
     "solver_name": "gurobi",
+    "solver_crossover": 0,  # Gurobi parameter Crossover, used with Method=2 (barrier). 0 = off, the barrier solution is returned without crossover (crossover took 53 to 70 % of the Gurobi time in the MIP3 test runs, 2026-09-29), -1 = Gurobi default (crossover on). Only added to the options if the solver is Gurobi
     "flex_dem_active_for_consumer": True,
     "share_of_flexibly_charging_EV": 0.5,  # Share of total EV consumption that is flexible (0-1). The remaining (1-share) is inflexible.
     "V2G_share_of_flexibly_charging_EV": 0.5,
@@ -49,6 +50,7 @@ seetings_default_param = {
     "electrolyzer_demand_reduction_coefficient": 1,
     "NTC_CH_ratio": 1,
     "RES_EU_coefficient": 1.1,
+    "RES_EU_coefficient_other_nodes": None,  # PV and wind coefficient for all European nodes except AT00, DE00, FR00, IT00 (the four Swiss neighbours keep RES_EU_coefficient). None = same as RES_EU_coefficient. Used for the MIP3 rest-of-Europe calibration (2026-09-29)
     "weather_year": 1995,
     "run_year": 2050,
     "high_resolution_PV": False,   # if True, replace 7 CHxx_pvrf investment candidates with per-plant Nexus-E rooftop PV. Reads input/RES_nexuse/PV/<weather_year>/. EMHIRES pvrf still loaded for preexisting (EP2050+) capacity.

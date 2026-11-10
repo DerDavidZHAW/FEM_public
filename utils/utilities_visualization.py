@@ -196,7 +196,7 @@ def merge_dispatch(dispatch_fig: go.Figure, color_mapping: dict, trace_dataframe
 
         "Other gen": ["other gen", "biomass gen", "CCGTCCS gen"],
         "Battery gen": ["battery gen", "v2g gen"],
-        "RES gen": ["Infeed preexisting PV", "Infeed preexisting Wind", "Infeed preexisting RoR", "windon gen", "pvrf gen", ],
+        "RES gen": ["Infeed preexisting PV", "Infeed preexisting Wind", "Infeed preexisting RoR", "windon gen", "pvrf gen", "pvalpine gen", ],
         "Heating demand": ["heat_pump demand", "resistive_heater demand", "heat_pump_households demand"],
         "EV flexible demand": ["ev_flex demand", "v2g demand"],
         "Electrolyzer demand": ["hydrogen demand", "electrolyzer demand"],
@@ -404,6 +404,7 @@ dispatch_color_mapping = {
 
     # Renewables
     'pvrf gen': '#ffdd57',                   # Solar - yellow
+    'pvalpine gen': '#ff8c00',               # Alpine Solar - dark orange
     'windon gen': '#1f78b4',                 # Wind - blue
 
     # Fixed consumer or inflow
@@ -446,6 +447,7 @@ dispatch_legend_labels = {
     "biomass gen": {"en": "Biomass Generation", "de": "Biomasseerzeugung"},
     "other gen": {"en": "Other Generation", "de": "Sonstige Erzeugung"},
     "pvrf gen": {"en": "Photovoltaic (Rooftop)", "de": "PV (Dach)"},
+    "pvalpine gen": {"en": "Photovoltaic (Alpine)", "de": "PV (Alpin)"},
     "windon gen": {"en": "Onshore Wind", "de": "Wind Onshore"},
     "v2g gen": {"en": "V2G Discharge", "de": "V2G-Einspeisung"},
     "psp_open gen": {"en": "Open PSP Generation", "de": "Wasserkraft"},
@@ -467,7 +469,9 @@ invest_color_mapping = {
     "CH00_hydrogen": "lightblue",
     "CH00_oil": "darkred",
     "CH00_nuclear": "purple",
+    "CH00_pvalpine": "darkorange",
     "PV CH": "gold",
+    "PV Alpine CH": "darkorange",
     "Wind CH": "blue",
     "Battery CH": "red",
 }
@@ -482,6 +486,7 @@ dispatchDH_legend_labels = {
     "HPG": {"en": "Heat Pump at natural resources", "de": "Wärmepumpe an natürlichen Ressourcen"},
     "HPNew": {"en": "Heat Pump", "de": "Wärmepumpe"},
     "CHPNew": {"en": "CHP", "de": "Kraft-Wärme-Kopplung"},
+    "EGSNew": {"en": "EGS", "de": "Tiefengeothermie"},
     "Consumption": {"en": "Demand (Thermal)", "de": "Nachfrage (Thermisch)"},
     "Price - Electricity": {"en": "Price - Electricity", "de": "Preis - Strom"},
     "Price - Heat": {"en": "Price - Heat", "de": "Preis - Wärme"},
@@ -497,6 +502,7 @@ dispatchDH_color_mapping = {
     "HPG": "#f7b0b0",                        # Light blue
     "HPNew": "#6dd8d3",                      # 
     "CHPNew": "#F01470",                     # 
+    "EGSNew": "#8B4513",                     # Saddle brown for geothermal
     "Consumption": "#1b1717",                
     "Price - Electricity": "#851c1c",        
     "Price - Heat": "#989266",               

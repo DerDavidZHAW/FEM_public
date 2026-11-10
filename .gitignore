@@ -165,6 +165,13 @@ output/
 input/hydro_WATSA/camels_ch/
 # Claude Code session state
 .claude/
+Claude Outputs/
 
 # Per-user Poetry config written by the Euler walkthrough — local-only by design
 poetry.toml
+
+# MIP3 reporting workbooks filled with FEM results (results, not source)
+Reporting_template/*MIP3_Reporting_FEM*.xlsx
+
+# Personal working notes (handoffs, plans, paper drafts), kept local only
+/private_notes/

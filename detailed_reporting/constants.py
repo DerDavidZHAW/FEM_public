@@ -22,6 +22,32 @@ CHF_TO_EUR = 0.899361453368109 * 1.3022
 
 # ============ PLANT LISTS FOR FILTERING ============
 
+# ============ SWISS HEAT-PROVIDING TECHNOLOGIES ============
+# Plants in CH that are part of the heating system: heat-producing plants
+# (CHP, EGS, HP, resistive heaters, thermalNew/boiler) and heat storage
+# (PTES pit thermal storage, TTES tank thermal storage).
+# Excluded: demand-side response (dsrTh) — this is a demand-side resource, not an asset.
+# Used to extend cost/emissions/generation aggregations so they cover Swiss heating tech.
+# Tech availability by network level (from cost_inv_thermal_dict.csv inventory):
+#   DH   → CHPNew, EGSNew, HPNew, resistiveNew, thermalNew, PTES_large, TTES_medium
+#   ILLT → CHPNew, HPNew, resistiveNew, thermalNew, PTES_large, TTES_medium (no EGS)
+#   ILHT → CHPNew, HPNew, resistiveNew, thermalNew, TTES_medium           (no EGS, no PTES)
+
+_CH_HEAT_DH_REGIONS = ["Alpen", "Jura", "Mittelland", "Voralpen", "medium"]
+_CH_HEAT_IL_REGIONS = ["Alpen", "Alpensuedseite", "Jura", "Mittelland", "Voralpen"]
+_CH_HEAT_DH_TECHS = ["CHPNew", "EGSNew", "HPNew", "resistiveNew", "thermalNew",
+                     "PTES_large", "TTES_medium"]
+_CH_HEAT_ILLT_TECHS = ["CHPNew", "HPNew", "resistiveNew", "thermalNew",
+                       "PTES_large", "TTES_medium"]
+_CH_HEAT_ILHT_TECHS = ["CHPNew", "HPNew", "resistiveNew", "thermalNew", "TTES_medium"]
+
+CH_HEAT_PROVIDING_PLANTS: List[str] = (
+    [f"DH_{r}_{t}" for r in _CH_HEAT_DH_REGIONS for t in _CH_HEAT_DH_TECHS]
+    + [f"ILLT_{r}_{t}" for r in _CH_HEAT_IL_REGIONS for t in _CH_HEAT_ILLT_TECHS]
+    + [f"ILHT_{r}_{t}" for r in _CH_HEAT_IL_REGIONS for t in _CH_HEAT_ILHT_TECHS]
+)
+
+
 # HP plants for energy shifting (building archetypes with heat pumps)
 # From to_consider_from_storage_charge.csv where Demand? = True
 HP_PLANTS: List[str] = [
@@ -63,6 +89,7 @@ HP_PLANTS: List[str] = [
 ]
 
 # Investment cost plants (from to_consider_from_cost_inv_dict.csv where Consider? = True)
+# Includes Swiss heat-providing technologies (CHP, EGS, HP, resistive, thermalNew).
 INV_COST_PLANTS: List[str] = [
     "CH01_pvrf", "CH01_windon",
     "CH02_pvrf", "CH02_windon",
@@ -71,18 +98,21 @@ INV_COST_PLANTS: List[str] = [
     "CH05_pvrf", "CH05_windon",
     "CH06_pvrf", "CH06_windon",
     "CH07_pvrf", "CH07_windon",
+    "CH00_pvalpine",  # Alpine PV - investment candidate only
     "CH00_CCGTresmethane", "CH00_SCGTresmethane",
     "CH00_CCGTCCS", "CH00_SCGTfossil",
     "CH00_battery", "CH00_hydrogen",
     "CH00_oil", "CH00_nuclear",
-]
+] + CH_HEAT_PROVIDING_PLANTS
 
-# Operation cost / emissions / gen plants (from respective CSVs where True)
-# These are CH plants that we consider for Swiss costs/emissions/generation
-OP_COST_PLANTS: List[str] = [
+# Electricity-only set: pure CH electricity-providing plants.
+# Used for the "Operational costs per unit of generated energy" metric, whose
+# definition is strictly op-cost(electricity) / generated-electricity. Mixing
+# heat-providing assets into either side of that ratio would distort it.
+OP_COST_PLANTS_ELECTRICITY_ONLY: List[str] = [
     "CH00_battery", "CH00_CCGTCCS", "CH00_CCGTresmethane", "CH00_dam",
     "CH00_hydrogen", "CH00_nuclear", "CH00_oil", "CH00_psp_close",
-    "CH00_SCGTfossil", "CH00_SCGTresmethane",
+    "CH00_SCGTfossil", "CH00_SCGTresmethane", "CH00_pvalpine",
     "CH01_battery", "CH01_biomass", "CH01_CCGTCCS", "CH01_other", "CH01_pvrf", "CH01_windon",
     "CH02_battery", "CH02_biomass", "CH02_CCGTCCS", "CH02_other", "CH02_pvrf", "CH02_windon",
     "CH03_battery", "CH03_biomass", "CH03_CCGTCCS", "CH03_nuclear", "CH03_other", "CH03_pvrf", "CH03_windon",
@@ -93,11 +123,17 @@ OP_COST_PLANTS: List[str] = [
     "large_psp", "medium_reservior",
 ]
 
+# Operation cost / emissions / gen plants (from respective CSVs where True).
+# Includes Swiss heat-providing technologies (CHP, EGS, HP, resistive, thermalNew,
+# PTES, TTES) for headline op-cost / emissions / generation totals.
+OP_COST_PLANTS: List[str] = OP_COST_PLANTS_ELECTRICITY_ONLY + CH_HEAT_PROVIDING_PLANTS
+
 # Emissions plants (same as OP_COST_PLANTS for CH)
 EMISSIONS_PLANTS: List[str] = OP_COST_PLANTS.copy()
 
 # Generation plants for total gen calculation (same as OP_COST_PLANTS for CH)
 GEN_PLANTS: List[str] = OP_COST_PLANTS.copy()
+GEN_PLANTS_ELECTRICITY_ONLY: List[str] = OP_COST_PLANTS_ELECTRICITY_ONLY.copy()
 
 
 def is_winter_t(t: str) -> bool:
@@ -225,10 +261,17 @@ def read_full_hp_demand(run_year: int, weather_year: int) -> pd.DataFrame:
     hp_data = data[data['heating_system_group'].str.contains('HP', na=False)]
     el_data = hp_data[hp_data['TS_Type'] == 'electricity demand kWh']
     
-    # Get hourly columns (datetime format like '01.01.1995 00:00')
-    # Columns are: age_construction_group, heating_system_group, climate_zone_group, 
-    # TS_Type, then 8760 hourly columns, then negative_capacity, positive_capacity, power_of_HP
-    hourly_cols = [c for c in el_data.columns if '.' in c and ':' in c]
+    # Hourly columns are all columns except the descriptive and capacity columns.
+    # Columns are: age_construction_group, heating_system_group, climate_zone_group,
+    # TS_Type, then the hourly columns, then negative_capacity, positive_capacity, power_of_HP.
+    # The 1995 files label the hours like '01.01.1995 00:00' (8760 hours), the 2008 files like
+    # '2008-01-01 00:00:00' (8784 hours, leap year). As in the model import
+    # (data_import_fcns), the hours are numbered t_1, t_2, ... in file order, so the
+    # model period t_1 ... t_8760 uses the first 8760 hours.
+    non_hourly_cols = {"age_construction_group", "heating_system_group", "climate_zone_group",
+                       "TS_Type", "negative_capacity [MJ]", "positive_capacity [MJ]",
+                       "power_of_HP [kW]"}
+    hourly_cols = [c for c in el_data.columns if c not in non_hourly_cols]
     
     # Sum across all building archetypes for each hour
     hourly_sums = el_data[hourly_cols].sum(axis=0)
@@ -277,3 +320,75 @@ def read_base_demand(run_year: int, weather_year: int, eu_policy: str) -> pd.Dat
     df["value"] = df["CH00"]
     
     return df[["T", "value"]]
+
+
+# ============ SWISS CURTAILMENT ============
+
+# Swiss cross-border lines and the neighbour at the other end.
+# Flows are positive for imports into CH (HVAC_AT00_CH00 > 0 means AT00 -> CH00).
+CH_LINE_NEIGHBOR = {
+    "HVAC_AT00_CH00": "AT00",
+    "HVAC_DE00_CH00": "DE00",
+    "HVAC_FR00_CH00": "FR00",
+    "HVAC_IT00_CH00": "IT00",
+}
+
+# Prices at or below this value (CHF/MWh) count as zero. Curtailment has no cost in FEM,
+# so every curtailment hour has a Swiss price of zero up to the solver tolerance.
+ZERO_PRICE_TOL = 0.01
+
+
+def swiss_curtailment_hourly(df_curtailment: pd.DataFrame, df_dual: pd.DataFrame,
+                             df_export: pd.DataFrame, tol: float = ZERO_PRICE_TOL) -> pd.DataFrame:
+    """Hourly Swiss curtailment in MWh with a unique allocation in zero-price hours.
+
+    FEM curtails only the exogenous infeed of CH00 (curtailment of CH00_fixedconsumer,
+    i.e. run-of-river). Invested PV and wind always generate their full potential.
+
+    If the Swiss price and the price of a neighbour are both zero, the model can move surplus
+    across that border at no cost, so the split of curtailment between Switzerland and that
+    neighbour is arbitrary. The Swiss value is made unique by letting Switzerland use its own
+    generation first. In an hour with a zero Swiss price
+
+        Swiss curtailment = max(0, raw curtailment + net export to neighbours at zero price)
+
+    Net imports from neighbours at zero price lower the value, net exports to them raise it.
+    Exports to neighbours with a positive price are used there and do not count. In hours
+    with a positive Swiss price the raw curtailment is kept.
+
+    Returns a DataFrame with the columns T, Scenarios, value (MWh).
+    """
+    cols = ["T", "Scenarios", "value"]
+    if df_curtailment is None or df_curtailment.empty:
+        return pd.DataFrame(columns=cols)
+    cur = df_curtailment[df_curtailment["Consumer_with_infeed"] == "CH00_fixedconsumer"].copy()
+    if cur.empty:
+        return pd.DataFrame(columns=cols)
+    cur["value"] = pd.to_numeric(cur["value"], errors="coerce").fillna(0.0)
+    out = cur.groupby(["T", "Scenarios"])["value"].sum().rename("raw").to_frame()
+
+    if df_dual is None or df_dual.empty or df_export is None or df_export.empty:
+        out["value"] = out["raw"]
+        return out.reset_index()[cols]
+
+    nodes = ["CH00"] + list(CH_LINE_NEIGHBOR.values())
+    du = df_dual[df_dual["Node"].isin(nodes)].copy()
+    du["value"] = pd.to_numeric(du["value"], errors="coerce")
+    prices = du.pivot_table(index=["T", "Scenarios"], columns="Node", values="value", aggfunc="mean")
+    ex = df_export[df_export["lineATC"].isin(list(CH_LINE_NEIGHBOR))].copy()
+    ex["value"] = pd.to_numeric(ex["value"], errors="coerce").fillna(0.0)
+    flows = ex.pivot_table(index=["T", "Scenarios"], columns="lineATC", values="value", aggfunc="sum")
+
+    # All hours with a price, so that zero-price exports also count where raw curtailment is missing
+    out = prices.join(out, how="outer").join(flows, how="left")
+    out["raw"] = out["raw"].fillna(0.0)
+    if "CH00" in out.columns:
+        zero_ch = out["CH00"].le(tol)
+    else:
+        zero_ch = pd.Series(False, index=out.index)
+    net_export_zero = pd.Series(0.0, index=out.index)
+    for line, node in CH_LINE_NEIGHBOR.items():
+        if line in out.columns and node in out.columns:
+            net_export_zero = net_export_zero - out[line].fillna(0.0).where(out[node].le(tol), 0.0)
+    out["value"] = out["raw"].where(~zero_ch, (out["raw"] + net_export_zero).clip(lower=0.0))
+    return out.reset_index()[cols]

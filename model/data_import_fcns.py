@@ -424,7 +424,7 @@ def read_RES_avail_data(weather_year, Node_list, run_year=None, high_resolution_
 
     # Step 3: read data for internal CH subnodes and apply correcting coefficients ----------
     # Step 3.1: create list of file names and tech names for RES availability factors
-    pv_tech_list = ["pvrf", "pvap"] # pvrf indicates the data from pv plants (mostly actually no rooftop), pvap indicates alpine pv (data not complete yet)
+    pv_tech_list = ["pvrf"] # pvrf indicates the data from pv plants (mostly actually no rooftop)
     file_names = {
         tech: "input/RES_EMHIRES/" + tech + "_" + str(weather_year) + ".csv"
 
@@ -432,7 +432,6 @@ def read_RES_avail_data(weather_year, Node_list, run_year=None, high_resolution_
     }
     res_name_mapping = {
         "pvrf": "pvrf",
-        "pvap": "pvap",
         # "windon": "windon",
     }
     #NOTE: in the case of NexusE, the data already includes performance_ratio and inverter_efficiency included in calculation of availability factors, therefore set to 1
@@ -441,7 +440,7 @@ def read_RES_avail_data(weather_year, Node_list, run_year=None, high_resolution_
 
 
     # Step 3.2: reading data and applying coeffients of correction, if needed ------------------------------------------------------------------
-    # PV technologies --------------------------------------------------------------
+    # PV technologies (with CH01-CH07 columns) --------------------------------------------------------------
     if high_resolution_PV:
         from model.high_res_PV import load_high_res_PV
         _, hires_avail = load_high_res_PV(weather_year, run_year)
@@ -476,6 +475,18 @@ def read_RES_avail_data(weather_year, Node_list, run_year=None, high_resolution_
                     ]
                     # Avail_plant_RES_region["CH01_pvnu", "t_7760"]
                     # Avail_plant_RES_region["CH01_pvrf", "t_18"]
+
+    # Alpine PV (pvalpine) - single CH00 column, applied to CH00 node only --------------
+    pvalpine_file = "input/RES_EMHIRES/pvalpine_" + str(weather_year) + ".csv"
+    if os.path.exists(pvalpine_file):
+        af_df_alpine = pd.read_csv(pvalpine_file, header=0, index_col=0)
+        af_df_alpine = af_df_alpine * performance_ratio * inverter_efficiency
+        plant_name_alpine = "CH00_pvalpine"
+        for t in range(af_df_alpine.shape[0]):
+            # Use CH00 column (first column after index)
+            Avail_plant_RES_region[plant_name_alpine, "t_" + str(t + 1)] = af_df_alpine.iloc[t, 0]
+    else:
+        print("File not found: ", pvalpine_file)
 
     # wind data from ninja --------------------------------------------------
     wind_tech_list = [
@@ -518,6 +529,7 @@ def read_RES_avail_data(weather_year, Node_list, run_year=None, high_resolution_
 
 def read_RES_capacities(
     eu_policy, ch_policy, year, Node_list, RES_EU_coefficient, RES_CH_coefficient, PVRF_CH_coefficient, Windon_CH_coefficient,
+    RES_EU_coefficient_other_nodes=None,
 ):
     """
     Read RES capacity data from TYNDP-2022 files and store in dictionary Res_capacity_dict.
@@ -576,6 +588,10 @@ def read_RES_capacities(
                 scenario = eu_policy.replace(" ", "")
                 assigned_node = node
                 increase_coef = RES_EU_coefficient
+                # 2026-09-29 (MIP3): separate PV/wind coefficient for all European nodes except the four Swiss neighbours,
+                # setting RES_EU_coefficient_other_nodes (None = same as RES_EU_coefficient)
+                if RES_EU_coefficient_other_nodes is not None and node not in ("AT00", "DE00", "FR00", "IT00"):
+                    increase_coef = RES_EU_coefficient_other_nodes
 
             try:
                 Res_capacity_dict[plant_name] = (
@@ -596,6 +612,15 @@ def read_RES_capacities(
             except IndexError:
                 if not (tech == "windof" and node in nodes_without_offshore_wind):
                     print("No data for " + plant_name)
+
+    # Alpine PV (pvalpine) - investment candidate only, no pre-existing capacity ----------------------
+    # Unlike pvrf which has installations across CH01-CH07, pvalpine is a single CH00 plant
+    # with zero initial capacity (purely an investment option)
+    pvalpine_plant_name = "CH00_pvalpine"
+    Res_capacity_dict[pvalpine_plant_name] = 0  # No pre-existing capacity
+    Plant_list.append(pvalpine_plant_name)
+    Map_plant_node[pvalpine_plant_name] = "CH00"
+    Map_plant_tech[pvalpine_plant_name] = "pvalpine"
 
     return Plant_list, Map_plant_tech, Res_capacity_dict, Map_plant_node
 
@@ -1457,9 +1482,15 @@ def read_line_data(year, Node_list, T_list, NTC_CH_ratio, eu_policy, CH_only=Fal
     """
     import time
 
-    ntc_year = 2050
-    if year != ntc_year:
-        print("--- WARNING! --- The NTC import and export data is only available for 2050. Therefore, 2050 is used for the NTC data.")
+    # Use the provided year for NTC data
+    ntc_year = year
+    
+    # Check if NTC files exist for this year, fall back to 2050 if not
+    import os
+    ntc_import_path = f"input/NTC/NTC_import_{eu_policy}_{ntc_year}.csv"
+    if not os.path.exists(ntc_import_path):
+        print(f"--- WARNING! --- NTC file {ntc_import_path} not found. Falling back to 2050.")
+        ntc_year = 2050
 
     start = time.time()
     
