@@ -5,3 +5,48 @@ dataset relates to 1986 to 2015
 year 1995 starts from time step 78889
 2008 192841
 2007 184081
+
+
+------------------------------------
+Alpine PV:
+
+### BIG LIMITATION: ###
+There is only the weather year 2016. Using those profiles with another weather year (e.g. 1995, 2008, or 2009) will make Alpine PV overly profitable. But if no investments show up under these circumstances, then it is unlikely that they will show up with accurate weather years.
+
+This is preliminary data shared by Yael Frischholz, which will be published on envidat some time in spring 2026 and which has the following DOI reserved: https://www.doi.org/10.16904/envidat.729
+You may use the data for the third EDGE model intercomparison, referring to the above publication link.
+
+Selecting in alpine_pv_capfactor_prof.xlsx the 30 municipalities with the feed-in profiles that have the greatest sum:
+6202
+6287
+6261
+6211
+6283
+6197
+6195
+6238
+6300
+3784
+6135
+6282
+6023
+6239
+6205
+6076
+6010
+6265
+5063
+6083
+3782
+6240
+6288
+3575
+3790
+6032
+1212
+6296
+6295
+6007
+
+and averaging the profiles to one.
+As a simplification, it is assumed that alpine PV will be equally constructed in those municipalities which explains the merging of those 30 profiles to one.

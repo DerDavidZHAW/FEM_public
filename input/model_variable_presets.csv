@@ -6529,3 +6529,7 @@ gen_energyTh_max,2050_060_100_EUbat,DH_medium_PTES_large,,81122.64584621508
 gen_energyTh_max,2050_070_100_EUbat,DH_medium_PTES_large,,81122.64584621508
 gen_energyTh_max,2050_080_100_EUbat,DH_medium_PTES_large,,81122.64584621508
 gen_energyTh_max,2050_090_100_EUbat,DH_medium_PTES_large,,81122.64584621508
+gen_max,2050_GA_NRT_WN_NF,CH00_nuclear,,1600,
+gen_max,2050_GA_NRT_WN_WF,CH00_nuclear,,1600,
+gen_max,2050_GA_WRT_WN_NF,CH00_nuclear,,1600,
+gen_max,2050_GA_WRT_WN_WF,CH00_nuclear,,1600,
