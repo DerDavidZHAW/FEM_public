@@ -1,0 +1,26 @@
+# National annual electrolyzer demand: scenario lookup for the step totals (per node scope).,,,,,,
+# multiplier applies to the totals ALREADY in the model. FEM runs use ONLY the,,,,,,
+#   GlobalAmbition column of TYNDP 22 and ONLY the ZBA row of EP2050+ (David 2026-08-11),,,,,,
+#   so ALL multipliers below are expressed against that common base:,,,,,,
+#   DEFAULT (neighbours): input/electrolyzer_net_demand.csv GlobalAmbition column.,,,,,,
+#     Both tyndp24 rungs divide by the GA-TYNDP22 base (tyndp24_de is therefore a,,,,,,
+#     CROSS-family comparison: ENTSO-E's lower 2024 electrolysis path vs the GA22 world).,,,,,,
+#   CH00: input/electrolyzer_net_demand_CH.csv ZBA row,,,,,,
+#     (2035 1'613'195 / 2050 2'938'216 MWh_el).,,,,,,
+# LADDER SOURCES (decision 2026-08-11): the model's own scenario producers only -- TYNDP for,,,,,,
+#   neighbours and EP2050+ for CH. Wallinger 2025 serves as validation only (SOURCES.md sec. 4).,,,,,,
+# TYNDP-24 multipliers are the CORRECTED extraction: network-connected electrolysis only,,,,,,
+#   (FEM has no off-grid assets) and scaled to FEM's 17 modeled EU members by their share of,,,,,,
+#   final H2 demand (s ~ 0.89 from the TYNDP-24 demand workbook). 2035 = linear interpolation,,,,,,
+#   NT-2030 -> 2040. Multipliers are upper bounds (bias note in SOURCES.md section 4).,,,,,,
+# Suggested run combos: central = CH00 ep2050_zba + DEFAULT tyndp22;,,,,,,
+#   low = CH00 ep2050_wwb + DEFAULT tyndp24_de; high = CH00 ep2050_zba + DEFAULT tyndp24_ga.,,,,,,
+#   CH has no upward rung (one-sided by decision; state as limitation).,,,,,,
+# Retire electrolyzer_demand_reduction_coefficient (set 1.0) when the steps go live --,,,,,,
+#   otherwise reductions double-count; the low rung covers the old halved 2035 case.,,,,,,
+scenario,node_scope,multiplier_2035,multiplier_2050,role,status,source
+tyndp22,DEFAULT,1.00,1.00,central,final,TYNDP 2022 GlobalAmbition as in model (electrolyzer_net_demand.csv; only family used in runs)
+ep2050_zba,CH00,1.00,1.00,central,final,EP2050+ ZBA as in model (electrolyzer_net_demand_CH.csv; only variant used in runs)
+tyndp24_de,DEFAULT,0.84,1.15,sensitivity,extracted,TYNDP 2024 Distributed Energy: Fig.23 network-connected x coverage 0.89 vs GA-TYNDP22-in-FEM (2040: 0.96; cross-family)
+tyndp24_ga,DEFAULT,0.99,1.30,sensitivity,extracted,TYNDP 2024 Global Ambition: Fig.23 network-connected x coverage 0.89 vs GA-TYNDP22-in-FEM (2040: 1.16)
+ep2050_wwb,CH00,0.38,0.81,sensitivity_low,final,EP2050+ WWB vs ZBA (608'963/1'613'195 and 2'373'482/2'938'216 MWh_el)

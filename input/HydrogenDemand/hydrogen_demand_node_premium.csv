@@ -1,0 +1,11 @@
+# National delivery premium ADDED to every step WTP (CHF/MWh_H2). Additive; not a ratio:,,,
+# transport and storage costs are per-kg adders on the delivered price; a multiplicative,,,
+# factor would inflate the top steps without physical basis. 1 CHF/kg = 30 CHF/MWh_H2.,,,
+# CH00 derivation (see SOURCES.md section 2b): backbone->CH pipeline leg ~0.2-0.5 CHF/kg,,,
+# (6-15) + no domestic salt caverns => buffering abroad / costly local storage ~0.2-0.35 CHF/kg,,,
+# (6-10). 2035: +15 (no backbone connection; upper transport band). 2050: +10 (assumed,,,
+# backbone connection per EHB planning; cavern gap remains). Equivalent ratio on the,,,
+# 75-step: ~1.20 (2035) / ~1.13 (2050). All other nodes: 0 (backbone-connected core).,,,
+node,premium_2035_CHF_per_MWh_H2,premium_2050_CHF_per_MWh_H2,status
+DEFAULT,0,0,final
+CH00,15,10,proposed

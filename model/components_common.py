@@ -57,6 +57,9 @@ from data_prep.definitions_common import (
     EV_charging_power_rate,
     EV_inflexible_demand_data,
     HP_inflexible_demand_data,
+    Electrolyzer_inflexible_demand_data,
+    DH_inflexible_demand_data,
+    Biomass_inflexible_generation_data,
     Fuel_limits_data,    
     BA_th_con,
     BA_th_lim,
@@ -303,7 +306,27 @@ def obj_expression(model):
             ]
         )
 
-    return sum(model.cost_inv_dict.values()) + sum(model.cost_op_dict.values()) + sum(model.lostload_cost_dict.values()) + sum(model.slack_cost_dict.values()) + sum(model.cost_inv_thermal_dict.values()) + sum(model.cost_op_thermal_dict.values()) + sum(model.cost_inv_fuel_storage_dict.values()) + sum(model.trade_cost_dict.values()) + sum(model.thermal_curtailment_penalty_dict.values())
+    # W8 elastic hydrogen offtake steps: WTP revenue for served elastic energy.
+    # Negative cost => the model buys a step only while the system marginal cost
+    # stays below the step's electricity-side value (eta x (WTP + premium)).
+    model.h2step_revenue_dict = {}
+    if hasattr(model, "E_h2step"):
+        for scen in model.Scenarios:
+            revenue_terms = []
+            for p in model.P_flex_d_within_window:
+                data = Data_plant_flex_d_within_window.get((p, scen))
+                elastic = (data.get("elastic_steps") or {}) if isinstance(data, dict) else {}
+                for sid, step in elastic.items():
+                    revenue_terms.append(
+                        step["value_el"] * model.E_h2step[p, sid, scen]
+                    )
+            model.h2step_revenue_dict[scen] = (
+                model.weight_in_objective_fcn[scen] * sum(revenue_terms)
+                if revenue_terms
+                else 0
+            )
+
+    return sum(model.cost_inv_dict.values()) + sum(model.cost_op_dict.values()) + sum(model.lostload_cost_dict.values()) + sum(model.slack_cost_dict.values()) + sum(model.cost_inv_thermal_dict.values()) + sum(model.cost_op_thermal_dict.values()) + sum(model.cost_inv_fuel_storage_dict.values()) + sum(model.trade_cost_dict.values()) + sum(model.thermal_curtailment_penalty_dict.values()) - sum(model.h2step_revenue_dict.values())
 
 
 # -----------------------------------------------------------------------------------------------------------
@@ -761,6 +784,45 @@ def define_params_op(model, resistive_heater_investment_cap_MW_total):
         initialize=lambda model, node, t, scen: HP_inflexible_demand_data.get((node, t, scen), 0),
         default=0,
         doc="Inflexible household heat pump demand time series per node and time step [MWh]. This is the portion of HP consumption that follows a fixed profile.",
+    )
+
+    # Electrolyzer inflexible demand parameter — only populated when
+    # switch_flexible_electrolyzer=False. Encodes the valley-filled fixed
+    # electrolyzer schedule (annual energy spread across the n_full lowest-
+    # inflex-demand hours per node). Empty/zero when the electrolyzer is
+    # modeled as a flexible plant instead.
+    model.Electrolyzer_inflexible_demand = Param(
+        model.Node,
+        model.T,
+        model.Scenarios,
+        initialize=lambda model, node, t, scen: Electrolyzer_inflexible_demand_data.get((node, t, scen), 0),
+        default=0,
+        doc="Fixed electrolyzer demand time series per node and time step [MWh] (only non-zero when switch_flexible_electrolyzer=False).",
+    )
+
+    # DH inflexible demand parameter — only populated when switch_DH=False.
+    # Holds the electric equivalent (thermal demand / COP=3) of the DH heat
+    # demand, attributed to CH00. Empty/zero when DH is modeled explicitly
+    # via the PDH/NodeDH machinery.
+    model.DH_inflexible_demand = Param(
+        model.Node,
+        model.T,
+        model.Scenarios,
+        initialize=lambda model, node, t, scen: DH_inflexible_demand_data.get((node, t, scen), 0),
+        default=0,
+        doc="Electric equivalent of DH thermal demand at COP=3 [MWh] (only non-zero when switch_DH=False).",
+    )
+
+    # Biomass inflexible GENERATION parameter — only populated when switch_biomass=False.
+    # Holds the fixed biomass schedule placed on the highest-residual-demand hours per node
+    # (annual energy budget preserved). Enters the energy_balance as a SUPPLY term.
+    model.Biomass_inflexible_generation = Param(
+        model.Node,
+        model.T,
+        model.Scenarios,
+        initialize=lambda model, node, t, scen: Biomass_inflexible_generation_data.get((node, t, scen), 0),
+        default=0,
+        doc="Fixed biomass generation schedule per node and time step [MWh] (only non-zero when switch_biomass=False).",
     )
 
     model.operation_slp = Param(
@@ -1463,6 +1525,45 @@ def define_vars_op(model):
         doc="THermal STorage level representing energywise the temperatur of the building respective to the inside comfort temperature [MWh]",
     )
 
+    # ------------------------------ W8: elastic hydrogen offtake steps ------------------------------
+    # One annual energy variable per (electrolyzer plant, elastic step, scenario),
+    # bounded by the step width. Valued at value_el = eta x (WTP + node premium)
+    # in the objective (revenue term); linked to hourly storage_charge through the
+    # consume_tot_limit equality in components_central. Only built when the data
+    # import ran with h2_steps=True (i.e. "elastic_steps" present in the window data).
+    # Declared over THREE separate sets (dense product), not one dimen-3 set:
+    # results_export.par_var derives CSV headers from the implicit subsets, so a
+    # single 3-dim set breaks the generic variable export (learned 2026-08-11).
+    # Combos without step data get bounds (0, 0) — harmless fixed-zero variables.
+    h2step_ids = sorted(
+        {
+            sid
+            for (p, scen), data in Data_plant_flex_d_within_window.items()
+            if isinstance(data, dict) and data.get("elastic_steps")
+            for sid in data["elastic_steps"]
+        }
+    )
+    if h2step_ids:
+        model.H2Steps = Set(
+            initialize=h2step_ids,
+            doc="elastic hydrogen offtake step ids (W8, input/HydrogenDemand)",
+        )
+
+        def _h2step_bounds(model, p, sid, scen):
+            data = Data_plant_flex_d_within_window.get((p, scen))
+            step = (data.get("elastic_steps") or {}).get(sid) if isinstance(data, dict) else None
+            return (0.0, step["width"] if step else 0.0)
+
+        model.E_h2step = Var(
+            model.P_flex_d_within_window,
+            model.H2Steps,
+            model.Scenarios,
+            domain=pyo.NonNegativeReals,
+            bounds=_h2step_bounds,
+            initialize=0,
+            doc="served elastic hydrogen offtake energy per plant, step and scenario (MWh electricity)",
+        )
+
     return model
     # model.curtail_node      = Var(model.Node,       model.T, domain=pyo.NonNegativeReals, initialize=0, doc= "nodes' curtailment of RES generation (MWh) - used for neighbours' nodes that have no consumer")
 
@@ -1601,6 +1702,8 @@ def define_constraints(model):
     # Energy limit for limited_energy techs
     model.energy_limit = Constraint(model.P_energylim, model.Scenarios, rule=energy_limit_Constraint)
 
+    # Both constraints iterate model.P_dsr — empty when switch_electric_DSR=False,
+    # so Pyomo never calls the rule and no LP rows are added.
     model.energy_shift_limit_dsr_daily = Constraint(
         model.P_dsr, model.Days, model.Scenarios, rule=energy_shift_limit_dsr_daily_Constraint
     )
@@ -1738,18 +1841,17 @@ def define_constraints(model):
     )
 
     # ----------------------------------- district heating -----------------------------------
+    # All DH constraints below index over model.PDH / PDH_* / NodeDH. When
+    # switch_DH=False those Sets are empty, Pyomo never calls the rule, and
+    # the Constraint container ends up with 0 entries — no LP rows added.
     # Generation limit
     model.generationTh_limit = Constraint(
         model.PDH, model.T, model.Scenarios, # model.genTh < model.genTh_max
         rule=generationTh_limit_Constraint
     )
-    # # resistive heating capacity limit
-    # model.storage_rate_limit_DH = Constraint(
-    #     model.PDH, model.T, model.Scenarios, rule=storage_rate_limit_DH_Constraint
-    # )
 
     # define the characteristics (the relationship between electric and thermal generation and consumption) of the all types of district heating plants
-    # resisitve heating plants 
+    # resisitve heating plants
     model.heat_electric_profile_resistiveheater = Constraint(
         model.PDH_resistive, model.T, model.Scenarios, rule=heat_electric_profile_resistiveheater_Constraint
     )
@@ -1767,10 +1869,6 @@ def define_constraints(model):
     model.energy_balancethermal = Constraint(
         model.NodeDH, model.T, model.Scenarios, rule=energy_balancethermal_Constraint
     )
-
-    # model.storageTh_start_condition = Constraint(
-    #     model.PDH_storage, model.Scenarios, rule=storage_start_condition_Constraint
-    # )
 
     model.storageTh_soc = Constraint(
         model.PDH_storage, model.T, model.Scenarios, rule=storeBalance_Constraint
@@ -1823,23 +1921,30 @@ def define_constraints(model):
     model.genTh_max_limit_constraint = Constraint(
         model.PDH_allinvTh, model.Scenarios, rule=genTh_max_limit_Constraint
     )
-    
+
     model.fix_storage_to_charge_ratio_PTES = Constraint(
         model.PDH_TES,
         model.Scenarios,
         rule=fix_storage_to_charge_ratio_PTES_Constraint,
     )
     # -------------------------------------------- EV modelling -------------------------------------------
-    # Model the charging of flexible EVs (CH00_EV_flex)
-    model.ev_consumption_weekly_sum = Constraint(
-        model.Week, model.Scenarios, rule=ev_consumption_weekly_sum_Constraint 
-    ) 
+    # Flexible EV constraints reference model.storage_charge["CH00_EV_flex", ...]
+    # by hardcoded plant name, so they MUST be skipped when the plant doesn't
+    # exist (switch_flexible_EV=False). The Week×Scenarios index set would
+    # otherwise fire rules against a missing plant id → KeyError on build.
+    if "CH00_EV_flex" in model.P:
+        model.ev_consumption_weekly_sum = Constraint(
+            model.Week, model.Scenarios, rule=ev_consumption_weekly_sum_Constraint
+        )
 
-    model.ev_consumption_hourly_rate = Constraint(
-        model.T, model.Scenarios, rule=ev_consumption_hourly_rate_Constraint
-    )
+        model.ev_consumption_hourly_rate = Constraint(
+            model.T, model.Scenarios, rule=ev_consumption_hourly_rate_Constraint
+        )
 
     # --------------------------------------------  V2G modeling -------------------------------------------
+    # Both constraints iterate model.P_evV2G — empty when switch_V2G (or
+    # switch_flexible_EV) is off, so Pyomo never calls the rule and no LP
+    # rows are added.
     model.v2g_consumption_hourly_rate = Constraint(
         model.P_evV2G, model.T, model.Scenarios, rule=v2g_consumption_hourly_rate_Constraint
     )
@@ -1849,7 +1954,10 @@ def define_constraints(model):
     )
 
     # -------------------------------------------- heat pump modeling -------------------------------------------
-    # define the thermal storage (temperature) regulation of the building archetypes
+    # define the thermal storage (temperature) regulation of the building archetypes.
+    # All three constraints iterate model.BA_names — empty when
+    # switch_flexible_HP=False, so Pyomo never calls the rule and no LP
+    # rows are added.
     model.building_heat_demand = Constraint(
         model.T, model.BA_names, model.Scenarios, rule=building_heat_demand_Constraint
     )
@@ -1953,6 +2061,12 @@ def energy_balance_Constraint(model, t, n, s):
     demand_ev_inflexible = model.EV_inflexible_demand[n, t, s]
     # inflexible household heat pump demand (added as fixed demand, separate from flexible HP)
     demand_hp_inflexible = model.HP_inflexible_demand[n, t, s]
+    # fixed electrolyzer demand (non-zero only when switch_flexible_electrolyzer=False)
+    demand_electrolyzer_inflexible = model.Electrolyzer_inflexible_demand[n, t, s]
+    # electric equivalent of DH heat demand (non-zero only when switch_DH=False)
+    demand_dh_inflexible = model.DH_inflexible_demand[n, t, s]
+    # fixed biomass generation schedule (non-zero only when switch_biomass=False)
+    gen_biomass_inflexible = model.Biomass_inflexible_generation[n, t, s]
     # demand from all storage technologies, which includes pumping and charging etc.
     demand_storage = sum(
         model.storage_charge[p, t, s] for p in model.P_pumping & model.Map_node_plant[n]
@@ -1977,8 +2091,8 @@ def energy_balance_Constraint(model, t, n, s):
     )
         
     return (
-        sf * (gen + infeed + import_as_ending_node + lostload)
-        == sf * (demand_fixed + demand_ev_inflexible + demand_hp_inflexible + demand_storage + export_as_starting_node + curtailment)
+        sf * (gen + infeed + gen_biomass_inflexible + import_as_ending_node + lostload)
+        == sf * (demand_fixed + demand_ev_inflexible + demand_hp_inflexible + demand_electrolyzer_inflexible + demand_dh_inflexible + demand_storage + export_as_starting_node + curtailment)
     )
 
 

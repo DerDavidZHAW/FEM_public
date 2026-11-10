@@ -87,8 +87,78 @@ def merge_country_regions_inflow(
     return data_df
 
 
+def _hydro_clusters_active(hydro_clusters):
+    """Interpret the hydro_clusters setting.
+
+    Returns None for the legacy PECD representation ("legacy", False,
+    None, nan), otherwise the validated cluster count n (int 4..20).
+    """
+    if hydro_clusters is None or hydro_clusters is False:
+        return None
+    if isinstance(hydro_clusters, str):
+        if hydro_clusters.strip().lower() in ("legacy", "", "nan", "false"):
+            return None
+        hydro_clusters = float(hydro_clusters)
+    if isinstance(hydro_clusters, float):
+        if pd.isna(hydro_clusters):
+            return None
+        hydro_clusters = int(hydro_clusters)
+    n = int(hydro_clusters)
+    if not 4 <= n <= 20:
+        raise ValueError(
+            f"hydro_clusters = {n} is not supported: use 'legacy' or an "
+            "integer 4..20 (cluster tables exist for n = 4..20 in "
+            "input/hydro_WATSA/cluster_sweep/)."
+        )
+    return n
+
+
+def read_hydro_cluster_table(n_clusters):
+    """Read the WASTA-based Swiss cluster table for n_clusters and return
+    it in the PECD representative-plants format (columns: area,
+    technology, variable, value, name, inflow_share).
+
+    The clusters replace the WHOLE Swiss storage fleet (dam, psp_open,
+    psp_close). The ror cluster of the table is NOT converted: Swiss
+    run-of-river stays on the PECD infeed path (read_ror_Infeed_data,
+    ror_annual_TWh knob), and the clustered ror capacity would double
+    count it. Plant names get a CH00_ prefix (CH00_dam_1, ...) so node
+    attribution by name prefix works everywhere downstream.
+    Pumping is written NEGATIVE, matching the PECD file convention
+    (read_hydro_capacities negates it back to positive).
+    """
+    path = (
+        "input/hydro_WATSA/cluster_sweep/"
+        f"representative_hydro_plants_n{n_clusters}.csv"
+    )
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            f"hydro_clusters = {n_clusters}, but {path} does not exist. "
+            "Run input/hydro_WATSA/cluster_hydro_plants.py first."
+        )
+    ct = pd.read_csv(path)
+    ct = ct[ct["category"].isin(["dam", "psp_open", "psp_close"])]
+    rows = []
+    for _, r in ct.iterrows():
+        base = {
+            "area": "CH00",
+            "technology": r["category"],
+            "name": "CH00_" + str(r["cluster_name"]),
+            "inflow_share": float(r.get("inflow_share_suggestion", 0.0) or 0.0),
+        }
+        rows.append({**base, "variable": "gen_cap_MW",
+                     "value": round(float(r["power_capacity_MW"]), 3)})
+        rows.append({**base, "variable": "sto_GWh",
+                     "value": round(float(r["storage_capacity_GWh"]), 3)})
+        if r["category"] in ("psp_open", "psp_close"):
+            rows.append({**base, "variable": "pumping_cap_MW",
+                         "value": -round(float(r["pump_capacity_MW"]), 3)})
+    return pd.DataFrame(rows)
+
+
 def read_hydro_capacities(
-    Node_list, rep_hydro_plants, merge_some_countries, target_merge_countries, pump_capacity_GW_target_CH, adding_hydro_storage_cap_TWh_CH
+    Node_list, rep_hydro_plants, merge_some_countries, target_merge_countries, pump_capacity_GW_target_CH, adding_hydro_storage_cap_TWh_CH,
+    hydro_clusters="legacy",
 ):
     """
     Read the hydro capacities from the csv file input/hydro_PECD/PECD_EERA2021_reservoir_pumping_2030_country_table.csv and save them in a dictionary.
@@ -134,8 +204,32 @@ def read_hydro_capacities(
         hydro_capacities_data["area"] + "_" + hydro_capacities_data["technology"]
     )
 
+    n_hydro_clusters = _hydro_clusters_active(hydro_clusters)
+
+    if n_hydro_clusters is not None:
+        # WASTA-based cluster representation (input/hydro_WATSA): replace
+        # the ENTIRE Swiss storage fleet - CH00 dam (0 MW in PECD anyway),
+        # CH00 psp_open and CH00 psp_close - by the n cluster plants.
+        # Overrides rep_hydro_plants for CH00.
+        cluster_data = read_hydro_cluster_table(n_hydro_clusters)
+        hydro_capacities_data = hydro_capacities_data[
+            ~(
+                (hydro_capacities_data["area"] == "CH00")
+                & (hydro_capacities_data["technology"].isin(
+                    ["dam", "psp_open", "psp_close"]))
+            )
+        ]
+        hydro_capacities_data = pd.concat(
+            [hydro_capacities_data, cluster_data]
+        )
+        print(
+            f"CH hydro representation: WASTA clusters n = {n_hydro_clusters} "
+            f"({cluster_data['name'].nunique()} storage plants, "
+            "input/hydro_WATSA/cluster_sweep/)"
+        )
+
     rep_hydro_plants_data = pd.DataFrame()
-    if rep_hydro_plants:
+    if rep_hydro_plants and n_hydro_clusters is None:
         rep_hydro_plants_data = pd.read_csv(
             "input/hydro_PECD/PECD_EERA2021_reservoir_pumping_2030_table_representative_plants.csv",
             header=0,
@@ -231,7 +325,15 @@ def read_hydro_capacities(
         
     # if BFE asked a taget pumping capacity for CH00 -------------------------------------
     if pump_capacity_GW_target_CH:
-        pumping_plants_CH = ["large_psp","CH00_psp_close"]
+        if n_hydro_clusters is not None:
+            # all Swiss cluster plants that can pump (psp_open_*/psp_close_*);
+            # proportional scaling, zero-pump clusters stay zero
+            pumping_plants_CH = [
+                p for p in hydro_capacities_pumping_MW
+                if p.startswith("CH00_psp")
+            ]
+        else:
+            pumping_plants_CH = ["large_psp","CH00_psp_close"]
         # total pumping capacity in GW is equal to sume of values in hydro_capacities_pumping_MW with any of the keys pumping_plants_CH
         total_pumping_capacity_CH = sum(
             [
@@ -249,7 +351,16 @@ def read_hydro_capacities(
     # if BFE asked to add hydro storage capacity in CH00 -------------------------------------
     if adding_hydro_storage_cap_TWh_CH:
         print("Adding hydro storage capacity in CH00")
-        plants_with_hydro_storage_no_psp_close = ["large_psp", "medium_reservior", "small_reservior", "CH00_psp_close"]
+        if n_hydro_clusters is not None:
+            # all Swiss cluster storage plants (dam_*/psp_open_*/psp_close_*);
+            # the added TWh is distributed proportionally to storage size,
+            # mirroring the legacy behaviour on the legacy plant set
+            plants_with_hydro_storage_no_psp_close = [
+                p for p in Plant_list
+                if p.startswith(("CH00_dam_", "CH00_psp_open_", "CH00_psp_close_"))
+            ]
+        else:
+            plants_with_hydro_storage_no_psp_close = ["large_psp", "medium_reservior", "small_reservior", "CH00_psp_close"]
         # total storage capacity in TWh is equal to sume of values in hydro_storage_MWh with any of the keys plants_with_hydro_storage_no_psp_close
         storage_capacity_CH = sum(
             [
@@ -1247,6 +1358,7 @@ def read_inflow_data_hourly(
     hydro_inflow_TWh,
     pump_capacity_GW,
     adding_hydro_storage_cap_TWh,
+    hydro_clusters="legacy",
 ):
     """
     Read the inflow data from the parquet file input/hydro_PECD/PECD_EERA2021_reservoir_pumping_2030_inflow.parquet and save them in a dictionary.
@@ -1259,6 +1371,7 @@ def read_inflow_data_hourly(
         inflow_data_hourly: dictionary with keys in the form of "region_RES_tech" (plant names) and week_1 with final values in MWh (e.g., ('NOS0_pumped_open', 't_1'): 977722.0)
     """
     Plant_inflow_list_TYNDP = []
+    n_hydro_clusters = _hydro_clusters_active(hydro_clusters)
     hydro_inflow_data_weekly = pd.read_parquet(
         "input/hydro_PECD/PECD_EERA2021_reservoir_pumping_2030_inflow.parquet"
     )
@@ -1310,8 +1423,55 @@ def read_inflow_data_hourly(
             if not grouped_data.isnull().all():
                 plant_name = region + "_" + RES_tech_mapping_ERA5_ours[tech]
 
+                if (n_hydro_clusters is not None) and (
+                    plant_name in ("CH00_psp_open", "CH00_dam")
+                ):
+                    # WASTA cluster mode: the whole Swiss natural inflow is
+                    # taken from the per-cluster weekly profiles built in
+                    # input/hydro_WATSA (CAMELS-CH shapes, reconciled to
+                    # exactly this PECD CH00 series, same 53-week
+                    # convention incl. the week-53 full-week-equivalent
+                    # value). PECD carries it all under pumped_open
+                    # (CH00_psp_open here); the CH00_dam branch never
+                    # fires because the PECD reservoir rows are all-NaN,
+                    # it is guarded only for future PECD versions.
+                    if plant_name == "CH00_psp_open":
+                        cl_weekly = pd.read_csv(
+                            "input/hydro_WATSA/inflow_profiles/"
+                            "cluster_inflow_weekly.csv"
+                        )
+                        cl_weekly = cl_weekly[
+                            (cl_weekly["n_total"] == n_hydro_clusters)
+                            & (cl_weekly["weather_year"] == int(weather_year))
+                        ]
+                        if cl_weekly.empty:
+                            raise ValueError(
+                                f"No cluster inflow data for n = "
+                                f"{n_hydro_clusters}, weather year "
+                                f"{weather_year} in input/hydro_WATSA/"
+                                "inflow_profiles/cluster_inflow_weekly.csv "
+                                "- run build_inflow_profiles.py for this "
+                                "weather year."
+                            )
+                        # optional BFE annual target: the cluster series
+                        # sums to the PECD CH00 annual total by
+                        # construction, so the same scaling applies
+                        factor = 1.0
+                        if hydro_inflow_TWh:
+                            factor = hydro_inflow_TWh / (
+                                cl_weekly["inflow_GWh"].sum() / 1000.0
+                            )
+                        for cname, grp in cl_weekly.groupby("cluster_name"):
+                            wk = grp.set_index("week")["inflow_GWh"]
+                            cl_plant = "CH00_" + str(cname)
+                            for N in range(1, 54):
+                                inflow_data_weekly[
+                                    (cl_plant, "week_" + str(N))
+                                ] = 1000 * round(float(wk.get(N, 0.0)), 3) * factor
+                            Plant_inflow_list_TYNDP.append(cl_plant)
+
                 # write a conditional statement that is True if rep_hydro_plants is True or if plant_name is not equal to "CH_psp_open"
-                if (rep_hydro_plants == True) and (plant_name == "CH00_psp_open"):
+                elif (rep_hydro_plants == True) and (plant_name == "CH00_psp_open"):
                     rep_hydro_plants_data = pd.read_csv(
                         "input/hydro_PECD/PECD_EERA2021_reservoir_pumping_2030_table_representative_plants.csv",
                         header=0,
@@ -1871,7 +2031,9 @@ def read_plant_energy_limited_data(
 
 
 def read_electrolyzer_data(
-    eu_policy, ch_policy, run_year, Node_list, T_list, weather_year, electrolyzer_demand_reduction
+    eu_policy, ch_policy, run_year, Node_list, T_list, weather_year, electrolyzer_demand_reduction,
+    h2_steps=False, h2_demand_scenario="central", electrolyzer_flh_target=3000,
+    h2_fixed_price=None, h2_fixed_price_eta=0.68,
 ):
     """
     Reads the electrolyzer data from the file input/electrolyzer.csv.
@@ -1880,11 +2042,63 @@ def read_electrolyzer_data(
         ch_policy: string, name of the CH policy scenario
         run_year: integer, year of the run
         Node_list: list of nodes
+        h2_steps: bool (W8, 2026-08-11). False = legacy behaviour (fixed annual
+            energy equality; electrolyzer_demand_reduction applied to non-CH
+            nodes). True = hybrid stepwise offtake demand from
+            input/HydrogenDemand/: the "energy" target becomes only the
+            must-serve share of the (rung-scaled) national total, and
+            "elastic_steps" carries annual WTP-valued energy blocks that
+            components_common/central turn into E_h2step variables. The
+            reduction coefficient is IGNORED in steps mode (the scenario rung
+            multiplier replaces it — avoid double-counting).
+        h2_demand_scenario: rung selector for hydrogen_demand_scenarios.csv:
+            a role name (e.g. "central") or an explicit pair
+            "<DEFAULT_rung>+<CH00_rung>" (e.g. "tyndp24_ga+ep2050_zba").
+        electrolyzer_flh_target: full-load-hour sizing convention; hourly
+            capacity = annual TOTAL width / this (legacy default 3000).
+        h2_fixed_price: None (default) or float, CHF/MWh_H2 (LHV; CHF = EUR 1:1
+            as elsewhere in FEM). 2026-10-13: uniform fixed hydrogen price for
+            ALL electrolyzer nodes. No must-serve energy; one elastic step per
+            plant whose width can never bind, so the electrolyzer bids
+            h2_fixed_price_eta x h2_fixed_price (CHF/MWh_el) in every hour and
+            the served volume is endogenous. Hourly capacity is sized exactly as
+            in the legacy branch (annual energy after
+            electrolyzer_demand_reduction / electrolyzer_flh_target), so
+            capacities equal the legacy base runs. Mutually exclusive with
+            h2_steps.
+        h2_fixed_price_eta: electrolysis efficiency (MWh_H2 per MWh_el) used to
+            convert the hydrogen price into the electricity-side bid.
     Output:
         electrolyzer_capacities: dictionary with the values in the index as keys and the values in the column "value" as values
             e.g., {('AT00_electrolyzer', 't_1'): 1200.0, ('AT00_electrolyzer', 't_2'): 1200.0, ...
     """
-    full_load_hour_target = 3000
+    full_load_hour_target = electrolyzer_flh_target
+
+    h2_steps_def = h2_scen_def = h2_premium_def = None
+    if h2_steps:
+        h2_steps_def = pd.read_csv("input/HydrogenDemand/hydrogen_demand_steps.csv", comment="#")
+        h2_scen_def = pd.read_csv("input/HydrogenDemand/hydrogen_demand_scenarios.csv", comment="#")
+        h2_premium_def = pd.read_csv("input/HydrogenDemand/hydrogen_demand_node_premium.csv", comment="#")
+        if electrolyzer_demand_reduction != 1:
+            print(
+                f"WARNING h2_steps: electrolyzer_demand_reduction_coefficient="
+                f"{electrolyzer_demand_reduction} is IGNORED in steps mode "
+                f"(the scenario rung multiplier replaces it)."
+            )
+
+    if h2_fixed_price is not None:
+        if h2_steps:
+            raise ValueError(
+                "h2_fixed_price and h2_steps are mutually exclusive: set h2_steps=False "
+                "for a run with a fixed hydrogen price."
+            )
+        h2_fixed_price = float(h2_fixed_price)
+        h2_fixed_price_eta = float(h2_fixed_price_eta)
+        print(
+            f"Fixed hydrogen price: {h2_fixed_price:.2f} CHF/MWh_H2 x eta "
+            f"{h2_fixed_price_eta:.2f} = electrolyzer bid "
+            f"{h2_fixed_price * h2_fixed_price_eta:.2f} CHF/MWh_el at all nodes"
+        )
 
     Plant_list = []
     Map_plant_tech = {}
@@ -1941,28 +2155,122 @@ def read_electrolyzer_data(
 
         if Map_plant_node[plant] == "CH00":
             scenario_policy = ch_policy
-            electrolyzer_demand_annual = electrolyzer_demand_data.loc[
+            electrolyzer_demand_annual_raw = electrolyzer_demand_data.loc[
                 (electrolyzer_demand_data["plant_name"] == plant)
                 & (electrolyzer_demand_data["scenario"] == scenario_policy)
                 & (electrolyzer_demand_data["weather_year"] == "all"),
                 str(run_year),
             ].item()  # type: ignore
+            electrolyzer_demand_annual = electrolyzer_demand_annual_raw
         else:
             scenario_policy = eu_policy
-            electrolyzer_demand_annual = electrolyzer_demand_data.loc[
+            electrolyzer_demand_annual_raw = electrolyzer_demand_data.loc[
                 (electrolyzer_demand_data["plant_name"] == plant)
                 & (electrolyzer_demand_data["scenario"] == scenario_policy)
                 & (electrolyzer_demand_data["weather_year"] == weather_year),
                 str(run_year),
-            ].item() * electrolyzer_demand_reduction  # type: ignore
+            ].item()  # type: ignore
+            electrolyzer_demand_annual = (
+                electrolyzer_demand_annual_raw * electrolyzer_demand_reduction
+            )
 
-        Data_plant_flex_d_within_window_electrolyzer[plant]["energy"] = [
-            electrolyzer_demand_annual * (len(T_list) / 8760)
-        ]
+        window_scale = len(T_list) / 8760
 
-        Data_plant_flex_d_within_window_electrolyzer[plant]["max_demand"] = (
-            electrolyzer_demand_annual / full_load_hour_target
-        )
+        if h2_steps:
+            # ---- W8 hybrid stepwise offtake demand (see input/HydrogenDemand/SOURCES.md)
+            node = Map_plant_node[plant]
+            scope = "CH00" if node == "CH00" else "DEFAULT"
+            mult_col = f"multiplier_{run_year}"
+            selector = str(h2_demand_scenario)
+            if "+" in selector:
+                d_rung, ch_rung = selector.split("+", 1)
+                rung = ch_rung if scope == "CH00" else d_rung
+                sel = h2_scen_def[
+                    (h2_scen_def["scenario"] == rung)
+                    & (h2_scen_def["node_scope"] == scope)
+                ]
+            else:
+                sel = h2_scen_def[
+                    (h2_scen_def["role"] == selector)
+                    & (h2_scen_def["node_scope"] == scope)
+                ]
+            if len(sel) != 1:
+                raise ValueError(
+                    f"h2_steps: no unique scenario rung for node_scope={scope}, "
+                    f"selector='{selector}' in hydrogen_demand_scenarios.csv"
+                )
+            if mult_col not in sel.columns:
+                raise ValueError(
+                    f"h2_steps: column '{mult_col}' missing in "
+                    f"hydrogen_demand_scenarios.csv (run_year={run_year})"
+                )
+            multiplier = float(sel[mult_col].item())
+
+            prem_col = f"premium_{run_year}_CHF_per_MWh_H2"
+            prem_sel = h2_premium_def[h2_premium_def["node"] == node]
+            if prem_sel.empty:
+                prem_sel = h2_premium_def[h2_premium_def["node"] == "DEFAULT"]
+            premium = float(prem_sel[prem_col].item())
+
+            # steps mode ignores the reduction coefficient: rung multiplier on the RAW total
+            total_width = electrolyzer_demand_annual_raw * multiplier
+            must_share = float(
+                h2_steps_def.loc[h2_steps_def["must_serve"] == 1, "width_share"].sum()
+            )
+
+            elastic_steps = {}
+            for _, row in h2_steps_def[h2_steps_def["must_serve"] == 0].iterrows():
+                elastic_steps[int(row["step_id"])] = {
+                    "width": float(row["width_share"]) * total_width * window_scale,
+                    "value_el": float(row["eta_electrolysis"])
+                    * (float(row["wtp_CHF_per_MWh_H2"]) + premium),
+                    "wtp_CHF_per_MWh_H2": float(row["wtp_CHF_per_MWh_H2"]),
+                    "premium_CHF_per_MWh_H2": premium,
+                    "segment": str(row["segment"]),
+                }
+
+            Data_plant_flex_d_within_window_electrolyzer[plant]["energy"] = [
+                total_width * must_share * window_scale
+            ]
+            # capacity sized on the FULL offered curve (v2: width_shares may sum
+            # to >1 so the demand curve extends beyond the TYNDP-22 base total)
+            width_share_sum = float(h2_steps_def["width_share"].sum())
+            Data_plant_flex_d_within_window_electrolyzer[plant]["max_demand"] = (
+                total_width * width_share_sum / full_load_hour_target
+            )
+            Data_plant_flex_d_within_window_electrolyzer[plant]["elastic_steps"] = (
+                elastic_steps
+            )
+        elif h2_fixed_price is not None:
+            # ---- uniform fixed hydrogen price (2026-10-13). Reuses the W8
+            # elastic-step machinery with ONE step per plant: must-serve energy
+            # 0, step width larger than capacity x hours (never binds), value
+            # eta x price. The consume_tot_limit dual is therefore pinned to
+            # eta x price and the electrolyzer bids that value in every hour.
+            # Capacity as in the legacy branch (post reduction coefficient).
+            max_demand_fixed = electrolyzer_demand_annual / full_load_hour_target
+            Data_plant_flex_d_within_window_electrolyzer[plant]["energy"] = [0.0]
+            Data_plant_flex_d_within_window_electrolyzer[plant]["max_demand"] = (
+                max_demand_fixed
+            )
+            Data_plant_flex_d_within_window_electrolyzer[plant]["elastic_steps"] = {
+                1: {
+                    "width": max_demand_fixed * len(T_list) * 1.05 + 1.0,
+                    "value_el": h2_fixed_price_eta * h2_fixed_price,
+                    "wtp_CHF_per_MWh_H2": h2_fixed_price,
+                    "premium_CHF_per_MWh_H2": 0.0,
+                    "segment": "fixed_price",
+                }
+            }
+        else:
+            # ---- legacy: fixed annual energy equality (post reduction coefficient)
+            Data_plant_flex_d_within_window_electrolyzer[plant]["energy"] = [
+                electrolyzer_demand_annual * window_scale
+            ]
+
+            Data_plant_flex_d_within_window_electrolyzer[plant]["max_demand"] = (
+                electrolyzer_demand_annual / full_load_hour_target
+            )
 
         Data_plant_flex_d_within_window_electrolyzer[plant]["time_horizon"] = [
             [int(T_list[0][2:]), int(T_list[-1][2:])]

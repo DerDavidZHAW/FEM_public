@@ -52,11 +52,11 @@ import os
 def core_main(scenario_name, sub_scenarios_list, model_version=None):
     # Start timer for total runtime tracking
     total_timer_start = time.time()
-    
+
     # create output folder --------------------
     output_dir = Path("output") / scenario_name
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # model definition ------------------------
     model = pyo.ConcreteModel(name="core_" + scenario_name + "_" + str(time.time()).split(".")[0])
 
@@ -98,7 +98,11 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         else:
             Node_list = settings_scen["Node_list_setting"]
         slack_soc = settings_scen["slack_soc"]
-        NodeDH_list = settings_scen["NodeDH_list"]
+        # switch_DH=False: drop the entire DH sector — force NodeDH_list empty so
+        # model.NodeDH (and every NodeDH-indexed Set/Param/Var/Constraint) is empty.
+        # PlantDH_list global is also untouched by data_import_TYNDP_fcn in that
+        # branch, so model.PDH and all PDH_* subsets are likewise empty.
+        NodeDH_list = settings_scen["NodeDH_list"] if settings_scen.get("switch_DH", True) else []
         resistive_heater_cap = settings_scen["resistive_heater_investment_cap_MW_total"]
     
     # Validate that resistive heater investment caps are identical across all subscenarios
@@ -293,7 +297,26 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
                 df = pd.DataFrame(data, columns=columns)
                 df.to_csv(output_path, index=False)
                 # print(f"  Exported {cost_name}")
-    
+
+    # ATC limits ---------------------------------------------------
+    # ATC_exportlimit / ATC_importlimit are Python dicts (used as Var bounds
+    # via ATCbound_Constraint), not Pyomo Params, so par_var() doesn't export
+    # them. Write them out manually so the post-processing scripts
+    # (price_attribution.py / merit_order_plot.py) can read the NTC capacities
+    # for each line/hour/scenario.
+    for _atc_name, _atc_dict in [
+        ("ATC_exportlimit", data_prep.definitions_common.ATC_exportlimit),
+        ("ATC_importlimit", data_prep.definitions_common.ATC_importlimit),
+    ]:
+        if _atc_dict:
+            _rows = [{"lineATC": k[0], "T": k[1], "Scenarios": k[2], "value": v}
+                     for k, v in _atc_dict.items()]
+            if _rows:
+                _df = pd.DataFrame(_rows)
+                _output_path = Path("output") / scenario_name / f"{_atc_name}.csv"
+                _output_path.parent.mkdir(parents=True, exist_ok=True)
+                _df.to_csv(_output_path, index=False)
+
     # Sets ---------------------------------------------------------
     set_names_to_export = ["P_allinv", ]
     set_list = [v for v in model.component_objects(ctype=Set, active=True, descend_into=True)
@@ -324,9 +347,43 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     # exports all dual values of constraints automatically in seperate files named after variable's name
 
     constraint_names_to_export = [
-        "energy_balance",
-        "storage_soc",
-        "energy_balancethermal",
+        "energy_balance",            # electricity price lambda_elec
+        "storage_soc",               # storage water value
+        "energy_balancethermal",     # nodal heat price lambda_heat (USED for DH bids)
+        # DSR daily duals. dsr_daily_balance (nu) = the DSR's internal price (= the
+        # midpoint of the prices it shifts between); already USED as the DSR
+        # watervalue. energy_shift_limit_dsr_daily (S) = half the price spread when
+        # the shift limit binds; NOT yet in the bid -> the DSR bid sits on the
+        # midpoint instead of nu-S (charge) / nu+S (reduce). Export S to confirm.
+        "dsr_daily_balance",
+        "energy_shift_limit_dsr_daily",
+        # Building heat value lambda_building: dual of building_heat_demand (the
+        # per-hour thermal SOC of each building archetype: th_sl[t] = th_sl[t-1]
+        # - BA_th_con + storage_charge * COP). A flexible household heat pump's
+        # bid is COP * lambda_building - o. NOTE sf = 100 for this row. Export to
+        # confirm value/sign before pricing the BA heat pumps off it.
+        "building_heat_demand",
+        # Firm-heat mandate dual delta (USED for DH bids): a minimum share of each
+        # DH node's heat must come from non-DSR sources. The heat value a firm DH
+        # plant (CHP, resistive heater, heat pump) faces is lambda_heat + delta;
+        # delta > 0 only when the mandate binds (then it forces a must-run plant).
+        "inflexble_demandTh_share",
+        # Coupling duals psi = lambda_heat + delta. NOT used for pricing (we build
+        # lambda_heat + delta directly, which is more transparent and lets a NEW
+        # heat-side constraint surface as a Bid_Gap). Exported only as a cross-check
+        # that psi == lambda_heat + delta.
+        "heat_electric_profile_CHP",
+        "heat_electric_profile_resistiveheater",
+        "heat_electric_profile_heatpump",
+        # Fuel-tracking duals: diagnostics from ruling out the fuel hypothesis
+        # (they came back zero — the CHP driver is the firm-heat mandate above).
+        "plant_fuel_consumption_tracking_CH_DH",
+        "plant_fuel_consumption_tracking_CH",
+        "fuel_consumption_tracking",
+        "fuel_limit_annual",
+        # Biomass fuel-scarcity premium mu_V: dual of the annual energy budget.
+        # Needed to rebuild biomass bids (o + mu_V) from the output folder alone.
+        "energy_limit",
         # "storage_soc_limit",
         # "lineATClimit",
         # Thermal capacity duals (HP, PTES, RH):
@@ -348,6 +405,64 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
     # export all dual values of constraints in constraint_list
     dual_values_dict = res_export.constraints(constraint_list, scenario_name, model, write_csv=True)
 
+    # Extra exports so every plant's bid can be rebuilt offline from the output
+    # folder (merit-order reconstruction), without the solved model in memory.
+    # 1) Electrolyser hydrogen value mu_H2: the consume_tot_limit constraints are
+    #    per-node SCALAR constraints with generated names (e.g.
+    #    consume_tot_limit_CH00_electrolyzer_1_<subscen>), so the exact-name
+    #    filter above cannot catch them. Collect them into ONE file. Raw duals,
+    #    like every other *_dual.csv: consumers apply sf('consume_tot_limit')
+    #    and divide by the scenario weight.
+    consume_rows = [
+        {"constraint": name, "value": model.dual.get(getattr(model, name), None)}
+        for name in model.component_map(Constraint)
+        if name.startswith("consume_tot_limit_")
+    ]
+    if consume_rows:
+        pd.DataFrame(consume_rows).to_csv(
+            Path("output") / scenario_name / "consume_tot_limit_dual.csv", index=False
+        )
+
+    # 1b) W8 elastic hydrogen offtake steps (h2_steps=True): served energy per
+    #     plant/step with width and electricity-side WTP, so step utilisation is
+    #     reportable and the electrolyzer bid is reconstructable offline.
+    if hasattr(model, "E_h2step"):
+        h2_rows = []
+        for (p, sid, s) in model.E_h2step:
+            _dfw = data_prep.definitions_common.Data_plant_flex_d_within_window.get(
+                (p, s)
+            )
+            d = (_dfw.get("elastic_steps") or {}).get(sid) if isinstance(_dfw, dict) else None
+            if d is None:
+                continue  # dense-product combo without step data (bounds 0,0)
+            h2_rows.append(
+                {
+                    "plant": p,
+                    "step_id": sid,
+                    "scenario": s,
+                    "segment": d.get("segment", ""),
+                    "E_served_MWh": pyo.value(model.E_h2step[p, sid, s]),
+                    "width_MWh": d["width"],
+                    "value_el_CHF_per_MWh": d["value_el"],
+                    "wtp_CHF_per_MWh_H2": d.get("wtp_CHF_per_MWh_H2"),
+                    "premium_CHF_per_MWh_H2": d.get("premium_CHF_per_MWh_H2"),
+                }
+            )
+        pd.DataFrame(h2_rows).to_csv(
+            Path("output") / scenario_name / "h2_steps_result.csv", index=False
+        )
+
+    # 2) DH plant data (efficiency / COP, power_to_heat_ratio, CHP flag, ...):
+    #    a data_prep dictionary, not a model Param, so the automatic parameter
+    #    export above misses it. Needed to rebuild CHP and DH-heater bids.
+    if PlantDH_data_remaining:
+        pd.DataFrame(
+            [list(key) + [value] for key, value in PlantDH_data_remaining.items()],
+            columns=["PlantDH", "Feature", "Scenario", "value"],
+        ).to_csv(
+            Path("output") / scenario_name / "PlantDH_data_remaining.csv", index=False
+        )
+
     # Reduced costs for investment variables --------------------------------
     # These tell you how much cheaper a technology would need to be to become competitive
     investment_var_names = [
@@ -364,12 +479,12 @@ def core_main(scenario_name, sub_scenarios_list, model_version=None):
         write_csv=True
     )
 
-    # df_plants, df_counts = price_setting_tech.aggregate_price_setting_data(
-    #     scenario_name,
-    #     sub_scenarios_list,
-    #     model,
-    #     dual_values_dict,
-    # )
+    df_plants, df_counts = price_setting_tech.aggregate_price_setting_data(
+        scenario_name,
+        sub_scenarios_list,
+        model,
+        dual_values_dict,
+    )
 
     investment_summary.investment_summary(r"output/" + scenario_name + "/")
     

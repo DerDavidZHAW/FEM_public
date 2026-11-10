@@ -21,7 +21,8 @@ import pandas as pd
 from model.version import MODEL_VERSION
 from detailed_reporting.constants import (
     is_winter_t, is_summer_t, CHF_TO_EUR, get_run_year, get_weather_year,
-    read_full_ev_demand, read_full_hp_demand, get_subscenario_weight
+    read_full_ev_demand, read_full_hp_demand, get_subscenario_weight,
+    CH_HYDRO_DAM_PLANTS_ALL, CH_HYDRO_PSP_PLANTS_ALL
 )
 
 
@@ -607,12 +608,11 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Total capacity hydro dams":
-            # CH00 only: medium_reservior, small_reservior, CH00_dam + large_psp, CH00_psp_close (combined)
-            dam_val = (_gen_max_for_plant(df_gen_max, "medium_reservior") +
-                       _gen_max_for_plant(df_gen_max, "small_reservior") +
-                       _gen_max_for_plant(df_gen_max, "CH00_dam"))
-            psp_val = (_gen_max_for_plant(df_gen_max, "large_psp") +
-                       _gen_max_for_plant(df_gen_max, "CH00_psp_close"))
+            # CH00 only: legacy names + hydro-cluster plants (absent names sum to 0)
+            dam_val = sum(_gen_max_for_plant(df_gen_max, p)
+                          for p in CH_HYDRO_DAM_PLANTS_ALL)
+            psp_val = sum(_gen_max_for_plant(df_gen_max, p)
+                          for p in CH_HYDRO_PSP_PLANTS_ALL)
             val = (dam_val + psp_val) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
@@ -701,10 +701,9 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Annual generation hydro dam":
-            # CH00 only
-            val = (_gen_for_plant(df_gen, "medium_reservior") +
-                   _gen_for_plant(df_gen, "small_reservior") +
-                   _gen_for_plant(df_gen, "CH00_dam")) / 1000.0
+            # CH00 only: legacy names + hydro-cluster plants
+            val = sum(_gen_for_plant(df_gen, p)
+                      for p in CH_HYDRO_DAM_PLANTS_ALL) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
@@ -715,16 +714,16 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Annual discharge pumped hydro":
-            # CH00 only
-            val = (_gen_for_plant(df_gen, "large_psp") +
-                   _gen_for_plant(df_gen, "CH00_psp_close")) / 1000.0
+            # CH00 only: legacy names + hydro-cluster plants
+            val = sum(_gen_for_plant(df_gen, p)
+                      for p in CH_HYDRO_PSP_PLANTS_ALL) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
         if param == "Annual charge pumped hydro":
-            # CH00 only
-            val = (_storage_charge_for_plant(df_storage_charge, "large_psp") +
-                   _storage_charge_for_plant(df_storage_charge, "CH00_psp_close")) / 1000.0
+            # CH00 only: legacy names + hydro-cluster plants
+            val = sum(_storage_charge_for_plant(df_storage_charge, p)
+                      for p in CH_HYDRO_PSP_PLANTS_ALL) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
@@ -752,14 +751,14 @@ def export_output_spatial(model, scenario_name, model_version: str = None,  # ty
             return result
 
         if param == "Charge pumped hydro WINTER":
-            val = (_storage_charge_for_plant_season(df_storage_charge, "large_psp", "winter") +
-                   _storage_charge_for_plant_season(df_storage_charge, "CH00_psp_close", "winter")) / 1000.0
+            val = sum(_storage_charge_for_plant_season(df_storage_charge, p, "winter")
+                      for p in CH_HYDRO_PSP_PLANTS_ALL) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 
         if param == "Charge pumped hydro SUMMER":
-            val = (_storage_charge_for_plant_season(df_storage_charge, "large_psp", "summer") +
-                   _storage_charge_for_plant_season(df_storage_charge, "CH00_psp_close", "summer")) / 1000.0
+            val = sum(_storage_charge_for_plant_season(df_storage_charge, p, "summer")
+                      for p in CH_HYDRO_PSP_PLANTS_ALL) / 1000.0
             result["Location independent"] = f"{val:.3f}"
             return result
 

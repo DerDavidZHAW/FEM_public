@@ -16,6 +16,12 @@ Map_plant_tech_cost_component = {  # cap_op (only generation capacity and operat
     "SCGTfossil": "cap_op",
     "hydrogen": "cap_op_energy",
 
+    # virtual unlimited backup generator used when switch_storage=False:
+    # one plant per electric node ({node}_storage_replacement) at fixed 300 CHF/MWh,
+    # 1 TW capacity. Lets the LP stay feasible after every "real" storage plant is
+    # filtered out. Never investable.
+    "storage_replacement": "cap_op",
+
     # non-district heating technologies - only operation
     "dsr": "cap_op",
     "other": "cap_op",
@@ -345,6 +351,7 @@ cost_data_opr_qdr = {
     'SCGTfossil' : 2 * 0.001,
     'battery' : 2 * 0.001,
     'hydrogen' : 2 * 0.001,
+    'storage_replacement': 0,  # synthetic backup generator used when switch_storage=False; flat 300 CHF/MWh (linear), no quadratic term
 }
 # defining the start condtion of storage technologies (to be assigned to all plants of this type of technology, not alreay having a value)
 Map_tech_startcondition = {

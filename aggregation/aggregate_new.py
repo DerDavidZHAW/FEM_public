@@ -445,19 +445,34 @@ def mappings_merge(scenarios_to_agg, original_results_dir):
 
     # loop over the files to merge
     for file_name, file_path_list in files_to_merge_dict.items():
-        # create an empty dataframe
-        merged_df = pd.DataFrame()
-
-        # loop over the files to merge
+        # PER-INDEX SET UNION of the mapped values across all scenario files.
+        # The previous combine_first() merge aligned the wide frames on
+        # POSITIONAL column labels, so a cell that already held a value in the
+        # first scenario silently masked a different value at the same
+        # position in a later scenario. One-to-many maps (e.g. Map_node_plant)
+        # therefore lost every plant that only exists in later scenarios --
+        # concretely the CH00_dam_*/CH00_psp_* hydro-cluster plants, which
+        # made Annual_balance_ch and all *_Map_node_plant sums drop the whole
+        # Swiss hydro fleet in hydro_clusters runs (bug found 2026-08-04).
+        union_vals = {}     # index label -> ordered set of mapped values
+        index_name = None
         for file_path in file_path_list:
-            # read the file
             file_df = pd.read_csv(file_path, index_col=0)
+            if index_name is None:
+                index_name = file_df.index.name
+            for idx, row in file_df.iterrows():
+                bucket = union_vals.setdefault(idx, {})
+                for v in row.tolist():
+                    if pd.notna(v):
+                        bucket[v] = None    # dict as ordered set
 
-        # Merge the indices from file_df with merged_df
-            merged_df = merged_df.combine_first(file_df)    
-
-        # withing each row of merged_df, sort values alphabetically (ignore column names)
-        merged_df = merged_df.apply(lambda row: sorted(row, key=lambda x: str(x)), axis=1, result_type='expand')
+        # rows sorted alphabetically as before; NaN-padding goes to the end
+        width = max((len(v) for v in union_vals.values()), default=1)
+        merged_df = pd.DataFrame(
+            [sorted(vals.keys(), key=str) + [np.nan] * (width - len(vals))
+             for vals in union_vals.values()],
+            index=pd.Index(union_vals.keys(), name=index_name),
+        )
 
         # # if Map_node_plant, add a column with the plant type
         # if file_name == "Map_node_plant.csv":

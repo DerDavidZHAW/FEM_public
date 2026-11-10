@@ -1,0 +1,22 @@
+# Stepwise annual hydrogen offtake demand for the electrolyzer redesign (W8) -- v2 (2026-08-12).,,,,,,,
+# DESIGN v2: the demand curve now EXTENDS BEYOND the TYNDP-22 total so that the model's,,,,,,,
+# calibrated quantity (multiplier 1.00 in hydrogen_demand_scenarios.csv) is an INTERIOR point,,,,,,,
+# of the curve rather than its maximum: width_shares sum to 1.40 (max ~ corrected TYNDP-24 GA,,,,,,,
+# upper range; see SOURCES.md sec. 4) and the must-serve floor is 0.50 (= the old ad-hoc 2035,,,,,,,
+# reduction coefficient; now segment-derived). Serving steps 1-5 = exactly 1.00 x TYNDP-22.,,,,,,,
+# must_serve=1 steps stay a FORCED annual equality (contracted/process-critical; scarcity rent,,,,,,,
+# possible in tight years). must_serve=0 steps are annual variables E_s in [0; width] valued at,,,,,,,
+# eta x (wtp + node premium); they self-curtail when power prices exceed the WTP.,,,,,,,
+# Must-serve widths follow the TYNDP-24 sectoral structure of final H2 demand (EU27: industry,,,,,,,
+# 62-77%; transport 16-24%; buildings/households 3-16%); elastic widths are cross-sector,,,,,,,
+# PARITY TRANCHES (price-based; not sector quotas). NO hourly H2 balance (implicit free,,,,,,,
+# intra-year storage -- state as limitation). Per-node premium added from,,,,,,,
+# hydrogen_demand_node_premium.csv. STATUS: proposed v2 -- awaiting sign-off + test run.,,,,,,,
+step_id,segment,wtp_CHF_per_MWh_H2,width_share,eta_electrolysis,must_serve,status,anchor_short
+1,captive_transport_synfuel,150,0.1,0.68,0,proposed,aviation/shipping e-fuel chains + captive HD fleets; <= FEM resmethane 220 x eta_meth 0.8 = 176; diesel-parity band
+2,industry_feedstock_existing,100,0.25,0.68,0,proposed,ammonia/refinery/chemicals feedstock (existing plants); EU marginal production cost at scale >110 (Lux & Pfluger 2020); blue-H2 parity
+3,industry_process_contracted,85,0.15,0.68,0,proposed,first-mover steel-DRI / HT process heat under take-or-pay contracts; blue-H2 parity lower band
+4,industry_fuel_switching,75,0.25,0.68,0,proposed,switchable industrial fuel use; gas+CO2 parity band; import parity central ~2.5 CHF/kg
+5,bulk_backbone,60,0.25,0.68,0,proposed,bulk uses at backbone pipeline-import parity ~2 CHF/kg; through step 5 = 1.00 x TYNDP22
+6,power_sector_storage,45,0.2,0.68,0,proposed,H2-to-power firming / storage refill; TYNDP24 P2G >> final demand gap ~1150 TWh (EU 2050); expected captured price x turbine eta
+7,export_optionality,30,0.2,0.68,0,proposed,export / ammonia low parity ~1-1.5 CHF/kg; Ahang et al. 2025 equilibrium ~30

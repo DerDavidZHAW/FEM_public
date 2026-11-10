@@ -77,6 +77,27 @@ INV_COST_PLANTS: List[str] = [
     "CH00_oil", "CH00_nuclear",
 ]
 
+# WASTA hydro-cluster plants (hydro_clusters = 4..20 runs). The names are
+# always CH00_dam_1..k / CH00_psp_open_1..k / CH00_psp_close_1..k; range 30 is
+# a safe upper bound over every sweep n. All reporting helpers return 0 for
+# absent plants, so the union is harmless in legacy runs (and the legacy
+# names are harmless in cluster runs).
+CH_CLUSTER_DAM_PLANTS: List[str] = [f"CH00_dam_{i}" for i in range(1, 31)]
+CH_CLUSTER_PSP_PLANTS: List[str] = (
+    [f"CH00_psp_open_{i}" for i in range(1, 31)]
+    + [f"CH00_psp_close_{i}" for i in range(1, 31)]
+)
+CH_HYDRO_CLUSTER_PLANTS: List[str] = CH_CLUSTER_DAM_PLANTS + CH_CLUSTER_PSP_PLANTS
+
+# Legacy + cluster unions for the CH hydro panels (dam-like vs pump-like split
+# follows the legacy convention: large_psp/psp_close count as pumped hydro)
+CH_HYDRO_DAM_PLANTS_ALL: List[str] = (
+    ["medium_reservior", "small_reservior", "CH00_dam"] + CH_CLUSTER_DAM_PLANTS
+)
+CH_HYDRO_PSP_PLANTS_ALL: List[str] = (
+    ["large_psp", "CH00_psp_close"] + CH_CLUSTER_PSP_PLANTS
+)
+
 # Operation cost / emissions / gen plants (from respective CSVs where True)
 # These are CH plants that we consider for Swiss costs/emissions/generation
 OP_COST_PLANTS: List[str] = [
@@ -91,7 +112,7 @@ OP_COST_PLANTS: List[str] = [
     "CH06_battery", "CH06_biomass", "CH06_CCGTCCS", "CH06_other", "CH06_pvrf", "CH06_windon",
     "CH07_battery", "CH07_biomass", "CH07_CCGTCCS", "CH07_other", "CH07_pvrf", "CH07_windon",
     "large_psp", "medium_reservior",
-]
+] + CH_HYDRO_CLUSTER_PLANTS
 
 # Emissions plants (same as OP_COST_PLANTS for CH)
 EMISSIONS_PLANTS: List[str] = OP_COST_PLANTS.copy()

@@ -128,6 +128,9 @@ class DemandTimeSeriesPlotter:
             self.priceTh_all,
             self.EV_inflexible_demand_all,
             self.HP_inflexible_demand_all,
+            self.Electrolyzer_inflexible_demand_all,
+            self.DH_inflexible_demand_all,
+            self.Biomass_inflexible_generation_all,
         ) = import_gen_demand_timeseries(self.output_dir, self.scenario_name)
         
         start_date = self.generation_all.columns[self.plot_range_int_list[0]]
@@ -250,6 +253,66 @@ class DemandTimeSeriesPlotter:
                     # Add data to the trace_dataframes dataframe
                     hp_inflex_data.name = trace_name
                     trace_dataframes = pd.concat([trace_dataframes, hp_inflex_data.to_frame().T], axis=0) # type: ignore
+
+        # Plot inflexible biomass generation (only populated when switch_biomass=False —
+        # fixed schedule of biomass output placed on the highest-residual hours per node).
+        # Positive y, stackgroup='one' — supply side of the dispatch.
+        if hasattr(self, 'Biomass_inflexible_generation_all') and not self.Biomass_inflexible_generation_all.empty:
+            if self.target_node in self.Biomass_inflexible_generation_all.index:
+                biomass_inflex_data = self.Biomass_inflexible_generation_all.loc[self.target_node, :]
+                if biomass_inflex_data.sum() > 0.5: # type: ignore
+                    trace_name = "biomass_inflex gen"
+                    self.fig_dispatch.add_trace(
+                        go.Scatter(
+                            x=biomass_inflex_data.index,
+                            y=biomass_inflex_data,
+                            mode=mode,
+                            stackgroup='one',  # supply side
+                            name=trace_name,
+                        )
+                    )
+                    biomass_inflex_data.name = trace_name
+                    trace_dataframes = pd.concat([trace_dataframes, biomass_inflex_data.to_frame().T], axis=0) # type: ignore
+
+        # Plot inflexible electrolyzer demand (only populated when switch_flexible_electrolyzer=False —
+        # the valley-filled fixed schedule). When electrolyzers are run as flexible plants instead,
+        # the Param is all-zero and the sum check below filters out the empty trace.
+        if hasattr(self, 'Electrolyzer_inflexible_demand_all') and not self.Electrolyzer_inflexible_demand_all.empty:
+            if self.target_node in self.Electrolyzer_inflexible_demand_all.index:
+                electrolyzer_inflex_data = self.Electrolyzer_inflexible_demand_all.loc[self.target_node, :]
+                if electrolyzer_inflex_data.sum() > 0.5: # type: ignore
+                    trace_name = "electrolyzer_inflex demand"
+                    self.fig_dispatch.add_trace(
+                        go.Scatter(
+                            x=electrolyzer_inflex_data.index,
+                            y=-electrolyzer_inflex_data,
+                            mode=mode,
+                            stackgroup='two',  # this line enables stacking
+                            name=trace_name,
+                        )
+                    )
+                    electrolyzer_inflex_data.name = trace_name
+                    trace_dataframes = pd.concat([trace_dataframes, electrolyzer_inflex_data.to_frame().T], axis=0) # type: ignore
+
+        # Plot DH inflexible heating demand (only populated when switch_DH=False — electric
+        # equivalent of the DH thermal demand at COP=3, attributed to CH00). When DH is modeled
+        # explicitly, the Param is all-zero and the sum check drops the trace.
+        if hasattr(self, 'DH_inflexible_demand_all') and not self.DH_inflexible_demand_all.empty:
+            if self.target_node in self.DH_inflexible_demand_all.index:
+                dh_inflex_data = self.DH_inflexible_demand_all.loc[self.target_node, :]
+                if dh_inflex_data.sum() > 0.5: # type: ignore
+                    trace_name = "dh_inflex heating demand"
+                    self.fig_dispatch.add_trace(
+                        go.Scatter(
+                            x=dh_inflex_data.index,
+                            y=-dh_inflex_data,
+                            mode=mode,
+                            stackgroup='two',  # this line enables stacking
+                            name=trace_name,
+                        )
+                    )
+                    dh_inflex_data.name = trace_name
+                    trace_dataframes = pd.concat([trace_dataframes, dh_inflex_data.to_frame().T], axis=0) # type: ignore
 
         # Plot curtailement aggregated --------------------------------------------------------------------------------
         # curtailment of households ----------------------------------

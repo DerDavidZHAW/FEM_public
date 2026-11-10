@@ -14,3 +14,13 @@ def test_ev_plants_are_added_once_however_many_sub_scenarios_are_imported():
     assert outflow_plants == ["V2G_CH"]
     assert map_plant_node == {"CH00_EV_flex": "CH00", "V2G_CH": "CH00"}
     assert map_plant_tech == {"CH00_EV_flex": "ev_flex", "V2G_CH": "v2g"}
+
+
+def test_v2g_plant_is_left_out_when_v2g_is_off():
+    plants, outflow_plants, map_plant_node, map_plant_tech = ["CH00_gas"], [], {}, {}
+    for _ in range(3):  # one call per sub-scenario
+        add_ev_plants("V2G_CH", plants, outflow_plants, map_plant_node, map_plant_tech, add_v2g=False)
+    assert plants == ["CH00_gas", "CH00_EV_flex"]
+    assert outflow_plants == []
+    assert map_plant_node == {"CH00_EV_flex": "CH00"}
+    assert map_plant_tech == {"CH00_EV_flex": "ev_flex"}

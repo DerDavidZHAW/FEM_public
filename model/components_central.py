@@ -28,6 +28,19 @@ def define_constraints_central(
                     # range_T is equal to sum of range(start, 8760) and range(1, end + 1)
                     range_T = list(range(start, 8760 + 1)) + list(range(1, end + 1))
                 sf = constraint_scaling['consume_tot_limit']
+                # W8 (h2_steps): elastic offtake steps sit on the RHS, so total
+                # consumption = must-serve energy + served elastic step energy.
+                # The constraint NAME is unchanged on purpose: the dual keeps
+                # feeding price_setting_tech (in elastic regimes it is pinned to
+                # the exogenous eta x (WTP + premium) of the marginal step).
+                elastic_steps = (
+                    data.get("elastic_steps") if isinstance(data, dict) else None
+                ) or {}
+                rhs_elastic = (
+                    sum(model.E_h2step[p, sid, s] for sid in elastic_steps)
+                    if elastic_steps
+                    else 0
+                )
                 model.add_component(
                     f"consume_tot_limit_{p}_{n}_{s}",
                     Constraint(
@@ -35,7 +48,7 @@ def define_constraints_central(
                             model.storage_charge[p, "t_" + str(t), s]
                             for t in range_T
                         )
-                        == sf * energy_limit
+                        == sf * (energy_limit + rhs_elastic)
                     ),
                 )
     # Both limits below are switched per sub-scenario: each constraint is indexed by the sub-scenarios that switch it on

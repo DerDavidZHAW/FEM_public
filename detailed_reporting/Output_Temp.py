@@ -16,7 +16,7 @@ from detailed_reporting.constants import (
     CHF_TO_EUR, is_winter_t, is_summer_t, get_run_year, get_weather_year,
     get_flexible_household_heatpump_share, get_eu_policy, HP_PLANTS,
     read_full_ev_demand, read_full_hp_demand, PROJECT_ROOT,
-    get_subscenario_weight
+    get_subscenario_weight, CH_HYDRO_DAM_PLANTS_ALL, CH_HYDRO_PSP_PLANTS_ALL
 )
 
 
@@ -343,9 +343,11 @@ def export_output_temporal(model, scenario_name: str, model_version: str = None,
     nuclear_gen = _sum_hourly_gen_for_plants(df_gen, ["CH00_nuclear", "CH03_nuclear"])
     hourly_nuclear = (nuclear_gen / 1000.0).reindex(template["T"]).fillna(0.0)
     
-    # Hydro dam: medium_reservior + small_reservior + CH00_dam + large_psp + CH00_psp_close (combined)
-    dam_plants = ["medium_reservior", "small_reservior", "CH00_dam"]
-    psp_plants = ["large_psp", "CH00_psp_close"]
+    # Hydro dam + pumped hydro (combined). Legacy names + hydro-cluster
+    # plants; absent names contribute 0, so the union works for both
+    # representations.
+    dam_plants = CH_HYDRO_DAM_PLANTS_ALL
+    psp_plants = CH_HYDRO_PSP_PLANTS_ALL
     dam_gen = _sum_hourly_gen_for_plants(df_gen, dam_plants)
     psp_gen = _sum_hourly_gen_for_plants(df_gen, psp_plants)
     # Combined: dam + psp

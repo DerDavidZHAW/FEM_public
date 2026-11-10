@@ -133,11 +133,11 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
             demand_inflx_all = pd.concat([demand_inflx_all, demand_inflx_all_consumer])
 
     # demand flexible ------------------------------------------
-    # inflexible demand, including consumers', battery storage, PSP, per plant and time steps
-    demand_flxbl_all = (
-        read_filtered_csv(output_dir + "storage_charge.csv", scenario_name)
-        .pivot(index="P_pumping", columns="T", values="value")
-        .reindex(columns=time_indices)
+    # flexible demand, including consumers', battery storage, PSP, per plant and time steps.
+    # Uses safe_pivot_csv so that when every flex/storage switch is off the empty
+    # storage_charge.csv (no P_pumping plants → empty Var) doesn't KeyError.
+    demand_flxbl_all = safe_pivot_csv(
+        output_dir, "storage_charge.csv", scenario_name, "P_pumping", "T", "value", time_indices
     )
 
     for consumer_id in range(1, 300 + 1):  #NOTE: should not be set mannually to 300
@@ -163,13 +163,12 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
     weight_shock = settings.loc["weight_in_objective_fcn", scenario_name]
     price_all = price_all/float(weight_shock) # type: ignore
     # soc dual ------------------------------------------
-    # marginal value of storage (opportunity cost), per storage plant and time steps
-    soc_dual_all = (
-        read_filtered_csv(output_dir + "storage_soc_dual.csv", scenario_name)
-        .pivot(index="P_storage", columns="T", values="value")
-        .reindex(columns=time_indices)
-    )
-    soc_dual_all = soc_dual_all/float(weight_shock) # type: ignore
+    # marginal value of storage (opportunity cost), per storage plant and time steps.
+    # safe_pivot_csv handles the case where the constraint never built (no storage
+    # plants → no storage_soc constraint → no dual CSV exported) gracefully.
+    soc_dual_all = safe_pivot_csv(output_dir, "storage_soc_dual.csv", scenario_name, "P_storage", "T", "value", time_indices)
+    if not soc_dual_all.empty:
+        soc_dual_all = soc_dual_all/float(weight_shock) # type: ignore
     
     socth_dual_all = safe_pivot_csv(output_dir, "storageTh_soc_dual.csv", scenario_name, "PDH_storage", "T", "value", time_indices)
     if not socth_dual_all.empty:
@@ -185,12 +184,8 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
     )
 
     # soc -----------------------------------------------
-    # state of charge
-    soc_all = (
-        read_filtered_csv(output_dir + "soc.csv", scenario_name)
-        .pivot(index="P_storage", columns="T", values="value")
-        .reindex(columns=time_indices)
-    )
+    # state of charge — empty when switch_storage=False (P_storage has no entries).
+    soc_all = safe_pivot_csv(output_dir, "soc.csv", scenario_name, "P_storage", "T", "value", time_indices)
 
     # for variables lost load, infeed, and curtailment, the data is aggregated and stored in one row "IDs"
     # lost load ------------------------------------------
@@ -355,6 +350,30 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
     HP_inflexible_demand_all = safe_pivot_csv(output_dir, "HP_inflexible_demand.csv", scenario_name, "Node", "T", "value", time_indices)
 
     # ------------------------------------------------------------------------------------------------------
+    # ----------------------------------- Electrolyzer Inflexible demand -----------------------------------
+    # ------------------------------------------------------------------------------------------------------
+    # Only populated when switch_flexible_electrolyzer=False (valley-filled fixed schedule). When the
+    # electrolyzer is run as a flexible plant, the Param exists with all-zero values and the CSV is
+    # exported empty; safe_pivot_csv returns an empty DataFrame if the file isn't there at all.
+    Electrolyzer_inflexible_demand_all = safe_pivot_csv(output_dir, "Electrolyzer_inflexible_demand.csv", scenario_name, "Node", "T", "value", time_indices)
+
+    # ------------------------------------------------------------------------------------------------------
+    # ----------------------------------- DH Inflexible demand ---------------------------------------------
+    # ------------------------------------------------------------------------------------------------------
+    # Only populated when switch_DH=False (electric equivalent of DH thermal demand at COP=3 attributed
+    # to CH00). When DH is modeled explicitly, the Param exists with all-zero values and the sum check
+    # in the dispatch plot drops the trace.
+    DH_inflexible_demand_all = safe_pivot_csv(output_dir, "DH_inflexible_demand.csv", scenario_name, "Node", "T", "value", time_indices)
+
+    # ------------------------------------------------------------------------------------------------------
+    # ----------------------------------- Biomass Inflexible generation -------------------------------------
+    # ------------------------------------------------------------------------------------------------------
+    # Only populated when switch_biomass=False (fixed biomass schedule on the highest-residual hours per
+    # node). When biomass plants are modeled explicitly, the Param is all-zero and the sum check in the
+    # dispatch plot drops the trace.
+    Biomass_inflexible_generation_all = safe_pivot_csv(output_dir, "Biomass_inflexible_generation.csv", scenario_name, "Node", "T", "value", time_indices)
+
+    # ------------------------------------------------------------------------------------------------------
     # -------------------------------------- adjusting time stamps------------------------------------------
     # ------------------------------------------------------------------------------------------------------
     #NOTE: do for all *time sereis* that are to be returned should be adjusted
@@ -390,6 +409,9 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
     priceTh_all = priceTh_all.rename(columns=hour_dict_custom)
     EV_inflexible_demand_all = EV_inflexible_demand_all.rename(columns=hour_dict_custom)
     HP_inflexible_demand_all = HP_inflexible_demand_all.rename(columns=hour_dict_custom)
+    Electrolyzer_inflexible_demand_all = Electrolyzer_inflexible_demand_all.rename(columns=hour_dict_custom)
+    DH_inflexible_demand_all = DH_inflexible_demand_all.rename(columns=hour_dict_custom)
+    Biomass_inflexible_generation_all = Biomass_inflexible_generation_all.rename(columns=hour_dict_custom)
 
 
     return (
@@ -417,4 +439,7 @@ def import_gen_demand_timeseries(output_dir, scenario_name):
         priceTh_all,
         EV_inflexible_demand_all,
         HP_inflexible_demand_all,
+        Electrolyzer_inflexible_demand_all,
+        DH_inflexible_demand_all,
+        Biomass_inflexible_generation_all,
     )

@@ -15,13 +15,19 @@ def investment_summary(dir):
             return len(rows) > 1  # i.e. at least one data row
 
     def import_and_keep_only_CH(filepath, index_col=0, usecols=None):
-        if os.path.isfile(filepath):
-            # Import the data
-            df = pd.read_csv(filepath, index_col=index_col, usecols=usecols)
-            # Keep only the rows where the index contains "CH"
-            return df.loc[df.index.astype(str).str.contains("CH")]
-        else:
+        # Use the same empty-file guard as safe_read_csv so that empty CSVs
+        # (e.g. gen_energy_max.csv when switch_storage=False leaves P_energymax
+        # empty → empty Var → par_var writes an empty DataFrame) don't trigger
+        # ValueError("Usecols do not match columns"). Returns an empty df in
+        # both the "file missing" and "file present but empty" cases.
+        if not file_is_nonempty_csv(filepath):
             return pd.DataFrame()
+        try:
+            df = pd.read_csv(filepath, index_col=index_col, usecols=usecols)
+        except (pd.errors.EmptyDataError, ValueError, KeyError):
+            return pd.DataFrame()
+        # Keep only the rows where the index contains "CH"
+        return df.loc[df.index.astype(str).str.contains("CH")]
     
     def safe_read_csv(path, **kwargs):
         if not file_is_nonempty_csv(path):

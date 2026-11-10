@@ -165,6 +165,10 @@ output/
 input/hydro_WATSA/camels_ch/
 # Claude Code session state
 .claude/
+Claude outputs/
 
 # Per-user Poetry config written by the Euler walkthrough — local-only by design
 poetry.toml
+
+# Personal working notes (handoffs, plans, paper drafts), kept local only
+/private_notes/

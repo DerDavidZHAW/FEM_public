@@ -325,6 +325,25 @@ EV_inflexible_demand_data = {}
 # This allows separate tracking and visualization of inflexible HP consumption apart from other inflexible demand
 HP_inflexible_demand_data = {}
 
+# dictionary that stores a FIXED electrolyzer charging schedule when switch_flexible_electrolyzer=False.
+# Per-electrolyzer annual demand is placed in the lowest-inflex-demand hours at each node (max_demand
+# MWh per hour, n_full = energy_target / max_demand hours filled + one remainder hour).
+# Keys are (node, timestep, scenario) tuples, values are demand in MWh.
+Electrolyzer_inflexible_demand_data = {}
+
+# dictionary that stores the electric equivalent of the DH thermal demand when switch_DH=False.
+# DH heat is assumed to be served by air heat pumps at COP=3, so electric_eq = thermal/3.
+# Keys are (node, timestep, scenario) tuples, values are demand in MWh.
+# Empty when switch_DH=True (DH sector is modeled explicitly).
+DH_inflexible_demand_data = {}
+
+# dictionary that stores a FIXED biomass generation schedule when switch_biomass=False.
+# Per-plant annual energy budget (from Data_plant_energy_limited for EU, fuel × efficiency
+# for CH) is placed on the highest-residual-demand hours at each node at full gen_max,
+# then a remainder hour. Enters the energy_balance as a SUPPLY term.
+# Keys are (node, timestep, scenario) tuples, values are generation in MWh.
+Biomass_inflexible_generation_data = {}
+
 # dictionary that allocates to each hour of the year the maximum possible charging and discharging rate for the representative V2G in MW
 V2G_charging_power_rate = {}  
 
