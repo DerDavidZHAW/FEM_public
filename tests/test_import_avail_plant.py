@@ -46,3 +46,31 @@ def test_two_rows_for_the_same_country_and_technology_raise(tmp_path, monkeypatc
             "Default,oil,0.9",
             "Default,gas,0.8",
         ])
+
+
+def test_swiss_res_plant_first_in_the_plant_list(tmp_path, monkeypatch):
+    # The series of a Swiss RES plant is stored under its own name or under the CH00 name.
+    (tmp_path / "input").mkdir()
+    (tmp_path / "input" / "availability_factor_conventional.csv").write_text(
+        "country,technology,jan\nDefault,gas,0.8\n"
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(data_import_fcns, "timemapping_creator", lambda originP, targetP: {"t_1": "jan", "t_2": "jan"})
+    res_series = {
+        ("CH00_pvrf", "t_1"): 0.1, ("CH00_pvrf", "t_2"): 0.2,
+        ("CH01_windon", "t_1"): 0.3, ("CH01_windon", "t_2"): 0.4,
+    }
+    avail = import_avail_plant(
+        ["CH01_pvrf", "CH01_windon", "CH00_gas"],
+        ["CH01_pvrf", "CH01_windon"],
+        [],
+        ["t_1", "t_2"],
+        {"CH01_pvrf": "CH01", "CH01_windon": "CH01", "CH00_gas": "CH00"},
+        {"CH01_pvrf": "pvrf", "CH01_windon": "windon", "CH00_gas": "gas"},
+        {"CH00": "CH", "CH01": "CH"},
+        res_series,
+    )
+    assert avail["CH01_pvrf", "t_1"] == pytest.approx(0.1)
+    assert avail["CH01_pvrf", "t_2"] == pytest.approx(0.2)
+    assert avail["CH01_windon", "t_2"] == pytest.approx(0.4)
+    assert avail["CH00_gas", "t_1"] == pytest.approx(0.8)
