@@ -28,7 +28,8 @@ def _model():
 
 
 def test_thermal_storage_slacks_cost_as_much_as_electric_storage_slacks():
-    repn = generate_standard_repn(obj_expression(_model()))
+    m = _model()  # keep a reference: a garbage-collected model leaves its variables unnamed
+    repn = generate_standard_repn(obj_expression(m))
     coefficients = {var.name: coef for var, coef in zip(repn.linear_vars, repn.linear_coefs)}
     for slack in ["slackSOC_POS", "slackSOC_NEG"]:
         electric = coefficients[f"{slack}[CH00_battery,t_1,2050_x_wy1995]"]
