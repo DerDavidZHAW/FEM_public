@@ -1,0 +1,6 @@
+﻿cluster_name,category,n_plants,power_capacity_MW,pump_capacity_MW,storage_capacity_GWh,agg_storage_hours,expected_gen_GWh_a,summer_infl_share_regime,mean_intake_alt_masl,largest_plants,inflow_share_suggestion
+dam_1,dam,22,2343.52,0.0,1112.41,474.675,5364.9,0.687,1046.264,Innertkirchen 1 und 1a; Bitsch; Biasca,0.291
+dam_2,dam,51,5961.82,0.0,6069.58,1018.075,12040.84,0.809,1817.609,Bieudron; Nendaz; Fionnay GD,0.653
+psp_open_1,psp_open,12,877.03,821.68,1078.1,1124.872,1025.91,0.814,1966.836,Robiei; Ferrera 1; Mottec,0.056
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,

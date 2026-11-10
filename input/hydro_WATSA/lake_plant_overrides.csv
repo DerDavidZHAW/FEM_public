@@ -1,0 +1,11 @@
+lake_name,outlet_plant_name,comment
+Lac de Tseuzier,St-Léonard,WASTA spells the lake "Stausee Zeuzier"; Lienne cascade Zeuzier-Croix-St-Léonard
+Gibidum Stausee,Bitsch,WASTA spells the lake "Stausee Gebidem" (wiki: Gibidum); Massa/Electra-Massa cascade
+Lago di Lei,Sils KHR,manual lake (Italian territory); KHR cascade Lei-Ferrera-Bärenburg-Sils
+Sufnersee,Sils KHR,manual lake; WASTA gew names are "Hinterrhein/Averserrhein" so token match cannot work
+Stausee Bärenburg,Sils KHR,manual lake; head pond of the Sils stage
+Lac de Barberine,DROP,submerged by Lac d'Emosson in 1975; keeping it double-counts ~40 Mio m3 (found via JRC cross-check)
+Sihlsee,Etzelwerk Altendorf,token match wrongly chained the Sihl to an Aare plant; Etzelwerk is the outlet (found via JRC cross-check)
+Lago dei Cavagnöö,Verbano 1,token match wrongly chained to Biaschina (Leventina); Cavagnöö feeds the Bavona/Maggia cascade (found via JRC cross-check)
+Lac d’Emosson,+Vernayaz CFF,Vernayaz CFF is the lowest Emosson stage but its water body is named "Pesseux" and its scheme carries only the (stopworded) CFF token
+Lac du Vieux Emosson,+Vernayaz CFF,same as above for the upper Emosson lake

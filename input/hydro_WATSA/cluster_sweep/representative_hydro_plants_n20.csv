@@ -1,0 +1,21 @@
+﻿cluster_name,category,n_plants,power_capacity_MW,pump_capacity_MW,storage_capacity_GWh,agg_storage_hours,expected_gen_GWh_a,summer_infl_share_regime,mean_intake_alt_masl,largest_plants,inflow_share_suggestion
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042
+dam_10,dam,4,328.13,0.0,348.13,1060.951,305.95,0.876,2360.339,Fionnay GD; Palü; Altstafel,0.017
+dam_11,dam,4,405.1,0.0,475.26,1173.192,1209.1,0.692,1079.846,La Bâtiaz; Cavergno; Navizence,0.066
+dam_12,dam,16,1597.61,0.0,1929.59,1207.798,2964.92,0.797,1725.24,Nendaz; Stalden KWM; Bavona,0.161
+dam_13,dam,9,530.23,0.0,1098.12,2071.026,1313.22,0.8,1739.146,Riddes; Miéville; Lucendro,0.071
+dam_14,dam,3,178.25,0.0,403.51,2263.731,452.25,0.686,1057.466,Vernayaz CFF; Campocologno 1; La Dernier,0.025
+dam_2,dam,4,486.6,0.0,133.85,275.072,959.1,0.768,1357.388,Innertkirchen 1 und 1a; Ilanz 2; Schwanden Niederenbach,0.052
+dam_3,dam,4,266.9,0.0,96.38,361.109,431.1,0.628,819.28,Sarelli; Am Löntsch; Unteraa Lungerersee,0.023
+dam_4,dam,5,574.4,0.0,223.51,389.119,855.67,0.801,1810.386,Tierfehd Limmern; Handeck 2 und 2a; Turtmann,0.046
+dam_5,dam,4,700.9,0.0,411.07,586.489,1696.36,0.679,1029.302,Biasca; Sils KHR; Martina,0.092
+dam_6,dam,1,1269.0,0.0,829.15,653.388,2103.1,0.877,2364.0,Bieudron,0.114
+dam_7,dam,8,865.1,0.0,570.62,659.6,2274.99,0.794,1626.129,Pradella; Bärenburg; Göschenen Göscheneralp,0.123
+dam_8,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056
+dam_9,dam,3,358.0,0.0,344.93,963.492,1037.04,0.75,1272.292,Tavanasa KVR; Rothenbrunnen KWZ; Tiefencastel Ost,0.056
+psp_open_1,psp_open,2,196.25,268.863,108.59,393.442,42.69,0.849,2229.043,Robiei; Z'Mutt Centrale pomp. et turb.,0.002
+psp_open_2,psp_open,1,66.2,30.629,69.48,1049.547,60.0,0.648,906.5,Rempen,0.003
+psp_open_3,psp_open,9,614.58,522.188,900.03,1460.566,923.22,0.816,1963.306,Ferrera 1; Mottec; Châtelard Barberine,0.05
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,

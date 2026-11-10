@@ -1,0 +1,125 @@
+lake_name,canton,volume_Mm3,lake_level_masl,area_km2,max_depth_m,dam_name,dam_type,dam_completed,dam_height_m
+Lac des Dix,Wallis,401.0,2365.0,3.65,227.0,Dixence | Grand Dixence,Pfeiler­stau­mauer | Gewichts­mauer,1935 | 1961,285.0
+Lac d’Emosson,Wallis,227.0,1930.0,3.27,161.0,Emosson,Bogen­mauer,1974,180.0
+Greyerzersee,Freiburg,220.0,677.0,9.28,75.0,Rossens,Bogen­mauer,1947,83.0
+Lac de Mauvoisin,Wallis,211.5,1961.0,2.08,180.0,Mauvoisin,Bogen­mauer,1957,250.0
+Lago di Livigno,Graubünden,164.6,1931.0,4.7,119.0,Punt dal Gall,Bogen­mauer,1968,130.0
+Wägitalersee,Schwyz,150.0,898.0,4.14,48.0,Schräh,Gewichts­mauer,1924,110.0
+Lac de Joux,Waadt,149.0,1004.0,9.56,34.0,Natursee,Natursee,,
+Lago di Poschiavo,Graubünden,111.0,962.0,1.95,85.0,Natursee,Natursee,,
+Lago di Luzzone,Tessin,108.0,1606.0,1.44,195.0,Luzzone,Bogen­mauer,1963,225.0
+Lago di Vogorno,Tessin,105.0,455.0,2.0,189.0,Contra,Bogen­mauer,1965,220.0
+Mattmarksee,Wallis,101.0,2195.0,1.76,93.0,Mattmark,Erddamm,1967,117.0
+Grimselsee,Bern,101.0,1908.0,2.72,100.0,Seeuferegg | Spitallamm,Gewichts­mauer | Bogen­mauer,1932,114.0
+Zervreilasee,Graubünden,100.5,1857.0,1.61,140.0,Zervreila,Gewichts­mauer,1957,151.0
+Sihlsee,Schwyz,96.5,889.0,10.85,17.0,Hühnermatt | In den Schlagen,Erddamm | Schwer­gewichts­mauer,1937 | 1936,34.0
+Limmerensee,Glarus,93.0,1855.0,1.36,122.0,Limmern,Bogen­mauer,1963,146.0
+Lac de Moiry,Wallis,78.0,2248.0,1.34,120.0,Moiry,Bogen­mauer,1958,148.0
+Göscheneralpsee,Uri,76.0,1789.0,1.33,99.0,Göschener­alp,Stein­schütt­damm,1960,155.0
+Albignasee,Graubünden,70.0,2163.0,1.26,108.0,Albigna,Gewichts­mauer,1959,115.0
+Lai da Sontga Maria,Graubünden,67.3,1906.0,1.77,86.0,Santa Maria,Bogen­mauer,1968,117.0
+Lungerersee,Obwalden,65.0,687.0,2.01,66.0,Natursee,Natursee,,
+Schiffenensee,Freiburg,65.0,531.0,4.25,38.0,Schiffenen,Bogen­mauer,1963,47.0
+Lago del Sambuco,Tessin,64.0,1458.0,1.11,110.0,Sambuco,Bogen­mauer,1956,130.0
+Oberaarsee,Bern,63.7,2302.0,1.6,90.0,Oberaar,Gewichts­mauer,1953,104.0
+Lai da Marmorera,Graubünden,62.6,1676.0,1.4,65.0,Marmorera,Erddamm,1954,91.0
+Klöntalersee,Glarus,56.4,844.0,3.29,45.0,Rhodannen­berg,Erddamm,1910,30.0
+Lago Ritóm,Tessin,53.9,1849.0,1.5,68.0,Piora,Gewichts­mauer,1918,27.0
+Lac de l’Hongrin,Waadt,53.2,1249.0,1.6,105.0,Hongrin Nord | Hongrin Süd,Bogen­mauer,1969,123.0
+Lac de Tseuzier,Wallis,51.0,1774.0,0.85,140.0,Proz-Riond | Zeuzier,Erddamm | Bogen­mauer,1957,156.0
+Lai da Nalps,Graubünden,45.0,1904.0,0.91,122.0,Nalps,Bogen­mauer,1962,127.0
+Lai da Curnera,Graubünden,41.1,1955.0,0.81,136.0,Curnera,Bogen­mauer,1966,153.0
+Lac de Salanfe,Wallis,40.0,1908.0,1.85,48.0,Salanfe,Gewichts­mauer,1952,52.0
+Lac de Barberine,Wallis,40.0,1890.0,1.26,75.0,Barberine,Gewichts­mauer,1925,79.0
+Gigerwaldsee,St. Gallen,35.6,1331.0,0.7,135.0,Gigerwald,Bogen­mauer,1976,137.0
+Lago del Narèt,Tessin,31.6,2308.0,0.74,104.0,Naret 1 | Naret 2,Bogen­mauer | Gewichts­mauer,1969,80.0
+Lago dei Cavagnöö,Tessin,29.1,2309.0,0.46,100.0,Cavagnoli,Bogen­mauer,1968,111.0
+Räterichs­bodensee,Bern,27.0,1762.0,1.6,72.0,Räterichs­boden,Gewichts­mauer,1950,92.0
+Lac du Vieux Emosson,Wallis,26.6,2225.0,0.76,62.0,Vieux Emosson,Bogen­mauer,1955,77.0
+Muttsee,Glarus,25.6,2474.0,0.84,98.0,Muttsee,Erddamm,2015,37.0
+Niederried Stausee,Bern,25.6,461.0,0.84,14.0,Niederried,Stau­wehr,1963,15.0
+Wohlensee,Bern,25.0,481.0,3.25,20.0,Mühleberg,Gewichts­mauer,1920,29.0
+Lago di Lucendro,Tessin,25.0,2131.0,0.54,93.0,Lucendro,Pfeilers­staus­mauer,1947,73.0
+Lac de Moron,Neuenburg,20.6,712.0,0.69,55.0,Châtelot,Bogen­mauer,1953,74.0
+Lac des Toules,Wallis,20.5,1809.0,0.61,75.0,Les Toules,Bogen­mauer,1963,86.0
+Lac de Cleuson,Wallis,20.0,2179.0,0.51,76.0,Cleuson,Gewichts­mauer,1950,87.0
+Lago Bianco,Graubünden,18.6,2234.0,1.43,54.0,Lago Bianco Nord | Lago Bianco Süd,Gewichts­mauer,1911,26.0
+Griessee,Wallis,18.6,2386.0,0.59,50.0,Gries,Gewichts­mauer,1965,60.0
+Davosersee,Graubünden,15.0,1558.0,0.59,54.0,Natursee,Natursee,,
+Gelmersee,Bern,14.0,1848.0,0.64,47.0,Gelmer,Gewichts­mauer,1929,35.0
+Lac de Montsalvens,Freiburg,12.6,795.0,0.69,27.0,Montsalvens,Bogen­mauer,1920,52.0
+Arnensee,Bern,10.5,1543.0,0.45,50.0,Arnensee,Erdschütt­damm,1942,17.0
+Gibidum Stausee,Wallis,9.2,1428.0,0.21,47.0,Gebidem,Bogen­stau­mauer,1967,122.0
+Lago della Sella,Tessin,9.2,2255.0,0.45,34.0,Sella,Gewichts­mauer,1956,36.0
+Lago Tremorgio,Tessin,9.0,1820.0,0.39,50.0,Natursee,Natursee,,
+Lai dad Ova Spin,Graubünden,7.4,1630.0,0.36,70.0,Ova Spin,Bogen­mauer,1968,73.0
+Panixersee | Lag da Pigniu,Graubünden,7.3,1462.0,0.46,44.0,Panix,Gewichts­mauer,1989,53.0
+Lago di Robièi,Tessin,6.9,1937.0,0.24,65.0,Robièi,Gewichts­mauer,1967,68.0
+Lago d’Isola,Graubünden,6.5,1602.0,0.39,40.0,Isola,Bogen­mauer,1960,45.0
+Illsee,Wallis,6.5,2359.0,0.21,20.0,Illsee,Schwer­gewichts­mauer,1927,25.0
+Mapraggsee,St. Gallen,5.3,861.0,0.26,70.0,Mapragg,Gewichts­mauer,1976,75.0
+Lac Supérieur de Fully,Wallis,5.2,2130.0,0.21,46.0,Fully,Gewichts­mauer,1914,11.0
+Lac de Bret,Waadt,5.0,673.0,0.36,13.0,Natursee,Natursee,,
+Laghetto della Val Malvaglia,Tessin,4.6,985.0,0.19,90.0,Malvaglia,Bogen­mauer,1959,92.0
+Lago di Palagnedra,Tessin,4.4,482.0,0.25,70.0,Palagnedra,Bogen­mauer,1952,72.0
+Lai da Solas,Graubünden,4.1,823.0,0.24,60.0,Solis,Erddamm | Gewichts­mauer,1986,61.0
+Tannensee,Obwalden,3.8,1975.0,0.31,24.0,Tannensee,Erddamm,1958,25.0
+Bortelsee,Wallis,3.7,2463.0,0.14,13.0,Bortelsee,Stein­schütt­damm,1989,20.0
+Melchsee,Obwalden,3.5,1893.0,0.55,15.0,Melchsee,Erddamm,1958,16.0
+Garichtisee,Glarus,3.3,1622.0,0.16,40.0,Garichti Hauptmauer | Garichti Nebenmauer,Gewichts­mauer,1931,42.0
+Klingnauer Stausee,Aargau,3.0,319.0,1.45,9.0,Klingnau,Stau­wehr,1935,15.0
+Lac du Vernex,Waadt,2.9,859.0,0.33,30.0,Rossinière,Gewichts­mauer,1972,33.0
+Sanetschsee,Wallis,2.8,2033.0,0.29,40.0,Sanetschsee,Gewichts­mauer,1965,42.0
+Totesee,Wallis,2.6,2160.0,0.27,19.0,Totensee,Gewichts­mauer,1962,20.0
+Flachsee,Aargau,2.2,381.0,1.0,7.0,Bremgarten-Zufikon,Stauwehr,1975,19.0
+Mattenalpsee,Bern,2.1,1873.0,0.18,24.0,Mattenalp,Gewichts­mauer,1950,25.0
+Engstlensee,Bern,2.0,1850.0,0.44,49.0,Natursee,Natursee,,
+Ferdensee,Wallis,1.9,1310.0,0.11,65.0,Ferden,Stauwehr,1975,67.0
+Lago del Zött,Tessin,1.7,1939.0,0.13,35.0,Zöt,Bogen­mauer,1967,36.0
+Bannalpsee,Nidwalden,1.7,1587.0,0.16,16.0,Bannalp,Erddamm,1937,32.0
+Lac de Lessoc | (Lac de Montbovon),Freiburg,1.5,772.0,0.23,30.0,Lessoc,Pfeiler­stau­mauer,1973,32.0
+Gübsensee,St. Gallen,1.5,682.0,0.17,11.0,Gübsensee Ost | Gübsensee West,Gewichts­mauer | Erd­damm,1900,24.0
+Lai da Seara,Graubünden,1.4,1904.0,0.08,60.0,Bärenburg,Bogen­mauer,1960,64.0
+Lac de Godey,Wallis,1.0,1398.0,0.05,30.0,Godey,Erddamm,1974,35.0
+Unterer Turtmannsee,Wallis,0.9,2176.0,0.11,30.0,Turtmann,Bogen­mauer,1958,33.0
+Z’Muttsee,Wallis,0.9,1968.0,0.04,70.0,Z’Mutt,Bogen­mauer,1963,74.0
+Laghet di Buseno,Graubünden,0.8,686.0,0.07,50.0,Molina,Bogen­mauer,1951,54.0
+Lac du Day,Waadt,0.7,741.0,0.09,30.0,Les Clées,Gewichts­mauer,1955,27.0
+Lac de Pérolles,Freiburg,0.6,553.0,0.35,20.0,Maigrauge,Gewichts­mauer,1872,22.0
+Märjelen-Stausee,Wallis,0.6,2360.0,0.06,20.0,Vordersee,Erddamm,1986,22.0
+Rämpensee,Schwyz,0.5,640.0,0.05,30.0,Rempen,Gewichts­mauer,1924,32.0
+Chapfensee,St. Gallen,0.5,1029.0,0.09,10.0,Chapfensee Nord | Chapfensee Ost,Gewichts­mauer,1948,20.0
+Lag da Runcahez,Graubünden,0.5,1275.0,0.06,30.0,Runcahez,Gewichts­mauer,1961,33.0
+Lago artificiale di Roggiasca,Graubünden,0.5,951.0,0.03,68.0,Roggiasca,Bogen­mauer,1965,69.0
+Lago della Vasasca,Tessin,0.4,720.0,0.02,68.0,Vasasca,Bogen­mauer,1967,69.0
+Airolo Ausgleichsbecken,Tessin,0.4,1131.0,0.05,15.0,Airolo,Gewichts­mauer,1968,17.0
+Preda Ausgleichs­becken,Graubünden,0.4,1945.0,0.08,22.0,Preda,Bogen­mauer,1961,23.0
+Egschi Stausee,Graubünden,0.4,1147.0,0.1,44.0,Egschi,Gewichts­mauer,1949,45.0
+Lago di Rierna,Tessin,0.4,595.0,0.02,25.0,Val d’Ambra,Erddamm,1967,26.0
+Wichelsee,Obwalden,0.4,459.0,0.22,6.0,,Stau­wehr,1955,
+Fionnay Ausgleichs­becken,Wallis,0.3,1484.0,0.03,22.0,Fionnay GD,Erddamm,1957,23.0
+Lai da Burvagn,Graubünden,0.3,1955.0,0.04,20.0,Burvagn,Gewichts­mauer,1949,20.0
+Lac da Breil,Graubünden,0.3,1254.0,0.07,17.0,Brigels,Erddamm,1960,18.0
+Lai da Innerferrera,Graubünden,0.3,1442.0,0.04,27.0,Innerferrera,Gewichts­mauer,1961,28.0
+Lago di Carmena,Tessin,0.3,631.0,0.02,38.0,Carmena,Bogen­mauer,1968,39.0
+Lago di Carassina,Tessin,0.3,1700.0,0.03,38.0,Carassina,Bogen­mauer,1963,39.0
+Le Chãtelard Ausgleichs­becken,Wallis,0.3,1115.0,0.02,32.0,Chãtelard CFF,Erddamm,1975,33.0
+Pfaffen­sprung Stausee,Uri,0.2,805.0,0.03,30.0,Pfaffensprung,Bogen­mauer,1921,32.0
+Arnisee,Uri,0.2,1368.0,0.46,16.0,Arnisee,Erddamm,1910,17.0
+Zen Binnen,Wallis,0.2,1307.0,0.02,21.0,Zen Binnen,Bogen­mauer,1953,22.0
+Lago Palü | Lagh da Palü,Graubünden,0.2,1923.0,0.05,,Palü 1 | Palü2,Gewichts­mauer,1927,
+Waldisee,Schwyz,0.2,1404.0,0.05,15.0,Waldialp Nord,Erddamm,1961,15.0
+Teufenbach­weiher,Zürich,0.2,682.0,0.04,15.0,Teufenbach­weiher,Erddamm,1895,16.0
+Lago di Löbbia,Graubünden,0.2,1416.0,0.04,25.0,Löbbia,Gewichts­mauer,1959,26.0
+Serra Stausee,Wallis,0.2,1273.0,0.03,25.0,Serra,Bogen­mauer,1952,26.0
+Safien Platz Ausgleichs­becken,Graubünden,0.2,1294.0,0.03,15.0,Safien Platz,Erddamm,1957,15.0
+Heidsee,Graubünden,0.15,1484.0,0.41,5.0,Oberer Heidsee | Unterer Heidsee,Erdschütt­damm,1916,2.0
+Sternenweiher,Zürich,0.1,583.0,0.03,16.0,Sternenweiher,Erddamm,1874,17.0
+Pallazuit Ausgleichs­becken,Wallis,0.1,1327.0,0.02,16.0,Pallazuit,Erddamm,1958,17.0
+Darbola,Graubünden,0.1,1147.0,0.01,22.0,Darbola,Gewichts­mauer,1958,23.0
+Vider­joch Speicher­see,Graubünden,0.1,2661.0,0.14,25.0,Viderjoch,Erddamm,2007,26.0
+Lac de Chermignon,Wallis,0.1,1574.0,0.02,20.0,Plans Mayens,Erddamm,1971,20.0
+Barcuns,Graubünden,0.1,1365.0,0.03,36.0,Barcuns,Gewichts­mauer,1947,37.0
+Obermatt Ausgleichs­becken,Nidwalden,0.1,659.0,0.02,15.0,Obermatt,Erddamm,1962,16.0
+Zervreila Ausgleichs­becken,Graubünden,0.1,1734.0,0.01,43.0,Zervreila Ausgleichs­becken,Stein­schütt­damm,1957,44.0
+Lac de Ferpècle,Wallis,0.1,1891.0,0.01,27.0,Ferpècle,Bogen­mauer,1963,28.0

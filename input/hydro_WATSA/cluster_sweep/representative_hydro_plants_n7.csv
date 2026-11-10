@@ -1,0 +1,8 @@
+﻿cluster_name,category,n_plants,power_capacity_MW,pump_capacity_MW,storage_capacity_GWh,agg_storage_hours,expected_gen_GWh_a,summer_infl_share_regime,mean_intake_alt_masl,largest_plants,inflow_share_suggestion
+dam_1,dam,2,389.5,0.0,21.79,55.944,905.3,0.779,1438.216,Bitsch; Ilanz 2,0.049
+dam_2,dam,18,3392.6,0.0,2019.19,595.175,6137.12,0.831,1964.726,Bieudron; Innertkirchen 1 und 1a; Fionnay GD,0.333
+dam_3,dam,17,1516.92,0.0,964.4,635.762,3635.5,0.64,858.994,Biasca; Sils KHR; Gordola,0.197
+dam_4,dam,36,3006.32,0.0,4176.61,1389.277,6727.82,0.778,1583.151,Nendaz; Riddes; La Bâtiaz,0.365
+psp_open_1,psp_open,12,877.03,821.68,1078.1,1124.872,1025.91,0.814,1966.836,Robiei; Ferrera 1; Mottec,0.056
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,

@@ -1,0 +1,443 @@
+====================================================================
+hydro_WATSA -- Swiss hydro fleet data pipeline for FEM
+====================================================================
+Last updated: 2026-08-03.
+Purpose: build, from public sources, (a) a validated per-plant table
+of the Swiss hydro fleet incl. storage energy content, (b) clustered
+representative plants for the FEM electricity market model, and
+(c) weekly natural-inflow profiles per cluster for the model's
+weather years 1995 / 2008 / 2009.
+
+Reading order for a new person:
+  1. this file, top to bottom
+  2. validation_report_hydro_storage.md  (what was wrong and fixed)
+  3. the docstring of each script, in pipeline order (Section 2)
+  4. cluster_sweep/sweep_convergence.png and
+     inflow_profiles/inflow_profiles_n12.png  (what the results look like)
+
+--------------------------------------------------------------------
+1. FOLDER MAP
+--------------------------------------------------------------------
+Pipeline scripts (run in this order; each reads only files produced
+by earlier steps or raw sources; all paths are relative, run from
+anywhere):
+  extract_wasta.py                 raw WASTA xlsx -> WASTA_2026_plants.csv
+  scrape_wiki_speicherseen.py      Wikipedia lake list -> wiki_speicherseen.csv
+  estimate_storage_energy.py       lake energies -> storage_lakes_energy_2026.csv
+  build_individual_plant_table.py  per-plant table -> hydro_plants_individual.csv
+  cluster_hydro_plants.py          clustering, n = 4..20 -> cluster_sweep/
+  build_inflow_profiles.py         weekly inflow per cluster -> inflow_profiles/
+  validate_hydro_plants.py         invariants + JRC, GloHydroRes and
+                                   mass-balance cross-checks -> validation/
+                                   (re-run after ANY change to the chain)
+
+Raw sources (do not edit by hand):
+  2025 Statistik der Wasserkraftanlagen der Schweiz_v2_1.1.2026.xlsx
+  ogd17_fuellungsgrad_speicherseen.csv
+  camels_ch/                       CAMELS-CH dataset (user-downloaded;
+                                   only static_attributes/ and
+                                   timeseries/observation_based/ are used)
+  validation/GloHydroRes_vs1.csv   global plant/reservoir dataset,
+                                   user-downloaded 2026-08-03 (Zenodo)
+  validation/ogd35_..._monatswerte.csv  BFE Elektrizitaetsbilanz,
+                                   monthly from 2000, user-downloaded
+                                   2026-08-03 (opendata.swiss ogd35;
+                                   the 5634-...xlsx next to it is the
+                                   same content, kept for reference)
+
+Hand-maintained inputs (edit these, they steer the pipeline):
+  lake_plant_overrides.csv         lake -> plant rules, three syntaxes:
+                                   "<plant>"  pin the chain seed (spelling
+                                              variants, cascade pinning)
+                                   "DROP"     remove the lake entirely
+                                              (historical Lac de Barberine,
+                                              submerged by Emosson 1975)
+                                   "+<plant>" ADD a chain member matching
+                                              cannot find (Vernayaz CFF
+                                              below Emosson, water body
+                                              named "Pesseux")
+  manual_lakes.csv                 lakes missing from the Wikipedia list
+                                   (KHR: Lago di Lei, Sufnersee, Baerenburg)
+
+Intermediate / final data:
+  WASTA_2026_plants.csv            722 plants, tidy English columns
+  wiki_speicherseen.csv            124 lakes (volume, level, dam)
+  storage_lakes_energy_2026.csv    127 lakes with calibrated energy [GWh]
+  hydro_plants_individual.csv      703 plants incl. storage_capacity_GWh
+  cluster_sweep/                   per n = 4..20: plant->cluster map,
+                                   representative-plant table, scatter PNG;
+                                   plus sweep_summary.csv and
+                                   sweep_convergence.png (n-selection aid)
+  inflow_profiles/                 cluster_inflow_weekly.csv (all n, all
+                                   weather years), inflow_shares.csv,
+                                   plant_donor_map.csv, reconciliation
+                                   diagnostics, profile figure
+
+Documentation:
+  source.txt                       this file
+  validation_report_hydro_storage.md  audit of the storage allocation
+                                   (2026-07-30): causes, fixes, before/after
+
+(_to_delete/ held superseded outputs of the old clustering method;
+reviewed and deleted 2026-08-03 -- the folder no longer exists.)
+
+--------------------------------------------------------------------
+2. PIPELINE, STEP BY STEP
+--------------------------------------------------------------------
+STEP 1  extract_wasta.py
+  Source: BFE WASTA "Statistik der Wasserkraftanlagen der Schweiz",
+  Stand 1.1.2026 (plants >= 300 kW). Downloaded 2026-07-16 from
+  https://pubdb.bfe.admin.ch/de/publication/download/12596
+  (landing: https://opendata.swiss/de/dataset/statistik-der-wasserkraftanlagen-wasta)
+  Keeps ~30 columns (capacities, expected annual/winter/summer
+  generation, pumping, heads, coordinates LV95, type), maps WASTA
+  types to model technologies: L->ror, S->dam, P/PS->psp_open,
+  U->psp_close. No filtering at this stage.
+  Sanity anchors (CH rows): ~17.2 GW turbines, ~4.0 GW pumps,
+  ~37 TWh/a expected generation.
+
+STEP 2  scrape_wiki_speicherseen.py
+  Scrapes lake volumes [Mio m3] and full-supply levels [m a.s.l.]
+  from https://de.wikipedia.org/wiki/Liste_der_Speicherseen_in_der_Schweiz
+  (community-maintained; large lakes spot-checked). WASTA does NOT
+  contain reservoir volumes/energies -- that gap is why steps 2-3 exist.
+  manual_lakes.csv supplements lakes absent from that list: the KHR
+  reservoirs Lago di Lei (197 Mio m3 @ 1931 m; Italian territory, but
+  Swiss-operated and counted in the BFE statistics, exactly like Lago
+  di Livigno), Sufnersee (16 @ 1401) and Stausee Baerenburg (1 @ 1080).
+  Values from the operator: https://www.khr.ch/de/stauseen
+
+STEP 3  estimate_storage_energy.py
+  Physics estimate per lake:  E = V * 0.0023 kWh/m3/m * head,
+  head = lake level minus turbine axis of the LOWEST stage of the
+  cascade chain fed by the lake (full-cascade convention -- see
+  limitations). Chains are found by name-matching lakes against the
+  WASTA water bodies, then expanding over shared scheme (WKA) name
+  tokens. lake_plant_overrides.csv pins problem cases; overrides are
+  applied BEFORE the cascade expansion so the override plant's whole
+  scheme is found.
+  Calibration: raw estimates are scaled PER REGION (Wallis,
+  Graubuenden, Tessin, UebrigCH) to the BFE maximum usable energy
+  content ("Fuellungsgrad der Speicherseen", ogd17,
+  https://www.uvek-gis.admin.ch/BFE/ogd/17/ogd17_fuellungsgrad_speicherseen.csv),
+  so regional totals match the official 8,895 GWh by construction and
+  the physics only decides the split within a region. Factors after
+  validation: Wallis 0.88, Graubuenden 0.86, Tessin 1.04, UebrigCH
+  0.78 -- all <= ~1 except Tessin, consistent with usable < gross
+  volume and the assumed eta = 0.85.
+  Anchors: Lac des Dix 1,529 vs 1,500 GWh (SWV factsheet
+  https://www.hydrosuisse.ch/fileadmin/user_upload/site/PDF/FB_SWV-Speichersee_Energiewende-2022.pdf);
+  independent cross-check candidates: JRC hydro-power database
+  (https://github.com/energy-modelling-toolkit/hydro-power-database),
+  GloHydroRes (Shah et al. 2025).
+
+STEP 4  build_individual_plant_table.py
+  One row per Swiss plant in operation. Each lake's calibrated energy
+  is split over the storage-type turbine stages of its chain below
+  the lake level, proportional to stage head; ror stages get 0
+  (fixed infeed in the model). Regional rescale so sums match ogd17
+  exactly.
+  The table carries TWO classifications: "type" is the WASTA physical
+  class (never overwritten), "category" is the MODEL treatment:
+    - storage-capable plants with turbines but E/P < 24 h (zero OR
+      near-zero storage: Hopflauenen Trift, Innertkirchen 2, Isenthal
+      Bolzbach, Engeweiher, Trubsee, Vouvry, and other small ones;
+      175 MW turbines, 8 MW pumps) -> "ror" = fixed infeed
+    - pump-ONLY stations (WASTA type P, no turbine: 20 intra-cascade
+      transfer pumps like Cleuson -> Dix, 227 MW) -> "pump_station",
+      EXCLUDED from the clusters: their lifted water is already
+      contained in the downstream plants' production expectations,
+      and modelling them as market pumping would misrepresent
+      scheduled transfers as price arbitrage. Their 227 MW are
+      RE-ATTRIBUTED to the psp_open clusters' pump capacity
+      (storage-weighted) in the representative tables: FEM's current
+      PECD source counts them inside the pumped_open aggregate
+      (10,732 MW incl. transfer pumps), so dropping them entirely
+      would silently shrink national pump capacity vs today's model.
+      They still do NOT enter the clustering itself (no turbines,
+      no features).
+  All downstream scripts read "category", never re-derive it.
+  All CSVs are written as UTF-8 with BOM (utf-8-sig) so Excel on
+  Windows displays umlauts correctly.
+
+STEP 5  cluster_hydro_plants.py  (design decided 2026-07-30/31)
+  Features -- ONLY quantities that map to model parameters or the
+  cluster's inflow profile:
+    log10 E/P [h]      storage speed -> water-value dynamics (log
+                       because k-means needs it for a 3-orders-of-
+                       magnitude skewed feature and storage classes
+                       are multiplicative: daily/weekly/monthly/seasonal)
+    regime proxy       summer-half-year inflow share, piecewise-linear
+                       in intake altitude (axis + gross head),
+                       CALIBRATED AT RUNTIME on the WASTA ror plants
+                       (ror has no storage, so its winter/summer
+                       generation split observes inflow seasonality
+                       directly): 390m->0.54 ... 2369m->0.88
+    pump ratio         pump / (pump + turbine)
+  Capacity is the k-means sample weight, NOT a feature. Size, head,
+  altitude were removed as features (they already entered via the
+  storage estimate; clusters that differ only in size/geography have
+  identical water-value dynamics).
+  Budget rule: every category (dam/ror/psp_open/psp_close) gets 1
+  cluster as representation floor; the remaining n-4 go
+  proportionally to STORAGE ENERGY CONTENT [GWh], largest remainder.
+  Rationale: clusters buy water-value resolution, water values attach
+  to stored energy; capacity- or generation-proportional rules
+  provably misallocate (generation gives half the budget to ror,
+  whose fixed infeed enters the model only as a SUM, so extra ror
+  clusters cannot change results).
+  Reclassification: S-plants with E/P < 24 h (Hopflauenen Trift,
+  Innertkirchen 2 -- daily basins, no seasonal reservoir) are
+  clustered with ror. WASTA type stays in "type", clustering category
+  in "category".
+  Naming: dam_1..k ascending in aggregate E/P (dam_1 = fastest).
+  n = 4 gives a single dam class = the EuroMod-failure exhibit.
+  n-selection: sweep_convergence.png shows the dam E/P ladder per n;
+  distinct up to n ~ 10-11, near-duplicates from n ~ 12-13. Final
+  choice by water-value distinctness in FEM runs.
+
+STEP 6  build_inflow_profiles.py  (three layers)
+  SHAPE  from 101 near-natural CAMELS-CH donor catchments
+         (observation-based daily discharge, calendar years 1995/
+         2008/2009; selection: CH, no hydropower, no reservoirs, no
+         lake outlets, readme exclusions, <= 5% missing per year,
+         strictly positive annual volume per year -- gauge 2079
+         Le Prese reports 0.0 for all of 1995, bad data coded as
+         zeros, now rejected by the gate).
+         Each dam/psp_open plant matched to its SINGLE most similar
+         donor by |intake altitude - catchment mean elevation|
+         (scale 300 m) and distance (scale 50 km); one donor keeps
+         the full weather variability of a real catchment instead of
+         averaging it away (user decision 2026-08-03; --n-donors
+         restores blending if ever wanted). Worst elevation mismatch
+         237 m, p90 187 m.
+         CAMELS-CH: Hoege et al. 2023, https://zenodo.org/records/15025258,
+         CC-BY 4.0 (attribution required in the paper).
+  SPLIT  cluster aggregation weighted by NATURAL annual inflow =
+         WASTA expected generation - 0.757 x pump demand (FEM's
+         0.87 turbine x 0.87 pump; pumped-through energy is not
+         natural inflow; psp_open natural share drops 5.6% -> 4.5%
+         of the national total).
+  LEVEL  reconciled week-by-week to the PECD CH00 inflow series of
+         the same weather year (PECD 2021.3 parquet mirror,
+         https://zenodo.org/record/7224854; note ALL Swiss natural
+         inflow sits under technology 'pumped_open' there, the
+         'reservoir' rows are zero). Annual totals: 15.9 / 18.6 /
+         18.3 TWh for 1995 / 2008 / 2009 (1995 is a ~13% dry year).
+         This keeps the national series identical to what the TYNDP-
+         based neighbour data assumes.
+  Week convention: week = (day_of_year - 1)//7 + 1, 53 weeks,
+  matching the PECD series. FEM's timemap (timemaps_hydro_year.csv,
+  model year starts t_6553 = Oct 1) wraps calendar years into the
+  Oct-Sep hydrological year -- profiles therefore stay calendar-year.
+  Diagnostics: reconciliation factor f(w) = PECD share / gauge share,
+  median 0.73-0.87 across the three years, p10-p90 ~0.25-2.0.
+  NOT a week-alignment artifact (lag
+  scan flat): PECD is more summer-peaked (winter share 0.14, peak
+  wk 28) than any near-natural gauge blend (0.29, wk 22) because
+  storage intake catchments sit higher and are more glaciated than
+  the near-natural gauge network reaches. Design: PECD is trusted for
+  the national shape, gauges only decide the split BETWEEN clusters.
+  Between-cluster differentiation survives: winter inflow shares at
+  n=12 run 0.07 (glacial) .. 0.30 (low-altitude) around PECD's 0.14.
+
+--------------------------------------------------------------------
+3. VALIDATION STATUS
+--------------------------------------------------------------------
+- Storage allocation audited 2026-07-30, three defects found and
+  fixed (Gebidem/Gibidum spelling -> Bitsch; missing KHR lakes ->
+  Ferrera/Baerenburg/Sils; override-after-expansion bug -> Croix).
+  Full before/after in validation_report_hydro_storage.md.
+- Totals reproduce BFE ogd17 (8,895 GWh) by construction; Lac des
+  Dix anchor within 2% of SWV.
+- Winter generation share is used ONLY as a post-run validation of
+  model dispatch, never as an input: for storage plants it is
+  dispatch-contaminated (corr 0.57 with storage hours) and would
+  make the endogenous water values circular.
+- validate_hydro_plants.py (2026-07-31): 14/14 checks PASS.
+  Internal invariants (totals vs WASTA/ogd17 anchors, no duplicates/
+  negatives, E/P bounds) plus JRC hydro-power database cross-check
+  (copy + retrieval date in validation/): capacities 45/56 matched
+  entries within +/-50% (scheme-level name matching), reservoir
+  volumes 8/10 within tolerance (Dix 421/400, Lei 197/197, Gibidum
+  9.2/9.2, Muttsee 25.6/25, Moiry 78/77, Sambuco 64/64, Limmeren
+  93/92, Hongrin 53.2/53.2), storage energies 4/4 where accounting
+  conventions align (Dix 1646/1764, Gibidum 14/16, Sihlsee 83/105
+  [raw physics ~105 before regional calibration], Hongrin 84/108).
+  JRC's other storage entries use loop-/basin-only accounting or are
+  erroneous ('Grimsel 3' never built) -- classified per row in
+  validation/jrc_volume_storage_check.csv.
+  The cross-check itself FOUND three defects, all fixed: the
+  historical Lac de Barberine double-counted next to Emosson (now
+  DROPped), Sihlsee chained to an Aare plant via the 'SBB' scheme
+  token (operator abbreviations are now stopwords; outlet Etzelwerk),
+  Lago dei Cavagnoo chained to Biaschina instead of the Bavona/
+  Maggia cascade (override added).
+- validate_hydro_plants.py (2026-08-03): extended to 20 checks, all
+  PASS. Two new external sections:
+  C. GloHydroRes v1 (user-downloaded; filter country=="Switzerland",
+     a "CH" substring would also match Chile): capacities 31/39
+     matched STO/PS entries within +/-50% (outliers are scheme-level
+     token multi-matches), reservoir volumes 20/25 within +/-25-30%
+     with near-exact hits for Albigna 70/71, Emosson 227/227,
+     Dix 401/400, Zervreila 100.5/100.5, Lei/Bianco/Toules/Ritom/
+     Luzzone/Moiry/Sambuco/... The 5 misses are usable-vs-total
+     conventions on natural lakes (Poschiavo, Waegital, Lungerersee)
+     or attribution (Baerenburg, pre-expansion Muttsee).
+  D. National mass balance, fully independent of WASTA: monthly
+     natural inflow ~ dSOC (ogd17) + storage generation (ogd35)
+     - 0.757 x pumping (ogd35), vs the PECD CH00 weekly series
+     spread to months. 2008: 19,545 vs 18,616 GWh (ratio 1.05),
+     monthly correlation 0.96; 2009: 19,256 vs 18,298 (1.05), 0.98.
+     This independently confirms BOTH the PECD level anchor and the
+     0.757 pump-correction formula. 1995 not checkable (ogd17
+     starts 2000). Figure: validation/mass_balance.png.
+- The single-donor switch itself caught a data defect: gauge 2079
+  (Le Prese) reports discharge 0.0 for every day of 1995; under
+  donor blending this was invisibly diluted, as single donor it
+  zeroed 4 plants and tripped the new completeness gate + runtime
+  guard (degenerate shapes now raise instead of silently becoming
+  f(w)=1).
+
+--------------------------------------------------------------------
+4. KNOWN LIMITATIONS (state these in the paper)
+--------------------------------------------------------------------
+- Full-cascade head convention: each lake is valued down to the
+  lowest stage of its chain. Under per-lake accounting (SWV style)
+  Lago di Lei is ~200 GWh, here 494; Muttsee analogous. Neutralized
+  in totals by the regional calibration, but the within-region split
+  leans on this convention.
+- ~107 GWh of unmatched run-of-river weirs (Wohlensee, Niederried,
+  Klingnau, ...) is smeared over matched plants by the calibration
+  (~1% of total). Consider dropping them from the lake list.
+- Within-cluster over-flexibility remains: summed capacity ignores
+  individual reservoir bounds and cascade coupling (aggregation
+  literature; bilevel-fitted equivalents are the refinement path).
+- Uniform weekly reconciliation factor: the PECD-vs-gauge shape
+  correction is applied identically to all clusters; cluster-specific
+  glacier corrections would need a hydrological model.
+- Observed 1995 hydrographs embed the 1995 glacier state; the
+  planned Hydro-CH2018 delta-change sensitivity addresses the trend.
+- Pump round-trip 0.757 (= FEM's 0.87 turbine x 0.87 pump) in the
+  natural-inflow correction.
+- The planned Trift reservoir (~85 Mio m3, KWO, delayed/contested)
+  is NOT included -- a 2035/2050 scenario decision, not a data gap.
+- Regime-proxy calibration: low-altitude nodes are slightly flattened
+  by alpine-fed river ror; top bin is thin (7 plants). The proxy only
+  orders plants for clustering; profiles come from gauges.
+
+--------------------------------------------------------------------
+5. FEM WIRING (implemented 2026-08-03)
+--------------------------------------------------------------------
+The model consumes this folder through ONE setting: "hydro_clusters"
+(row in scenarios/scen_to_run_*.csv; default "legacy" in
+scenarios/settings_default.py).
+  legacy    the old PECD representation: CH00_dam (0 MW),
+            CH00_psp_close, large_psp/medium_reservior/small_reservior
+            with PECD inflow shares. Bit-identical to the pre-wiring
+            code (regression-tested).
+  4..20     WASTA cluster representation: replaces the WHOLE Swiss
+            storage fleet with the n-cluster plants
+            (CH00_dam_1, ..., CH00_psp_open_1, ..., CH00_psp_close_1,
+            ...; the CH00_ prefix makes node attribution and
+            price-setting classification work unchanged). Capacities/
+            storage from cluster_sweep/representative_hydro_plants_
+            n{N}.csv; weekly inflow per cluster from inflow_profiles/
+            cluster_inflow_weekly.csv (same 53-week convention as
+            PECD, national total identical to legacy by construction).
+            Swiss ror is untouched (PECD infeed path + ror_annual_TWh
+            knob; the ror cluster of the table is deliberately not
+            imported -- it would double count).
+Touched files: model/data_import_fcns.py (_hydro_clusters_active,
+read_hydro_cluster_table, read_hydro_capacities,
+read_inflow_data_hourly), data_prep/data_import_TYNDP.py (pass-
+through), scenarios/settings_default.py, scenarios/
+scen_to_run_STORSUPPORT.csv (new row, set to legacy).
+BFE knobs with clusters: hydro_inflow_TWh scales all cluster inflows
+to the target (identical week-53 convention as legacy);
+pump_capacity_GW scales all CH00_psp_* cluster pumps proportionally;
+adding_hydro_storage_cap_TWh distributes over all cluster storage
+proportionally.
+Tested (sandbox, no solver): legacy = old code bit-for-bit; n=4..20 x
+weather years 1995/2008/2009 all load; totals match the tables and
+the legacy national inflow; knobs verified (4.71 GW, +1 TWh, 19 TWh).
+Reporting generalised 2026-08-04: detailed_reporting/ (constants.py,
+Output_Spatial.py, Output_Temp.py) now sums legacy + cluster plant
+names (absent names contribute 0, so the union works for both
+representations), and aggregation/aggregate_new.py mappings_merge was
+rebuilt as a per-index set union -- the old positional combine_first
+silently dropped plants that only exist in later scenarios, which
+emptied the CH hydro rows of Annual_balance_ch.csv in cluster runs.
+Additionally price_setting_tech.py now writes
+price_setting_plants_count_comarginal.csv (per label: Hours_present,
+Share_frac_role = tied hours split equally among the role classes
+present, Share_frac_unit = candidate-count weighted) as the
+robustness companion to the winner-takes-all count -- the CH-vs-
+abroad tie-break is positional, so winner counts alone overstate
+whoever wins ties.
+
+--------------------------------------------------------------------
+5b. STILL OPEN (model side)
+--------------------------------------------------------------------
+- Choice of n: n = 12 recommended after the 2026-08-04 test runs
+  (water-value ladder distinct at n=10, duplicate values at n=20;
+  Bid_Gap gate held in all four test runs).
+- Delta-change climate sensitivity from the Hydro-CH2018-Runoff
+  ensemble (https://doi.org/10.5281/zenodo.3937485), timeboxed as a
+  sensitivity run.
+- Winter-generation-share dispatch validation vs WASTA expectations
+  (post-run check, now possible with the cluster runs).
+
+--------------------------------------------------------------------
+6. CHANGELOG
+--------------------------------------------------------------------
+2026-07-16  WASTA 2026 downloaded, extraction + storage-energy
+            pipeline + first clustering (size/head/altitude features).
+2026-07-30  Storage-allocation validation: Gebidem/KHR/Croix fixes,
+            manual_lakes.csv, override-before-expansion. Clustering
+            redesigned on log E/P + regime proxy + pump ratio.
+2026-07-31  Storage-proportional budget rule; sweep n = 4..20 into
+            cluster_sweep/; regime proxy calibrated on ror data;
+            inflow pipeline (CAMELS-CH shapes, PECD level) into
+            inflow_profiles/. Old-method outputs moved to _to_delete/.
+2026-07-31  validate_hydro_plants.py + validation/ added (JRC
+            cross-check). Three defects found and fixed: Barberine
+            double count (DROP), Sihlsee outlet via 'SBB' token
+            (operator stopwords), Cavagnoo outlet (override). Full
+            chain regenerated; 14/14 checks PASS.
+2026-07-31  "category" column moved upstream into
+            hydro_plants_individual.csv and extended to psp types
+            (zero/near-zero-storage plants -> ror; single source of
+            truth, downstream scripts consume it). Additive "+<plant>"
+            override syntax added; Vernayaz CFF restored to the
+            Emosson chain (had been orphaned by the SBB/CFF stopword
+            fix). Full chain regenerated; 14/14 checks PASS.
+2026-07-31  Pump-only transfer stations (20 x, 227 MW) -> category
+            "pump_station", excluded from clustering. All CSV outputs
+            switched to utf-8-sig for correct umlaut display in Excel.
+            Full chain regenerated; 14/14 checks PASS.
+2026-08-03  FEM wiring: new "hydro_clusters" setting (legacy | 4..20)
+            in scenarios; cluster capacities + weekly inflows are
+            consumed directly by data_import_fcns.py. Legacy path
+            regression-tested bit-identical. Folder review: no strays,
+            _to_delete/ was reviewed and removed by the user.
+2026-08-04  Test runs (2050 wy2008: legacy/4/10/20) evaluated: all
+            optimal, Bid_Gap gate held, balances close, knobs
+            verified. Findings: legacy books all inflow through
+            psp_open eff 0.87 (-2.7 TWh/a CH hydro), +1 GW battery
+            over-investment under legacy, water-value ladder
+            converges at n~10-12, CH-hydro price-setting share
+            24%->14% (winner) / 11%->6% (role-fractional).
+            Reporting fixes: mappings_merge set-union rebuild,
+            detailed_reporting name-list generalisation,
+            co-marginal count file added (see section 5).
+2026-08-03  Three user decisions implemented: (1) transfer-pump MW
+            re-attributed to psp_open cluster pump capacity for
+            parity with FEM's current PECD aggregate (they stay out
+            of the clustering); (2) PECD confirmed as the level
+            anchor (it IS FEM's current CH source); (3) single-donor
+            matching (--n-donors default 1). The switch exposed
+            gauge 2079's all-zero 1995 series -> positive-volume
+            completeness gate + runtime guard added. Validation
+            extended with GloHydroRes v1 and the ogd17+ogd35 mass
+            balance; 20/20 checks PASS. Full chain regenerated.

@@ -1,0 +1,684 @@
+﻿idx,name,type,category,cluster_name,power_capacity_MW,storage_capacity_GWh,pump_capacity_MW,storage_hours,summer_infl_share,intake_alt_masl,wasta_id,canton
+1,Bieudron,dam,dam,dam_4,1269.0,829.15,0.0,653.388,0.877,2364.0,504950,VS
+2,Riddes,dam,dam,dam_6,271.0,461.97,0.0,1704.686,0.784,1491.3,505400,VS
+3,Nendaz,dam,dam,dam_6,392.0,451.22,0.0,1151.071,0.784,1486.8,505100,VS
+4,Fionnay GD,dam,dam,dam_4,306.0,317.89,0.0,1038.856,0.877,2364.45,505000,VS
+5,Châtelard Barberine,psp_open,psp_open,psp_open_2,93.0,237.92,30.0,2558.28,0.803,1934.05,506700,VS
+6,Ferrera 1,psp_open,psp_open,psp_open_2,180.0,228.38,90.0,1268.778,0.803,1931.0,101900,GR
+7,La Bâtiaz,dam,dam,dam_5,190.0,226.32,0.0,1191.158,0.704,1122.0,507300,VS
+8,Vernayaz CFF,dam,dam,dam_5,100.25,219.55,0.0,2190.025,0.702,1117.0,507200,VS
+9,Stalden KWM,dam,dam,dam_6,185.0,215.8,0.0,1166.486,0.803,1744.1,501800,VS
+10,Sedrun 1,dam,dam,dam_6,150.0,199.38,0.0,1329.2,0.803,1908.04,100200,GR
+11,Fionnay FMM,dam,dam,dam_6,138.6,195.4,0.0,1409.812,0.803,1975.0,505300,VS
+12,Biasca,dam,dam,dam_5,327.0,190.87,0.0,583.7,0.668,990.0,601300,TI
+13,Pradella,dam,dam,dam_2,288.0,189.16,0.0,656.806,0.798,1630.0,801000,GR
+14,Bavona,dam,dam,dam_6,162.0,182.04,0.0,1123.704,0.803,1940.8,602600,TI
+15,Olivone,dam,dam,dam_6,110.0,159.55,0.0,1450.455,0.796,1606.0,601200,TI
+16,Tavanasa KVR,dam,dam,dam_5,180.0,157.25,0.0,873.611,0.751,1277.0,100300,GR
+17,Sils KHR,dam,dam,dam_5,249.9,152.77,0.0,611.325,0.691,1080.0,102300,GR
+18,Bärenburg,dam,dam,dam_2,221.3,141.41,0.0,638.997,0.775,1401.0,102100,GR
+19,Rothenbrunnen KWZ,dam,dam,dam_6,126.0,140.39,0.0,1114.206,0.757,1295.4,101300,GR
+20,Tierfehd Umwälzwerk,psp_close,psp_close,psp_close_1,138.0,123.79,131.0,897.029,0.803,1831.63,400250,GL
+21,Tierfehd Limmern,dam,dam,dam_2,306.0,121.91,0.0,398.399,0.803,1861.8,400200,GL
+22,Miéville,dam,dam,dam_6,70.46,121.86,0.0,1729.492,0.803,1925.0,507500,VS
+23,Innertkirchen 1 und 1a,dam,dam,dam_2,394.0,116.52,0.0,295.736,0.764,1319.8,200800,BE
+24,Nant de Drance,psp_close,psp_close,psp_close_1,900.0,115.67,900.0,128.522,0.815,2068.9,506850,VS
+25,Campocologno 1,dam,dam,dam_5,50.0,114.25,0.0,2285.0,0.662,966.25,700500,GR
+26,Mottec,psp_open,psp_open,psp_open_2,102.0,112.41,81.0,1102.059,0.853,2248.0,503200,VS
+27,Ritom,dam,dam,dam_6,33.0,108.24,0.0,3280.0,0.803,1850.14,600400,TI
+28,Cavergno,dam,dam,dam_5,108.0,105.33,0.0,975.278,0.678,1032.7,602700,TI
+29,Castasegna,dam,dam,dam_6,100.0,103.5,0.0,1035.0,0.777,1417.3,701400,GR
+30,Löbbia Albigna,dam,dam,dam_6,86.0,103.41,0.0,1202.442,0.834,2161.0,700800,GR
+31,Handeck 1,dam,dam,dam_6,44.0,101.17,0.0,2299.318,0.803,1916.64,200400,BE
+32,Göschenen Göscheneralp,dam,dam,dam_2,164.8,100.99,0.0,612.803,0.803,1792.0,300400,UR
+33,Lucendro,dam,dam,dam_6,60.0,98.98,0.0,1649.667,0.829,2135.5,600100,TI
+34,Zermeiggern,psp_open,psp_open,psp_open_2,74.0,97.14,0.0,1312.703,0.842,2198.0,501500,VS
+35,Navizence,dam,dam,dam_5,71.1,95.7,0.0,1345.992,0.703,1120.0,503400,VS
+36,Croix,dam,dam,dam_6,66.0,87.85,0.0,1331.061,0.803,1779.7,503500,VS
+37,Veytaux,psp_close,psp_close,psp_close_1,420.0,87.69,498.0,176.084,0.745,1257.95,509100,VD
+38,Safien Platz,dam,dam,dam_6,86.0,86.49,0.0,1005.698,0.803,1721.5,101200,GR
+39,Etzelwerk Altendorf,psp_close,psp_close,psp_close_1,140.0,86.19,54.0,615.643,0.646,899.2,404400,SZ
+40,Limmern,psp_close,psp_close,psp_close_1,1000.0,86.11,1000.0,86.11,0.879,2414.0,400050,GL
+41,Grimsel 1 Oberaar,dam,dam,dam_6,34.0,85.94,0.0,2527.647,0.865,2306.7,200200,BE
+42,Tremorgio,dam,dam,dam_6,10.0,83.36,0.0,8336.0,0.803,1833.5,600600,TI
+43,Peccia Sambuco,psp_open,psp_open,psp_open_2,48.0,82.63,24.0,1721.458,0.781,1461.0,602400,TI
+44,Handeck 2 und 2a,dam,dam,dam_2,218.0,82.61,0.0,378.945,0.803,1776.7,200500,BE
+45,Grimsel 2,psp_close,psp_close,psp_close_1,388.0,81.47,392.0,207.832,0.845,2213.0,200100,BE
+46,Vissoie,dam,dam,dam_6,57.0,74.52,0.0,1307.368,0.792,1563.5,503300,VS
+47,Ova Spin,psp_open,psp_open,psp_open_2,52.0,74.29,50.0,1428.654,0.803,1804.7,800800,GR
+48,La Dernier,dam,dam,dam_5,28.0,69.71,0.0,2489.643,0.672,1007.2,205200,VD
+49,Rempen,psp_open,psp_open,psp_open_2,66.2,69.48,16.0,1049.547,0.648,906.5,404100,SZ
+50,Gordola,dam,dam,dam_3,114.0,65.63,0.0,575.702,0.558,470.0,602200,TI
+51,Tinizong,dam,dam,dam_6,69.5,59.8,0.0,860.432,0.803,1680.0,103100,GR
+52,Z'Mutt Centrale pomp. et turb.,psp_open,psp_open,psp_open_1,4.25,57.08,84.0,679.524,0.81,2044.0,504700,VS
+53,Siebnen,dam,dam,dam_3,51.5,56.94,0.0,1105.631,0.59,642.0,404200,SZ
+54,Verbano 1,dam,dam,dam_3,104.0,56.77,0.0,545.865,0.561,486.7,602800,TI
+55,Verbano 2,dam,dam,dam_3,52.0,56.77,0.0,1091.731,0.561,486.7,602900,TI
+56,Hauterive,dam,dam,dam_3,70.0,54.2,0.0,774.286,0.596,677.04,204400,FR
+57,Robiei,psp_open,psp_open,psp_open_1,192.0,51.51,162.0,268.281,0.866,2310.0,602500,TI
+58,Handeck 3,psp_open,psp_open,psp_open_2,55.0,48.89,48.0,888.909,0.803,1767.0,200600,BE
+59,St-Léonard,dam,dam,dam_5,36.0,47.91,0.0,1330.833,0.651,919.5,503700,VS
+60,Tiefencastel Ost,dam,dam,dam_5,52.0,47.29,0.0,909.423,0.728,1200.0,103200,GR
+61,Martina,dam,dam,dam_5,80.0,41.22,0.0,515.25,0.711,1144.5,801100,GR
+62,Am Löntsch,dam,dam,dam_3,88.0,38.57,0.0,438.295,0.636,854.95,401900,GL
+63,Mapragg,psp_close,psp_close,psp_close_1,279.9,33.43,159.0,119.436,0.768,1335.0,104600,SG
+64,Rothenbrunnen ewz,dam,dam,dam_3,44.0,26.21,0.0,595.682,0.628,824.0,103600,GR
+65,Robbia,dam,dam,dam_2,35.1,25.08,0.0,714.53,0.803,1694.0,700400,GR
+66,Sarelli,dam,dam,dam_3,90.0,24.9,0.0,276.667,0.639,869.6,104700,SG
+67,Klosters,dam,dam,dam_6,16.5,22.04,0.0,1335.758,0.791,1559.0,104200,GR
+68,Seekraftwerk Zervreila,dam,dam,dam_6,22.5,21.69,0.0,964.0,0.803,1862.0,101100,GR
+69,Pallazuit,dam,dam,dam_2,33.4,20.54,0.0,614.97,0.803,1811.0,505900,VS
+70,Grimsel 1 Nachschubmaschine,dam,dam,dam_2,32.0,19.1,0.0,596.875,0.803,1922.2,200300,BE
+71,Diablerets,dam,dam,dam_6,5.57,18.82,0.0,3378.815,0.791,1557.3,508700,VD
+72,Verdan,dam,dam,dam_6,2.2,17.78,0.0,8081.818,0.791,1552.74,505525,VS
+73,Unteraa Lungerersee,dam,dam,dam_3,54.5,17.01,0.0,312.11,0.597,683.5,303700,OW
+74,Altstafel,dam,dam,dam_6,9.7,16.07,0.0,1656.701,0.879,2386.5,500100,VS
+75,Linthal Limmern,dam,dam,dam_3,34.4,15.9,0.0,462.209,0.625,811.5,400400,GL
+76,Spina Isola,dam,dam,dam_2,21.0,14.54,0.0,692.381,0.796,1606.85,601400,GR
+77,Oberems Argessa,psp_open,psp_open,psp_open_2,8.2,14.53,5.67,1771.951,0.877,2363.05,502600,VS
+78,Bitsch,dam,dam,dam_1,340.0,14.16,0.0,41.647,0.779,1436.5,501200,VS
+79,Hugschwendi,dam,dam,dam_6,14.0,13.25,0.0,946.429,0.803,1893.0,303800,OW
+80,Palü,dam,dam,dam_4,10.5,11.6,0.0,1104.762,0.85,2235.54,700100,GR
+81,Unteraa Melchaa,dam,dam,dam_3,12.0,10.85,0.0,904.167,0.586,622.5,303650,OW
+82,Turtmann,dam,dam,dam_2,23.9,10.47,0.0,438.075,0.772,1368.8,502800,VS
+83,Cavaglia,dam,dam,dam_6,7.0,8.82,0.0,1260.0,0.803,1940.24,700300,GR
+84,Ilanz 2,dam,dam,dam_2,49.5,7.63,0.0,154.141,0.78,1450.0,101000,GR
+85,Schwanden Niederenbach,dam,dam,dam_2,33.5,7.0,0.0,208.955,0.796,1611.3,401500,GL
+86,Schiffenen,ror,ror,ror_1,73.26,5.56,0.0,75.894,0.57,534.0,204700,FR
+87,Innergsteig,dam,dam,dam_2,18.0,5.08,0.0,282.222,0.808,2034.0,203600,BE
+88,Ganterbrücke,dam,dam,dam_6,5.01,4.63,0.0,924.152,0.803,1968.0,501375,VS
+89,Bortelalp,psp_open,psp_open,psp_open_1,2.38,3.84,4.02,955.224,0.879,2462.5,501350,VS
+90,Oberrickenbach,dam,dam,dam_2,8.5,3.44,0.0,404.706,0.794,1591.5,303300,NW
+91,Fuhren Gental,dam,dam,dam_2,9.6,2.7,0.0,281.25,0.789,1536.5,200900,BE
+92,Broc,ror,ror,ror_1,25.0,2.69,0.0,107.6,0.623,801.0,204200,FR
+93,Lötschen,ror,ror,ror_1,122.0,2.64,0.0,21.639,0.761,1311.0,502500,VS
+94,Le Châtelot,ror,ror,ror_1,45.0,2.57,0.0,57.111,0.604,718.5,509900,NE
+95,Sella,dam,dam,dam_6,1.93,2.57,0.0,1331.606,0.855,2256.0,600050,TI
+96,Campocologno 2,dam,dam,dam_3,1.62,2.55,0.0,1574.074,0.569,528.92,700600,GR
+97,Rossens Centrale de dotation 2,ror,ror,ror_1,1.7,1.97,0.0,1158.824,0.596,677.0,204350,FR
+98,Le Châtelot Centrale dotation,ror,ror,ror_1,1.0,1.47,0.0,1470.0,0.603,713.79,509850,NE
+99,Grono,ror,ror,ror_1,37.5,0.63,0.0,16.8,0.659,954.3,601900,GR
+100,Montbovon,ror,ror,ror_1,31.0,0.46,0.0,14.839,0.637,860.0,203800,FR
+101,Maigrauge Centrale de dotation,ror,ror,ror_1,0.58,0.43,0.0,741.379,0.575,563.1,204500,FR
+102,Giumaglio,ror,ror,ror_1,8.94,0.35,0.0,39.15,0.605,728.3,603000,TI
+103,Arniberg,ror,ror,ror_1,13.3,0.32,0.0,24.06,0.772,1369.7,301000,UR
+104,Morobbia,ror,ror,ror_1,16.0,0.27,0.0,16.875,0.589,636.5,602100,TI
+105,Les Clées,ror,ror,ror_1,27.6,0.22,0.0,7.971,0.609,743.8,205400,VD
+106,Montcherand,ror,ror,ror_1,14.5,0.14,0.0,9.655,0.577,570.44,205500,VD
+107,Lostallo,ror,ror,ror_1,25.0,0.14,0.0,5.6,0.713,1152.0,601700,GR
+108,Ticinetto,ror,ror,ror_1,4.5,0.14,0.0,31.111,0.616,775.7,600900,TI
+109,Lienz,ror,ror,ror_1,0.38,0.13,0.0,342.105,0.551,428.74,105700,SG
+110,Blatten Kanal,ror,ror,ror_1,0.38,0.13,0.0,342.105,0.55,422.6,105800,SG
+111,Montlingen,ror,ror,ror_1,0.38,0.13,0.0,342.105,0.549,417.6,105900,SG
+112,Russein,ror,ror,ror_1,24.87,0.08,0.0,3.217,0.772,1370.1,100400,GR
+113,Lessoc,ror,ror,ror_1,8.5,0.06,0.0,7.059,0.616,773.8,203900,FR
+114,Waldhalde,ror,ror,ror_1,2.8,0.03,0.0,10.714,0.599,691.5,404800,ZH
+115,Le Chalet,ror,ror,ror_1,2.6,0.02,0.0,7.692,0.558,468.26,205600,VD
+116,Des Moulinets,ror,ror,ror_1,0.77,0.01,0.0,12.987,0.554,449.1,205650,VD
+117,Biaschina,ror,ror,ror_1,147.0,0.0,0.0,0.0,0.583,603.5,601000,TI
+118,Amsteg,ror,ror,ror_1,120.0,0.0,0.0,0.0,0.626,815.5,300900,UR
+119,Laufenburg,ror,ror,ror_1,110.0,0.0,0.0,0.0,0.543,300.27,109100,AG
+120,Verbois,ror,ror,ror_1,102.8,0.0,0.0,0.0,0.543,371.8,509600,GE
+121,Rheinfelden,ror,ror,ror_1,100.0,0.0,0.0,0.0,0.543,273.2,109400,AG
+122,Birsfelden,ror,ror,ror_1,100.0,0.0,0.0,0.0,0.543,254.2,109700,BL
+123,Lavey,ror,ror,ror_1,93.0,0.0,0.0,0.0,0.554,446.0,507900,VD
+124,Soazza,ror,ror,ror_1,83.0,0.0,0.0,0.0,0.725,1190.0,601600,GR
+125,Hopflauenen Trift,dam,ror,ror_1,82.0,0.0,0.0,0.0,0.767,1328.85,201100,BE
+126,Piottino,ror,ror,ror_1,69.0,0.0,0.0,0.0,0.658,946.5,600800,TI
+127,Filisur,ror,ror,ror_1,65.0,0.0,0.0,0.0,0.777,1420.7,102800,GR
+128,Fieschertal,ror,ror,ror_1,64.0,0.0,0.0,0.0,0.8,1649.5,500500,VS
+129,Ackersand 2,ror,ror,ror_1,63.0,0.0,0.0,0.0,0.737,1230.1,502300,VS
+130,Wassen Pfaffensprung,ror,ror,ror_1,58.0,0.0,0.0,0.0,0.694,1089.75,300700,UR
+131,Gondo,ror,ror,ror_1,57.0,0.0,0.0,0.0,0.751,1278.0,603500,VS
+132,Mörel Rhone Binna,ror,ror,ror_1,54.7,0.0,0.0,0.0,0.671,1001.0,501000,VS
+133,Chancy-Pougny,ror,ror,ror_1,54.0,0.0,0.0,0.0,0.543,347.0,509700,GE
+134,Innertkirchen 2,dam,ror,ror_1,54.0,0.0,0.0,0.0,0.638,866.55,201300,BE
+135,Ardon,ror,ror,ror_1,52.35,0.0,0.0,0.0,0.775,1398.0,504400,VS
+136,Gösgen,ror,ror,ror_1,51.3,0.0,0.0,0.0,0.545,396.64,208300,SO
+137,Wildegg-Brugg,ror,ror,ror_1,50.0,0.0,0.0,0.0,0.543,351.3,208800,AG
+138,Eglisau,ror,ror,ror_1,46.4,0.0,0.0,0.0,0.543,345.18,108700,ZH
+139,Tierfehd Hintersand,ror,ror,ror_1,46.0,0.0,0.0,0.0,0.763,1316.0,400300,GL
+140,Küblis,ror,ror,ror_1,45.6,0.0,0.0,0.0,0.728,1202.0,104400,GR
+141,Mühleberg,ror,ror,ror_1,44.59,0.0,0.0,0.0,0.56,481.94,203500,BE
+142,Mörel Aletsch,ror,ror,ror_1,43.2,0.0,0.0,0.0,0.779,1443.0,500900,VS
+143,Klingnau,ror,ror,ror_1,42.6,0.0,0.0,0.0,0.543,319.9,209000,AG
+144,Heiligkreuz,ror,ror,ror_1,41.0,0.0,0.0,0.0,0.821,2097.0,500800,VS
+145,Rupperswil-Auenstein,ror,ror,ror_1,39.5,0.0,0.0,0.0,0.543,360.0,208600,AG
+146,Rheinau,ror,ror,ror_1,36.8,0.0,0.0,0.0,0.543,364.2,106500,ZH
+147,Augst,ror,ror,ror_1,35.0,0.0,0.0,0.0,0.543,261.7,109500,BL
+148,Ilanz 1,ror,ror,ror_1,34.5,0.0,0.0,0.0,0.621,792.9,100900,GR
+149,Chanrion,ror,ror,ror_1,33.4,0.0,0.0,0.0,0.875,2351.41,505200,VS
+150,Göschenen Andermatt,ror,ror,ror_1,33.26,0.0,0.0,0.0,0.779,1439.8,300500,UR
+151,Ernen,ror,ror,ror_1,33.0,0.0,0.0,0.0,0.76,1308.0,500600,VS
+152,Ackersand 1,ror,ror,ror_1,32.0,0.0,0.0,0.0,0.781,1457.0,502200,VS
+153,Obermatt,ror,ror,ror_1,32.0,0.0,0.0,0.0,0.669,994.0,303000,OW
+154,Bramois,ror,ror,ror_1,32.0,0.0,0.0,0.0,0.653,926.0,504000,VS
+155,Albbruck Wehrkraftwerk,ror,ror,ror_1,28.5,0.0,0.0,0.0,0.543,313.8,108950,AG
+156,Bannwil,ror,ror,ror_1,28.5,0.0,0.0,0.0,0.549,419.6,207800,BE
+157,Flumenthal,ror,ror,ror_1,27.0,0.0,0.0,0.0,0.551,430.5,207700,SO
+158,Orsières,ror,ror,ror_1,26.4,0.0,0.0,0.0,0.767,1330.0,506100,VS
+159,Realta Rabiusa,ror,ror,ror_1,26.0,0.0,0.0,0.0,0.713,1151.0,101400,GR
+160,Sils ewz,ror,ror,ror_1,26.0,0.0,0.0,0.0,0.629,825.7,103500,GR
+161,Mubisa,ror,ror,ror_1,26.0,0.0,0.0,0.0,0.803,1747.5,500400,VS
+162,Schaffhausen,ror,ror,ror_1,26.0,0.0,0.0,0.0,0.545,397.85,106200,SH
+163,Wettingen,ror,ror,ror_1,25.35,0.0,0.0,0.0,0.543,386.6,405300,AG
+164,Tiefencastel ALK,ror,ror,ror_1,24.0,0.0,0.0,0.0,0.67,997.9,102900,GR
+165,Tiefencastel West,ror,ror,ror_1,24.0,0.0,0.0,0.0,0.702,1117.0,103300,GR
+166,La Peuffeyre,ror,ror,ror_1,24.0,0.0,0.0,0.0,0.714,1156.0,508000,VD
+167,Bürglen Unterschächen,ror,ror,ror_1,23.5,0.0,0.0,0.0,0.668,990.2,301400,UR
+168,Ruppoldingen,ror,ror,ror_1,23.0,0.0,0.0,0.0,0.545,398.6,208100,SO
+169,Wernisberg,ror,ror,ror_1,22.6,0.0,0.0,0.0,0.574,555.4,302300,SZ
+170,Martigny-Bourg,ror,ror,ror_1,22.2,0.0,0.0,0.0,0.597,684.8,506400,VS
+171,Les Farettes,ror,ror,ror_1,21.0,0.0,0.0,0.0,0.625,811.54,508900,VD
+172,Hagneck 2,ror,ror,ror_1,20.96,0.0,0.0,0.0,0.552,438.9,205150,BE
+173,Sassello,ror,ror,ror_1,20.8,0.0,0.0,0.0,0.598,686.8,602000,GR
+174,Bremgarten-Zufikon,ror,ror,ror_1,20.0,0.0,0.0,0.0,0.543,384.2,305300,AG
+175,Beznau,ror,ror,ror_1,19.3,0.0,0.0,0.0,0.543,326.35,208900,AG
+176,Reichenau,ror,ror,ror_1,19.06,0.0,0.0,0.0,0.579,585.0,103700,GR
+177,Kandergrund,ror,ror,ror_1,19.0,0.0,0.0,0.0,0.718,1166.85,202400,BE
+178,Spiez,ror,ror,ror_1,18.66,0.0,0.0,0.0,0.588,631.7,202500,BE
+179,Gabi,ror,ror,ror_1,18.61,0.0,0.0,0.0,0.795,1596.5,603400,VS
+180,Erlenbach,ror,ror,ror_1,18.0,0.0,0.0,0.0,0.668,990.6,202700,BE
+181,Oelberg,ror,ror,ror_1,17.78,0.0,0.0,0.0,0.574,558.9,204600,FR
+182,Dallenwil,ror,ror,ror_1,17.75,0.0,0.0,0.0,0.593,661.5,303200,NW
+183,Aarau Stadt,ror,ror,ror_1,16.93,0.0,0.0,0.0,0.543,379.24,208400,AG
+184,Schwanden Sernf,ror,ror,ror_1,16.5,0.0,0.0,0.0,0.614,767.3,401400,GL
+185,Sembrancher,ror,ror,ror_1,16.0,0.0,0.0,0.0,0.652,924.7,506300,VS
+186,Bisisthal,ror,ror,ror_1,15.9,0.0,0.0,0.0,0.709,1137.8,302000,SZ
+187,Aarberg,ror,ror,ror_1,15.2,0.0,0.0,0.0,0.555,452.55,204900,BE
+188,Gletsch-Oberwald,ror,ror,ror_1,15.11,0.0,0.0,0.0,0.803,1750.0,500125,VS
+189,Niederried,ror,ror,ror_1,15.0,0.0,0.0,0.0,0.557,461.2,204800,BE
+190,Fätschbach,ror,ror,ror_1,15.0,0.0,0.0,0.0,0.762,1312.6,400500,GL
+191,Kubel,ror,ror,ror_1,15.0,0.0,0.0,0.0,0.597,682.3,107500,SG
+192,Luzzone,ror,ror,ror_1,15.0,0.0,0.0,0.0,0.803,1739.0,601100,TI
+193,Stalvedro Ticino,ror,ror,ror_1,14.0,0.0,0.0,0.0,0.708,1136.0,600500,TI
+194,Dala,ror,ror,ror_1,12.8,0.0,0.0,0.0,0.745,1258.0,502900,VS
+195,Isenthal Bolzbach,psp_close,ror,ror_1,12.5,0.0,2.8,0.0,0.614,764.9,301700,UR
+196,Mutteins,ror,ror,ror_1,12.5,0.0,0.0,0.0,0.747,1264.0,100700,GR
+197,Monthey Vièze,ror,ror,ror_1,12.1,0.0,0.0,0.0,0.602,708.4,508500,VS
+198,Sägengüetli Bruggwiti,ror,ror,ror_1,12.0,0.0,0.0,0.0,0.662,966.4,402550,SG
+199,Wynau,ror,ror,ror_1,12.0,0.0,0.0,0.0,0.547,408.1,207900,BE
+200,Lütschental,ror,ror,ror_1,11.9,0.0,0.0,0.0,0.646,897.06,202000,BE
+201,Plan Dessous,ror,ror,ror_1,11.87,0.0,0.0,0.0,0.575,562.0,509400,VD
+202,Felsenau,ror,ror,ror_1,11.5,0.0,0.0,0.0,0.563,495.7,203400,BE
+203,Erstfeldertal,ror,ror,ror_1,11.5,0.0,0.0,0.0,0.606,730.0,300975,UR
+204,Taschinas,ror,ror,ror_1,11.33,0.0,0.0,0.0,0.677,1028.0,104450,GR
+205,Mutt,ror,ror,ror_1,11.3,0.0,0.0,0.0,0.803,1968.0,501850,VS
+206,Sandweidli Sousbach,ror,ror,ror_1,11.3,0.0,0.0,0.0,0.799,1638.0,202110,BE
+207,Schattenhalb 3,ror,ror,ror_1,11.0,0.0,0.0,0.0,0.671,1001.0,201750,BE
+208,Tavanasa AHS,ror,ror,ror_1,10.14,0.0,0.0,0.0,0.729,1204.1,100600,GR
+209,Gurtnellen,ror,ror,ror_1,10.0,0.0,0.0,0.0,0.769,1341.05,300800,UR
+210,Sublin 1,ror,ror,ror_1,10.0,0.0,0.0,0.0,0.606,731.3,508100,VD
+211,Rüchlig,ror,ror,ror_1,9.5,0.0,0.0,0.0,0.543,367.0,208500,AG
+212,Sand Plessur,ror,ror,ror_1,9.4,0.0,0.0,0.0,0.617,777.7,104000,GR
+213,Monthey Tine,ror,ror,ror_1,9.4,0.0,0.0,0.0,0.743,1252.0,508600,VS
+214,Sahli Glattalp,ror,ror,ror_1,9.3,0.0,0.0,0.0,0.803,1865.95,301900,SZ
+215,Simmenfluh,ror,ror,ror_1,9.1,0.0,0.0,0.0,0.598,686.95,202800,BE
+216,Löbbia Forno,ror,ror,ror_1,9.0,0.0,0.0,0.0,0.803,1990.9,700900,GR
+217,Seujet,ror,ror,ror_1,8.7,0.0,0.0,0.0,0.543,372.3,509450,GE
+218,Hinterthal Muota,ror,ror,ror_1,8.6,0.0,0.0,0.0,0.619,786.4,302100,SZ
+219,Engelberg Trübsee,dam,ror,ror_1,8.5,0.0,0.0,0.0,0.803,1767.97,302800,OW
+220,Augand,ror,ror,ror_1,8.3,0.0,0.0,0.0,0.592,657.0,202440,BE
+221,Tannuwald,ror,ror,ror_1,8.3,0.0,0.0,0.0,0.803,1759.0,603600,VS
+222,Schwarzhäusern,ror,ror,ror_1,8.2,0.0,0.0,0.0,0.547,408.14,208000,BE
+223,Kallnach,ror,ror,ror_1,8.1,0.0,0.0,0.0,0.557,461.0,205000,BE
+224,Lüen Plessur,ror,ror,ror_1,7.82,0.0,0.0,0.0,0.67,996.23,103900,GR
+225,La Goule,ror,ror,ror_1,7.5,0.0,0.0,0.0,0.571,539.4,510100,JU
+226,Vouvry,dam,ror,ror_1,7.5,0.0,0.0,0.0,0.777,1417.07,509000,VS
+227,Solis,ror,ror,ror_1,7.3,0.0,0.0,0.0,0.778,1427.0,103400,GR
+228,Mulegn Ragn d‘Err,ror,ror,ror_1,7.22,0.0,0.0,0.0,0.802,1662.2,103050,GR
+229,Massaboden,ror,ror,ror_1,7.2,0.0,0.0,0.0,0.607,736.0,501100,VS
+230,Bocki 2,ror,ror,ror_1,7.0,0.0,0.0,0.0,0.774,1389.1,301100,UR
+231,Bondo,ror,ror,ror_1,7.0,0.0,0.0,0.0,0.693,1085.5,701300,GR
+232,Aarewerk62,ror,ror,ror_1,6.94,0.0,0.0,0.0,0.574,557.2,202900,BE
+233,Wolfenschiessen,ror,ror,ror_1,6.7,0.0,0.0,0.0,0.621,795.01,303400,NW
+234,Lizun,ror,ror,ror_1,6.6,0.0,0.0,0.0,0.803,1789.0,700700,GR
+235,Tasnan,ror,ror,ror_1,6.6,0.0,0.0,0.0,0.792,1567.5,800480,GR
+236,Kappelerhof,ror,ror,ror_1,6.5,0.0,0.0,0.0,0.543,347.5,405500,AG
+237,Pintrun,ror,ror,ror_1,6.48,0.0,0.0,0.0,0.617,776.0,101800,GR
+238,Gere,ror,ror,ror_1,6.45,0.0,0.0,0.0,0.8,1649.0,500135,VS
+239,Plätz,ror,ror,ror_1,6.29,0.0,0.0,0.0,0.695,1093.3,403150,SG
+240,Sot Ruinas Susasca,ror,ror,ror_1,6.28,0.0,0.0,0.0,0.803,1778.05,800450,GR
+241,Pont de la Tine,ror,ror,ror_1,6.25,0.0,0.0,0.0,0.694,1090.4,508800,VD
+242,Schlappin,ror,ror,ror_1,6.1,0.0,0.0,0.0,0.799,1639.0,104300,GR
+243,Silliboden,ror,ror,ror_1,6.1,0.0,0.0,0.0,0.753,1284.0,501400,VS
+244,Beznau Wehrkraftwerk,ror,ror,ror_1,6.1,0.0,0.0,0.0,0.543,327.8,208850,AG
+245,Neuhausen,ror,ror,ror_1,5.6,0.0,0.0,0.0,0.543,378.9,106400,SH
+246,Luchsingen,ror,ror,ror_1,5.6,0.0,0.0,0.0,0.7,1107.8,401100,GL
+247,Ladral,ror,ror,ror_1,5.56,0.0,0.0,0.0,0.776,1413.0,100800,GR
+248,Aue,ror,ror,ror_1,5.5,0.0,0.0,0.0,0.543,358.0,405400,AG
+249,Hopflauenen Leimboden,ror,ror,ror_1,5.4,0.0,0.0,0.0,0.73,1206.35,201200,BE
+250,Charmey,ror,ror,ror_1,5.27,0.0,0.0,0.0,0.636,858.02,204100,FR
+251,Wiler Kippel,ror,ror,ror_1,5.2,0.0,0.0,0.0,0.774,1386.0,502477,VS
+252,Brügg,ror,ror,ror_1,5.2,0.0,0.0,0.0,0.551,429.2,206950,BE
+253,Hinterthal Hüribach,ror,ror,ror_1,5.1,0.0,0.0,0.0,0.728,1200.0,302200,SZ
+254,Litzirüti,ror,ror,ror_1,5.0,0.0,0.0,0.0,0.796,1609.8,103800,GR
+255,Letten,ror,ror,ror_1,5.0,0.0,0.0,0.0,0.547,406.2,405000,ZH
+256,Engeweiher,psp_close,ror,ror_1,5.0,0.0,5.3,0.0,0.572,544.98,106300,SH
+257,Stampa,ror,ror,ror_1,5.0,0.0,0.0,0.0,0.584,609.25,603200,TI
+258,Schächen,ror,ror,ror_1,4.9,0.0,0.0,0.0,0.571,538.0,301375,UR
+259,Combe Garot,ror,ror,ror_1,4.86,0.0,0.0,0.0,0.587,626.0,206200,NE
+260,Jungbach,ror,ror,ror_1,4.8,0.0,0.0,0.0,0.877,2362.0,502070,VS
+261,St-Sulpice,ror,ror,ror_1,4.78,0.0,0.0,0.0,0.62,791.0,205850,NE
+262,Sahli Ruosalp,ror,ror,ror_1,4.7,0.0,0.0,0.0,0.776,1407.95,301800,SZ
+263,Sauterôt Hérémence LYSA,ror,ror,ror_1,4.7,0.0,0.0,0.0,0.79,1543.4,503900,VS
+264,Thusis,ror,ror,ror_1,4.6,0.0,0.0,0.0,0.619,788.0,102400,GR
+265,Stechelberg,ror,ror,ror_1,4.6,0.0,0.0,0.0,0.717,1163.55,202100,BE
+266,Ferrera 2,ror,ror,ror_1,4.4,0.0,0.0,0.0,0.779,1443.3,102000,GR
+267,Usine du Chanet,ror,ror,ror_1,4.4,0.0,0.0,0.0,0.57,532.5,206300,NE
+268,Islas,ror,ror,ror_1,4.4,0.0,0.0,0.0,0.803,1770.28,800200,GR
+269,Risi,ror,ror,ror_1,4.33,0.0,0.0,0.0,0.63,831.0,403800,GL
+270,Wiesti,ror,ror,ror_1,4.3,0.0,0.0,0.0,0.83,2140.0,502000,VS
+271,St. Joseph,ror,ror,ror_1,4.26,0.0,0.0,0.0,0.798,1625.3,100625,GR
+272,Tenero Centrale di dotazione,ror,ror,ror_1,4.25,0.0,0.0,0.0,0.558,470.05,602300,TI
+273,Ferrera Trun,ror,ror,ror_1,4.2,0.0,0.0,0.0,0.8,1641.05,100500,GR
+274,Bévieux,ror,ror,ror_1,4.2,0.0,0.0,0.0,0.574,554.0,508300,VD
+275,Schattigmatt,ror,ror,ror_1,4.2,0.0,0.0,0.0,0.672,1007.0,300875,UR
+276,Spina Valbella,ror,ror,ror_1,4.2,0.0,0.0,0.0,0.762,1311.85,601500,GR
+277,Doppelpower,ror,ror,ror_1,4.2,0.0,0.0,0.0,0.57,534.0,401750,GL
+278,Rasoira,ror,ror,ror_1,4.15,0.0,0.0,0.0,0.675,1018.0,601125,TI
+279,Steigs Stoffel,ror,ror,ror_1,4.0,0.0,0.0,0.0,0.6,697.7,402200,SG
+280,Rondchâtel,ror,ror,ror_1,4.0,0.0,0.0,0.0,0.581,594.97,206600,BE
+281,Ponte Brolla,ror,ror,ror_1,3.8,0.0,0.0,0.0,0.543,266.0,603100,TI
+282,Walibach,ror,ror,ror_1,3.64,0.0,0.0,0.0,0.826,2120.0,500275,VS
+283,Calcaccia,ror,ror,ror_1,3.6,0.0,0.0,0.0,0.783,1478.2,600300,TI
+284,Engi Mühlebach,ror,ror,ror_1,3.6,0.0,0.0,0.0,0.717,1164.45,401350,GL
+285,Altendorf Buchs,ror,ror,ror_1,3.56,0.0,0.0,0.0,0.692,1081.0,105300,SG
+286,Lüen Sagenbach,ror,ror,ror_1,3.55,0.0,0.0,0.0,0.755,1290.5,103850,GR
+287,Eggli Berschis,ror,ror,ror_1,3.5,0.0,0.0,0.0,0.694,1089.3,402710,SG
+288,Borgnone,ror,ror,ror_1,3.4,0.0,0.0,0.0,0.563,496.0,603050,TI
+289,Aboyeu,ror,ror,ror_1,3.35,0.0,0.0,0.0,0.769,1345.0,507800,VS
+290,Dietikon,ror,ror,ror_1,3.34,0.0,0.0,0.0,0.543,386.3,405200,ZH
+291,Schiffmühle,ror,ror,ror_1,3.3,0.0,0.0,0.0,0.543,338.35,405600,AG
+292,La Petite Vaux,ror,ror,ror_1,3.3,0.0,0.0,0.0,0.557,463.0,509425,VD
+293,Bözingen,ror,ror,ror_1,3.25,0.0,0.0,0.0,0.564,503.84,206900,BE
+294,Sainte-Anne,ror,ror,ror_1,3.2,0.0,0.0,0.0,0.698,1103.0,203950,FR
+295,Wysswasser,ror,ror,ror_1,3.1,0.0,0.0,0.0,0.68,1037.6,500550,VS
+296,Lavinuoz,ror,ror,ror_1,3.07,0.0,0.0,0.0,0.803,1743.0,800460,GR
+297,Arni Engelberg,ror,ror,ror_1,3.07,0.0,0.0,0.0,0.765,1322.0,302900,OW
+298,Chrizji,ror,ror,ror_1,3.0,0.0,0.0,0.0,0.803,1686.25,502310,VS
+299,Innertkirchen 3,ror,ror,ror_1,3.0,0.0,0.0,0.0,0.62,789.35,200750,BE
+300,Palanggenbach 1,ror,ror,ror_1,3.0,0.0,0.0,0.0,0.638,866.0,301525,UR
+301,Adont,ror,ror,ror_1,2.95,0.0,0.0,0.0,0.803,1740.5,103110,GR
+302,Hagneck 1 Dotierzentrale,ror,ror,ror_1,2.91,0.0,0.0,0.0,0.553,439.19,205100,BE
+303,Spiggebach,ror,ror,ror_1,2.9,0.0,0.0,0.0,0.723,1186.0,202430,BE
+304,Oberalp,ror,ror,ror_1,2.9,0.0,0.0,0.0,0.803,1888.2,300300,UR
+305,Aarewerk94,ror,ror,ror_1,2.83,0.0,0.0,0.0,0.574,555.99,203000,BE
+306,Bargaus,ror,ror,ror_1,2.82,0.0,0.0,0.0,0.685,1060.0,101500,GR
+307,Realp 2,ror,ror,ror_1,2.81,0.0,0.0,0.0,0.803,1704.4,300250,UR
+308,Laubeggfall,ror,ror,ror_1,2.8,0.0,0.0,0.0,0.643,886.7,202550,BE
+309,Gödis,ror,ror,ror_1,2.8,0.0,0.0,0.0,0.601,705.15,403300,SG
+310,Buoholzbach,ror,ror,ror_1,2.7,0.0,0.0,0.0,0.648,907.45,303250,NW
+311,Segnas,ror,ror,ror_1,2.63,0.0,0.0,0.0,0.818,2083.54,101550,GR
+312,Sublin 2,ror,ror,ror_1,2.61,0.0,0.0,0.0,0.769,1339.0,508200,VD
+313,Campo Vallemaggia,ror,ror,ror_1,2.54,0.0,0.0,0.0,0.741,1244.0,602950,TI
+314,Cotlan,ror,ror,ror_1,2.53,0.0,0.0,0.0,0.589,638.05,400910,GL
+315,Wasserauen,dam,ror,ror_1,2.5,0.0,0.0,0.0,0.711,1144.0,107400,AI
+316,Curnera Druckminderer,ror,ror,ror_1,2.5,0.0,0.0,0.0,0.803,1915.0,100125,GR
+317,Avançon Palier inférieur,ror,ror,ror_1,2.43,0.0,0.0,0.0,0.559,476.6,508325,VD
+318,Punt dal Gall Dotierzentrale,ror,ror,ror_1,2.4,0.0,0.0,0.0,0.803,1809.1,800700,GR
+319,Eichi,ror,ror,ror_1,2.4,0.0,0.0,0.0,0.557,462.65,304000,OW
+320,Eaux du Fossau,ror,ror,ror_1,2.37,0.0,0.0,0.0,0.657,943.99,509010,VS
+321,Ulrichen,ror,ror,ror_1,2.35,0.0,0.0,0.0,0.799,1633.5,500150,VS
+322,La Jougnenaz,ror,ror,ror_1,2.35,0.0,0.0,0.0,0.621,793.55,205300,VD
+323,Stundhüs,ror,ror,ror_1,2.32,0.0,0.0,0.0,0.708,1134.5,502315,VS
+324,Säge Murg,ror,ror,ror_1,2.32,0.0,0.0,0.0,0.571,539.0,403400,SG
+325,Fellitobel,ror,ror,ror_1,2.3,0.0,0.0,0.0,0.605,728.0,300850,UR
+326,Unterschächen,ror,ror,ror_1,2.3,0.0,0.0,0.0,0.772,1370.0,301300,UR
+327,Schattenhalb 1plus,ror,ror,ror_1,2.3,0.0,0.0,0.0,0.627,818.6,201700,BE
+328,Eaux de Verbier,ror,ror,ror_1,2.3,0.0,0.0,0.0,0.77,1356.0,505760,VS
+329,Brummbach Niederschwende,ror,ror,ror_1,2.3,0.0,0.0,0.0,0.69,1075.0,400800,GL
+330,Muranzina,ror,ror,ror_1,2.29,0.0,0.0,0.0,0.803,1886.25,900100,GR
+331,Gadastätt Schaniela,ror,ror,ror_1,2.22,0.0,0.0,0.0,0.769,1337.1,104425,GR
+332,Crastatscha Sarsaura,ror,ror,ror_1,2.2,0.0,0.0,0.0,0.803,1790.7,800425,GR
+333,Cerentino,ror,ror,ror_1,2.2,0.0,0.0,0.0,0.683,1052.5,602975,TI
+334,Müliacher,ror,ror,ror_1,2.2,0.0,0.0,0.0,0.602,709.0,302550,SZ
+335,Schwanden Gemeinde,ror,ror,ror_1,2.2,0.0,0.0,0.0,0.646,900.0,401600,GL
+336,Kandersteg Alpbach,ror,ror,ror_1,2.2,0.0,0.0,0.0,0.788,1527.6,202290,BE
+337,Vionnaz,ror,ror,ror_1,2.16,0.0,0.0,0.0,0.713,1152.95,508680,VS
+338,Wannebode,ror,ror,ror_1,2.13,0.0,0.0,0.0,0.789,1533.0,500250,VS
+339,Bleichi Dorfbach,ror,ror,ror_1,2.12,0.0,0.0,0.0,0.661,959.3,403900,GL
+340,Broglio Tomé,ror,ror,ror_1,2.12,0.0,0.0,0.0,0.803,1690.55,602675,TI
+341,Wettingen Dotierzentrale,ror,ror,ror_1,2.1,0.0,0.0,0.0,0.543,380.2,405250,AG
+342,Au Schönenberg,ror,ror,ror_1,2.1,0.0,0.0,0.0,0.555,450.2,107750,TG
+343,Rathausen,ror,ror,ror_1,2.1,0.0,0.0,0.0,0.551,432.0,304500,LU
+344,Ceresa,ror,ror,ror_1,2.1,0.0,0.0,0.0,0.803,1723.0,600700,TI
+345,Chasseras,ror,ror,ror_1,2.1,0.0,0.0,0.0,0.785,1497.8,900200,GR
+346,Matten Fermelbach,ror,ror,ror_1,2.09,0.0,0.0,0.0,0.755,1290.0,202520,BE
+347,Windisch,ror,ror,ror_1,2.09,0.0,0.0,0.0,0.543,338.67,305400,AG
+348,Blatten 2 Fuxloch,ror,ror,ror_1,2.05,0.0,0.0,0.0,0.803,1855.5,502445,VS
+349,Val Strem,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.792,1569.0,100150,GR
+350,Sägengüetli Aeuli,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.632,842.0,402650,SG
+351,Icogne,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.777,1416.0,503650,VS
+352,Hospental,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.797,1612.0,300100,UR
+353,La Delise,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.829,2137.0,505850,VS
+354,Lorzentobel 3,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.57,537.05,305000,ZG
+355,Splügen Hüscherabach,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.803,1699.9,102075,GR
+356,Sihl-Höfe,ror,ror,ror_1,2.0,0.0,0.0,0.0,0.612,757.25,404700,SZ
+357,Obermatt Nebenzentrale,ror,ror,ror_1,1.97,0.0,0.0,0.0,0.596,678.3,303100,OW
+358,Merezenbach,ror,ror,ror_1,1.96,0.0,0.0,0.0,0.803,1842.0,500200,VS
+359,Sonzier,ror,ror,ror_1,1.95,0.0,0.0,0.0,0.697,1100.24,509200,VD
+360,Clemgia,ror,ror,ror_1,1.94,0.0,0.0,0.0,0.752,1281.0,800500,GR
+361,Thurfeld,ror,ror,ror_1,1.9,0.0,0.0,0.0,0.555,455.0,107740,TG
+362,Schattenhalb 2,ror,ror,ror_1,1.9,0.0,0.0,0.0,0.671,1001.1,201600,BE
+363,Lorzentobel 2,ror,ror,ror_1,1.9,0.0,0.0,0.0,0.597,683.29,304800,ZG
+364,Giessen,ror,ror,ror_1,1.9,0.0,0.0,0.0,0.618,783.34,106600,SG
+365,Breithorn Fafleralp,ror,ror,ror_1,1.85,0.0,0.0,0.0,0.806,2028.0,502485,VS
+366,Chamarin,ror,ror,ror_1,1.84,0.0,0.0,0.0,0.803,1800.0,503600,VS
+367,Splügen Tambobach,ror,ror,ror_1,1.8,0.0,0.0,0.0,0.803,1890.0,102070,GR
+368,La Serrière,ror,ror,ror_1,1.8,0.0,0.0,0.0,0.558,470.62,206530,NE
+369,Kandersteg Zilfuri,ror,ror,ror_1,1.8,0.0,0.0,0.0,0.789,1539.52,202300,BE
+370,Trempel,ror,ror,ror_1,1.8,0.0,0.0,0.0,0.601,702.0,106700,SG
+371,Arvigo,ror,ror,ror_1,1.78,0.0,0.0,0.0,0.787,1518.0,601750,GR
+372,Rupperswil Dotierzentrale,ror,ror,ror_1,1.74,0.0,0.0,0.0,0.543,360.4,208650,AG
+373,Amsteg Regulierzentrale,ror,ror,ror_1,1.73,0.0,0.0,0.0,0.567,520.4,300950,UR
+374,Stenna,ror,ror,ror_1,1.73,0.0,0.0,0.0,0.759,1304.0,101600,GR
+375,Mulin,ror,ror,ror_1,1.7,0.0,0.0,0.0,0.658,946.25,101700,GR
+376,Linthkraft,ror,ror,ror_1,1.7,0.0,0.0,0.0,0.555,453.7,402000,GL
+377,Pissevache,ror,ror,ror_1,1.7,0.0,0.0,0.0,0.696,1095.0,507400,VS
+378,Bocki 1,ror,ror,ror_1,1.7,0.0,0.0,0.0,0.635,853.0,301200,UR
+379,Lorzentobel 1,ror,ror,ror_1,1.67,0.0,0.0,0.0,0.58,586.86,304900,ZG
+380,Morteratsch,ror,ror,ror_1,1.66,0.0,0.0,0.0,0.805,2020.5,800300,GR
+381,Meiringen 2,ror,ror,ror_1,1.65,0.0,0.0,0.0,0.777,1421.0,201400,BE
+382,Täschbach,ror,ror,ror_1,1.65,0.0,0.0,0.0,0.803,1960.35,502050,VS
+383,Sustli,ror,ror,ror_1,1.63,0.0,0.0,0.0,0.628,822.0,302600,NW
+384,Muslen,ror,ror,ror_1,1.63,0.0,0.0,0.0,0.593,658.0,403500,SG
+385,Les Moyats,ror,ror,ror_1,1.6,0.0,0.0,0.0,0.598,686.5,206100,NE
+386,Linthal Spinnerei,ror,ror,ror_1,1.6,0.0,0.0,0.0,0.593,659.0,400700,GL
+387,Nandro,ror,ror,ror_1,1.59,0.0,0.0,0.0,0.803,1796.0,103150,GR
+388,Madulain,ror,ror,ror_1,1.56,0.0,0.0,0.0,0.817,2080.1,800400,GR
+389,Saas-Fee Regulierzentrale,ror,ror,ror_1,1.55,0.0,0.0,0.0,0.803,1865.25,501700,VS
+390,Dornachbrugg,ror,ror,ror_1,1.54,0.0,0.0,0.0,0.543,287.85,110450,SO
+391,Wiler Milibach,ror,ror,ror_1,1.53,0.0,0.0,0.0,0.803,1900.0,502475,VS
+392,Val Giuv,ror,ror,ror_1,1.5,0.0,0.0,0.0,0.803,1753.5,100100,GR
+393,Bürglen Loreto,ror,ror,ror_1,1.5,0.0,0.0,0.0,0.587,628.2,301500,UR
+394,Grimsel Nollen,ror,ror,ror_1,1.5,0.0,0.0,0.0,0.803,1873.4,200150,BE
+395,Hospitalet,ror,ror,ror_1,1.47,0.0,0.0,0.0,0.82,2093.92,505800,VS
+396,Silvaplana,ror,ror,ror_1,1.47,0.0,0.0,0.0,0.807,2029.0,800100,GR
+397,Göschenen Unterdorf,ror,ror,ror_1,1.47,0.0,0.0,0.0,0.716,1161.95,300600,UR
+398,Zer Niwu Schiir,ror,ror,ror_1,1.44,0.0,0.0,0.0,0.789,1540.0,501312,VS
+399,Badhalte,ror,ror,ror_1,1.44,0.0,0.0,0.0,0.697,1100.0,501410,VS
+400,Lochmedli Hostetbach,ror,ror,ror_1,1.44,0.0,0.0,0.0,0.803,1682.3,200740,BE
+401,Löchli,ror,ror,ror_1,1.43,0.0,0.0,0.0,0.632,840.9,105500,SG
+402,Höngg,ror,ror,ror_1,1.4,0.0,0.0,0.0,0.545,397.1,405100,ZH
+403,Isch,dam,ror,ror_1,1.4,0.0,0.0,0.0,0.786,1506.9,201900,BE
+404,Waldemme,ror,ror,ror_1,1.4,0.0,0.0,0.0,0.637,859.54,304175,LU
+405,La Rançonnière,ror,ror,ror_1,1.4,0.0,0.0,0.0,0.65,913.89,509800,NE
+406,Mühlau,ror,ror,ror_1,1.37,0.0,0.0,0.0,0.571,539.0,107100,SG
+407,Rufi,ror,ror,ror_1,1.35,0.0,0.0,0.0,0.579,585.2,409975,GL
+408,Rüchlig Dotierzentrale,ror,ror,ror_1,1.35,0.0,0.0,0.0,0.543,366.25,208560,AG
+409,Büeli,ror,ror,ror_1,1.35,0.0,0.0,0.0,0.779,1436.0,402900,SG
+410,Breite Stäg,ror,ror,ror_1,1.34,0.0,0.0,0.0,0.821,2097.0,502390,VS
+411,Rappental,ror,ror,ror_1,1.3,0.0,0.0,0.0,0.803,1790.0,500300,VS
+412,Crans-Montana,ror,ror,ror_1,1.3,0.0,0.0,0.0,0.798,1626.05,503625,VS
+413,Klusi,dam,ror,ror_1,1.3,0.0,0.0,0.0,0.795,1593.45,202600,BE
+414,Preda,ror,ror,ror_1,1.27,0.0,0.0,0.0,0.803,1919.0,102500,GR
+415,Stalden Kloster,ror,ror,ror_1,1.27,0.0,0.0,0.0,0.792,1568.4,302700,OW
+416,Ossasco,ror,ror,ror_1,1.27,0.0,0.0,0.0,0.79,1546.6,600025,TI
+417,Morgental,ror,ror,ror_1,1.26,0.0,0.0,0.0,0.581,592.5,106125,SG
+418,Fafleralp,ror,ror,ror_1,1.25,0.0,0.0,0.0,0.803,1921.78,502440,VS
+419,Saflisch,ror,ror,ror_1,1.25,0.0,0.0,0.0,0.803,1788.0,500700,VS
+420,Nesslau Ijentalbach,ror,ror,ror_1,1.25,0.0,0.0,0.0,0.689,1071.0,106625,SG
+421,Strick,ror,ror,ror_1,1.22,0.0,0.0,0.0,0.594,668.02,105600,SG
+422,Emmenweid,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.555,451.0,304400,LU
+423,Kleintal Isenthal,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.655,934.9,301600,UR
+424,Hackeren,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.772,1375.0,303550,OW
+425,Valeis,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.634,850.0,104900,SG
+426,Taulan,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.597,681.24,509300,VD
+427,Neuewelt,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.543,266.0,110475,BL
+428,Niollet 2,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.77,1348.0,506050,VS
+429,Bärenburg Dotierzentrale,ror,ror,ror_1,1.2,0.0,0.0,0.0,0.692,1083.5,102200,GR
+430,Turtig,ror,ror,ror_1,1.19,0.0,0.0,0.0,0.712,1147.0,502410,VS
+431,Perlen 2 Root,ror,ror,ror_1,1.19,0.0,0.0,0.0,0.548,414.8,304700,LU
+432,Matte,ror,ror,ror_1,1.16,0.0,0.0,0.0,0.563,498.4,203300,BE
+433,Wysserlen,ror,ror,ror_1,1.15,0.0,0.0,0.0,0.7,1110.18,303900,OW
+434,Winggel,ror,ror,ror_1,1.14,0.0,0.0,0.0,0.645,894.9,105100,SG
+435,Hefti Hätzingen,ror,ror,ror_1,1.14,0.0,0.0,0.0,0.579,582.2,401000,GL
+436,Glaris,ror,ror,ror_1,1.13,0.0,0.0,0.0,0.783,1482.0,102700,GR
+437,La Montoz,ror,ror,ror_1,1.09,0.0,0.0,0.0,0.803,1706.0,505725,VS
+438,Interlaken Kanal,ror,ror,ror_1,1.09,0.0,0.0,0.0,0.576,566.97,202200,BE
+439,Meiringen 1,ror,ror,ror_1,1.08,0.0,0.0,0.0,0.634,846.4,201500,BE
+440,Lona,ror,ror,ror_1,1.05,0.0,0.0,0.0,0.879,2908.0,503100,VS
+441,Perlen 1 Buchrain,ror,ror,ror_1,1.04,0.0,0.0,0.0,0.548,416.57,304600,LU
+442,Bassecourt,ror,ror,ror_1,1.03,0.0,0.0,0.0,0.568,524.4,109900,JU
+443,Kandersteg Dorf,ror,ror,ror_1,1.03,0.0,0.0,0.0,0.753,1282.12,202350,BE
+444,Piumogna,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.741,1242.96,600750,TI
+445,Siwibach,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.879,2407.0,502071,VS
+446,Schindellegi,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.618,782.0,404600,SZ
+447,Trient,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.74,1242.4,506600,VS
+448,Pradella Dotierzentrale,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.711,1146.2,800150,GR
+449,Beulet,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.596,676.5,503800,VS
+450,Torrent de Soi,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.729,1204.0,508450,VS
+451,Turgi,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.543,334.46,405650,AG
+452,Leuggelbach,ror,ror,ror_1,1.0,0.0,0.0,0.0,0.701,1111.0,401150,GL
+453,Bürglen Kanal,ror,ror,ror_1,0.99,0.0,0.0,0.0,0.555,450.9,107950,TG
+454,Dietfurt,ror,ror,ror_1,0.99,0.0,0.0,0.0,0.58,590.9,106900,SG
+455,Soor,ror,ror,ror_1,0.99,0.0,0.0,0.0,0.577,575.3,107000,SG
+456,Dornbach Ferden,ror,ror,ror_1,0.99,0.0,0.0,0.0,0.803,1986.0,502480,VS
+457,Tobel,ror,ror,ror_1,0.99,0.0,0.0,0.0,0.612,757.6,402100,SG
+458,Bachtoly,ror,ror,ror_1,0.98,0.0,0.0,0.0,0.803,1912.0,502395,VS
+459,Peccia Corgello,ror,ror,ror_1,0.98,0.0,0.0,0.0,0.691,1077.5,602450,TI
+460,Moos,ror,ror,ror_1,0.98,0.0,0.0,0.0,0.543,327.6,110200,BL
+461,Vorderberg,ror,ror,ror_1,0.98,0.0,0.0,0.0,0.788,1527.6,105150,SG
+462,Spissermühle,ror,ror,ror_1,0.96,0.0,0.0,0.0,0.803,1683.35,800600,GR
+463,Valmara,ror,ror,ror_1,0.95,0.0,0.0,0.0,0.581,593.0,603300,TI
+464,Stollen,ror,ror,ror_1,0.95,0.0,0.0,0.0,0.654,930.67,304250,LU
+465,Lunschania,ror,ror,ror_1,0.94,0.0,0.0,0.0,0.766,1327.67,101450,GR
+466,Mühlenplatz,ror,ror,ror_1,0.93,0.0,0.0,0.0,0.552,433.69,304150,LU
+467,Brummbach Braunwald,ror,ror,ror_1,0.93,0.0,0.0,0.0,0.778,1425.0,400850,GL
+468,Schönenwerd Dotierzentrale,ror,ror,ror_1,0.93,0.0,0.0,0.0,0.543,370.96,208350,AG
+469,Pont-Neuf,ror,ror,ror_1,0.93,0.0,0.0,0.0,0.731,1210.0,506500,VS
+470,Giessbach,ror,ror,ror_1,0.93,0.0,0.0,0.0,0.653,926.5,201800,BE
+471,Legler,ror,ror,ror_1,0.93,0.0,0.0,0.0,0.582,599.36,400950,GL
+472,Ischla Tarasp,ror,ror,ror_1,0.92,0.0,0.0,0.0,0.785,1503.05,800490,GR
+473,Haslen,ror,ror,ror_1,0.92,0.0,0.0,0.0,0.573,549.0,401200,GL
+474,Gorges de Court,ror,ror,ror_1,0.92,0.0,0.0,0.0,0.593,657.92,109800,JU
+475,Realp 1,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.805,2022.0,300200,UR
+476,Charmey La Tzintre,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.638,866.5,204050,FR
+477,Les Garettes,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.803,1989.0,505550,VS
+478,Gebenstorf,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.543,332.29,405700,AG
+479,Lauenen Louibach,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.737,1230.6,203650,BE
+480,Cries Vollèges,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.799,1635.0,505780,VS
+481,Schwanden Blumer,ror,ror,ror_1,0.9,0.0,0.0,0.0,0.568,524.55,401225,GL
+482,Röllbach,ror,ror,ror_1,0.89,0.0,0.0,0.0,0.608,739.66,402675,SG
+483,Rütiberg Obersee,ror,ror,ror_1,0.89,0.0,0.0,0.0,0.666,982.9,403600,GL
+484,Marmorera Dotierzentrale,ror,ror,ror_1,0.89,0.0,0.0,0.0,0.803,1684.3,103025,GR
+485,Felsbach Karstwasser,ror,ror,ror_1,0.88,0.0,0.0,0.0,0.692,1082.07,101650,GR
+486,Ettisbühl,ror,ror,ror_1,0.87,0.0,0.0,0.0,0.565,508.04,304225,LU
+487,Luterbach 1,ror,ror,ror_1,0.86,0.0,0.0,0.0,0.553,441.8,207600,SO
+488,Im Roos,ror,ror,ror_1,0.86,0.0,0.0,0.0,0.589,641.06,106750,SG
+489,Engstlige,ror,ror,ror_1,0.85,0.0,0.0,0.0,0.72,1174.2,202475,BE
+490,Rivaz le Forestay,ror,ror,ror_1,0.85,0.0,0.0,0.0,0.575,562.0,509350,VD
+491,Seidendruckerei,ror,ror,ror_1,0.85,0.0,0.0,0.0,0.563,498.35,401760,GL
+492,Rütiberg Brändbach,ror,ror,ror_1,0.85,0.0,0.0,0.0,0.699,1106.5,403700,GL
+493,Unterbäch,ror,ror,ror_1,0.85,0.0,0.0,0.0,0.801,1658.0,502400,VS
+494,Sigirino Monteceneri,ror,ror,ror_1,0.84,0.0,0.0,0.0,0.672,1008.2,603250,TI
+495,Herrentöbeli,ror,ror,ror_1,0.84,0.0,0.0,0.0,0.603,718.0,106650,SG
+496,Talbach,ror,ror,ror_1,0.83,0.0,0.0,0.0,0.707,1130.4,402800,SG
+497,Papieri Bischofszell,ror,ror,ror_1,0.82,0.0,0.0,0.0,0.559,474.88,107300,TG
+498,Vissoie groupe auxiliaire,ror,ror,ror_1,0.81,0.0,0.0,0.0,0.729,1204.0,503350,VS
+499,Grossbach,ror,ror,ror_1,0.81,0.0,0.0,0.0,0.746,1260.7,105000,SG
+500,Stroppel,ror,ror,ror_1,0.8,0.0,0.0,0.0,0.543,329.2,405800,AG
+501,Elggiskraft,ror,ror,ror_1,0.8,0.0,0.0,0.0,0.556,458.0,401800,GL
+502,Mühlefuhr,ror,ror,ror_1,0.8,0.0,0.0,0.0,0.562,489.0,401775,GL
+503,Niderbach,ror,ror,ror_1,0.8,0.0,0.0,0.0,0.814,2066.0,500225,VS
+504,Kammri,ror,ror,ror_1,0.8,0.0,0.0,0.0,0.694,1089.18,202150,BE
+505,Thorenberg,ror,ror,ror_1,0.79,0.0,0.0,0.0,0.558,471.5,304300,LU
+506,Widen Weinfelden,ror,ror,ror_1,0.77,0.0,0.0,0.0,0.55,423.2,108250,TG
+507,Dietikon Dotierzentrale,ror,ror,ror_1,0.77,0.0,0.0,0.0,0.543,385.5,405210,ZH
+508,La Rippaz,ror,ror,ror_1,0.77,0.0,0.0,0.0,0.693,1084.6,508350,VD
+509,La Rasse,ror,ror,ror_1,0.75,0.0,0.0,0.0,0.711,1145.5,507850,VS
+510,Sedrun 2,ror,ror,ror_1,0.75,0.0,0.0,0.0,0.769,1341.0,100250,GR
+511,Holenstein Wehrkraftwerk,ror,ror,ror_1,0.75,0.0,0.0,0.0,0.56,481.0,401780,GL
+512,Gstaldenbach,ror,ror,ror_1,0.75,0.0,0.0,0.0,0.602,711.56,106000,AR
+513,Borterbach,ror,ror,ror_1,0.75,0.0,0.0,0.0,0.803,2000.0,502550,VS
+514,Choindez,ror,ror,ror_1,0.75,0.0,0.0,0.0,0.56,478.0,109850,JU
+515,Champéry Etrivouez,ror,ror,ror_1,0.73,0.0,0.0,0.0,0.735,1225.0,508400,VS
+516,Reservoir de Péteille,ror,ror,ror_1,0.73,0.0,0.0,0.0,0.692,1082.4,504375,VS
+517,Gsteig,ror,ror,ror_1,0.72,0.0,0.0,0.0,0.734,1222.5,203700,BE
+518,Wassen Dotierzentrale,ror,ror,ror_1,0.72,0.0,0.0,0.0,0.622,800.1,300750,UR
+519,Sand Rabiusa,ror,ror,ror_1,0.71,0.0,0.0,0.0,0.603,713.05,104100,GR
+520,Ragaz,ror,ror,ror_1,0.7,0.0,0.0,0.0,0.57,535.89,104800,SG
+521,Rossens Centrale de dotation 1,ror,ror,ror_1,0.7,0.0,0.0,0.0,0.596,677.0,204300,FR
+522,Pied du Mont Palier Riddes,ror,ror,ror_1,0.7,0.0,0.0,0.0,0.739,1237.4,505110,VS
+523,Thur,ror,ror,ror_1,0.7,0.0,0.0,0.0,0.552,437.8,108000,TG
+524,Trun,ror,ror,ror_1,0.7,0.0,0.0,0.0,0.732,1214.0,100550,GR
+525,Frauenkirch,ror,ror,ror_1,0.7,0.0,0.0,0.0,0.798,1627.9,102600,GR
+526,Tobeläckerli,ror,ror,ror_1,0.69,0.0,0.0,0.0,0.689,1074.0,105200,SG
+527,Laufen Wasserfall,ror,ror,ror_1,0.69,0.0,0.0,0.0,0.543,352.55,109950,BL
+528,Gorges de Arnon,ror,ror,ror_1,0.69,0.0,0.0,0.0,0.609,744.06,205670,VD
+529,Felsreservoir Saas-Grund,ror,ror,ror_1,0.69,0.0,0.0,0.0,0.842,2196.0,501750,VS
+530,Landquart 2,ror,ror,ror_1,0.68,0.0,0.0,0.0,0.57,532.0,104550,GR
+531,Gilamont,ror,ror,ror_1,0.67,0.0,0.0,0.0,0.552,435.6,509325,VD
+532,Lochmühle,ror,ror,ror_1,0.66,0.0,0.0,0.0,0.584,614.0,106100,SG
+533,Chapfensee,ror,ror,ror_1,0.65,0.0,0.0,0.0,0.688,1068.0,402360,SG
+534,Stalvedro Julia,ror,ror,ror_1,0.65,0.0,0.0,0.0,0.803,1762.7,103000,GR
+535,Wildegg-Brugg Dotierzentrale,ror,ror,ror_1,0.65,0.0,0.0,0.0,0.543,348.7,208750,AG
+536,Blumenstein,ror,ror,ror_1,0.65,0.0,0.0,0.0,0.769,1344.8,203200,BE
+537,Platt Alva,ror,ror,ror_1,0.64,0.0,0.0,0.0,0.794,1589.4,101560,GR
+538,Weissenstein,ror,ror,ror_1,0.64,0.0,0.0,0.0,0.801,1654.0,402350,SG
+539,Engi Sernf,ror,ror,ror_1,0.63,0.0,0.0,0.0,0.624,805.4,401325,GL
+540,Krauchbach,ror,ror,ror_1,0.62,0.0,0.0,0.0,0.654,930.0,401300,GL
+541,Obermatt Zwingen,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.543,346.6,110000,BL
+542,Ziegelbrücke,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.55,425.0,404000,GL
+543,Engstligenalp,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.803,1929.34,202425,BE
+544,Untermühle Cham,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.547,408.69,305100,ZG
+545,Sauterôt Hérémence FMdB,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.657,942.0,503950,VS
+546,Töbeli Widenbach,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.699,1106.76,402750,SG
+547,Freienstein,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.543,364.3,108500,ZH
+548,Rossfall,ror,ror,ror_1,0.6,0.0,0.0,0.0,0.659,951.7,107425,AR
+549,Bellerive,ror,ror,ror_1,0.59,0.0,0.0,0.0,0.546,402.8,109915,JU
+550,Arbaz 1,ror,ror,ror_1,0.59,0.0,0.0,0.0,0.781,1460.0,504335,VS
+551,Arbaz 2,ror,ror,ror_1,0.58,0.0,0.0,0.0,0.675,1019.0,504340,VS
+552,Hard Wülflingen,ror,ror,ror_1,0.58,0.0,0.0,0.0,0.548,412.23,108460,ZH
+553,Hagendorn,ror,ror,ror_1,0.58,0.0,0.0,0.0,0.546,402.8,305200,ZG
+554,Niedergesteln,ror,ror,ror_1,0.58,0.0,0.0,0.0,0.792,1570.0,502430,VS
+555,Merlen,dam,ror,ror_1,0.57,0.0,0.0,0.0,0.722,1182.1,403000,SG
+556,Petit Pont de la Tine,ror,ror,ror_1,0.57,0.0,0.0,0.0,0.784,1491.0,508810,VD
+557,Pilgersteg,ror,ror,ror_1,0.56,0.0,0.0,0.0,0.572,543.0,404300,ZH
+558,Bruggmühle,ror,ror,ror_1,0.56,0.0,0.0,0.0,0.543,368.0,305350,AG
+559,Mühlebach 2,ror,ror,ror_1,0.56,0.0,0.0,0.0,0.625,809.5,401360,GL
+560,Büttenen 1,ror,ror,ror_1,0.55,0.0,0.0,0.0,0.543,322.5,110400,BL
+561,Mels,ror,ror,ror_1,0.55,0.0,0.0,0.0,0.571,542.0,402300,SG
+562,Chriz,ror,ror,ror_1,0.55,0.0,0.0,0.0,0.726,1195.0,502415,VS
+563,Gantergrund Nessel-Mittubäch,ror,ror,ror_1,0.55,0.0,0.0,0.0,0.787,1515.0,501360,VS
+564,Vaye-Planaz,ror,ror,ror_1,0.54,0.0,0.0,0.0,0.718,1167.0,503460,VS
+565,Stadtbrücke,ror,ror,ror_1,0.53,0.0,0.0,0.0,0.582,600.9,106800,SG
+566,Moosbrunnen 1,ror,ror,ror_1,0.52,0.0,0.0,0.0,0.557,463.1,207300,BE
+567,Äsch,ror,ror,ror_1,0.52,0.0,0.0,0.0,0.73,1206.5,301250,UR
+568,Acqui Marsci,ror,ror,ror_1,0.51,0.0,0.0,0.0,0.794,1590.0,700450,GR
+569,Uznaberg,ror,ror,ror_1,0.51,0.0,0.0,0.0,0.563,494.6,404050,SG
+570,Mulin Promontogno,ror,ror,ror_1,0.51,0.0,0.0,0.0,0.63,832.4,701350,GR
+571,Varen Ost,ror,ror,ror_1,0.51,0.0,0.0,0.0,0.636,855.5,502910,VS
+572,Büttenen 2,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.543,321.6,110300,BL
+573,Schwanden SNE,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.57,533.05,401700,GL
+574,Kalter Brunnen,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.793,1580.25,502375,VS
+575,Hagerhüsli,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.56,482.0,207000,BE
+576,Blatten 1 Runeja,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.803,1857.0,502450,VS
+577,Sufers Dotierzentrale,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.775,1401.0,102080,GR
+578,Bebie Linthkraft,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.595,671.45,400600,GL
+579,Aue Dotierzentrale,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.543,357.7,405350,AG
+580,Boudry,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.554,447.85,206350,NE
+581,Plancanin,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.812,2056.0,700850,GR
+582,Landquart 1,ror,ror,ror_1,0.5,0.0,0.0,0.0,0.571,541.3,104500,GR
+583,Bannwald Grabs,ror,ror,ror_1,0.49,0.0,0.0,0.0,0.652,925.0,105400,SG
+584,Bramois G7,ror,ror,ror_1,0.49,0.0,0.0,0.0,0.569,530.0,504100,VS
+585,Gappli Törbel,ror,ror,ror_1,0.49,0.0,0.0,0.0,0.831,2144.0,502090,VS
+586,Reutiberg 2,ror,ror,ror_1,0.48,0.0,0.0,0.0,0.668,989.5,201510,BE
+587,Erlenholz,ror,ror,ror_1,0.48,0.0,0.0,0.0,0.573,549.4,107700,SG
+588,Pas du Lein,ror,ror,ror_1,0.47,0.0,0.0,0.0,0.803,1999.0,505775,VS
+589,Turbinage Jora Afforêts,ror,ror,ror_1,0.47,0.0,0.0,0.0,0.787,1522.0,505450,VS
+590,Ova Spin Dotierzentrale,ror,ror,ror_1,0.47,0.0,0.0,0.0,0.799,1633.7,800900,GR
+591,Châble 2,ror,ror,ror_1,0.47,0.0,0.0,0.0,0.717,1166.0,508675,VS
+592,Geissbrunnen,ror,ror,ror_1,0.47,0.0,0.0,0.0,0.776,1413.2,202125,BE
+593,Engehalde Dotierzentrale,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.563,495.64,203350,BE
+594,La Douve,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.73,1209.0,508850,VD
+595,Sittertal,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.579,585.7,107600,SG
+596,Industrie,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.783,1476.8,104850,GR
+597,La Zour,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.794,1590.0,504325,VS
+598,Alp Trida Laret,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.848,2224.0,800575,GR
+599,Vernayaz STESV,ror,ror,ror_1,0.46,0.0,0.0,0.0,0.658,950.0,507250,VS
+600,Les Pontets,ror,ror,ror_1,0.45,0.0,0.0,0.0,0.879,2553.0,505150,VS
+601,Gérignoz La Pontia,ror,ror,ror_1,0.45,0.0,0.0,0.0,0.742,1247.4,203750,VD
+602,Innere Spinnerei,ror,ror,ror_1,0.45,0.0,0.0,0.0,0.607,738.0,304750,ZG
+603,Rosswald Gärsterna,ror,ror,ror_1,0.45,0.0,0.0,0.0,0.803,1987.0,501450,VS
+604,Bürglen Säge,ror,ror,ror_1,0.44,0.0,0.0,0.0,0.553,441.1,107900,TG
+605,Thun Eidg,ror,ror,ror_1,0.44,0.0,0.0,0.0,0.575,561.2,203100,BE
+606,Wunderklingen,ror,ror,ror_1,0.44,0.0,0.0,0.0,0.549,418.9,108900,SH
+607,Sennhof,ror,ror,ror_1,0.43,0.0,0.0,0.0,0.56,482.5,108400,ZH
+608,Mossjesee,ror,ror,ror_1,0.43,0.0,0.0,0.0,0.879,2416.0,501825,VS
+609,Aux Plans groupe Eau Froide,ror,ror,ror_1,0.43,0.0,0.0,0.0,0.75,1272.65,203775,VD
+610,Gohlhaus,ror,ror,ror_1,0.43,0.0,0.0,0.0,0.58,588.4,206985,BE
+611,Grafenau,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.577,574.1,107625,SG
+612,Aarburg,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.548,412.8,208200,AG
+613,Trümpler,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.563,498.2,108600,ZH
+614,La Moille,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.76,1308.0,506550,VS
+615,Biberist Papieri,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.554,447.64,207400,SO
+616,Model Weinfelden,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.551,428.2,108100,TG
+617,Mühle Weinfelden,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.551,428.2,108200,TG
+618,Moosweid,ror,ror,ror_1,0.42,0.0,0.0,0.0,0.783,1483.0,202450,BE
+619,Wannenfluh,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.583,603.6,206975,BE
+620,Niederlenz,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.544,390.0,208700,AG
+621,Bätterkinden,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.559,474.1,207100,BE
+622,Monthey Meunière,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.552,438.5,508650,VS
+623,Schiffmühle Dotierzentrale,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.543,339.77,405550,AG
+624,Pfungen,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.543,386.0,108450,ZH
+625,Le Châble EVB,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.77,1356.0,505750,VS
+626,Casut Dardin,ror,ror,ror_1,0.4,0.0,0.0,0.0,0.774,1388.8,100575,GR
+627,Sous les Roches,ror,ror,ror_1,0.39,0.0,0.0,0.0,0.589,641.0,206550,BE
+628,Utzenstorf,ror,ror,ror_1,0.38,0.0,0.0,0.0,0.558,468.06,207200,BE
+629,Champagna 1,ror,ror,ror_1,0.38,0.0,0.0,0.0,0.813,2060.0,800350,GR
+630,Seedorf Chuchibach,ror,ror,ror_1,0.38,0.0,0.0,0.0,0.622,800.0,301650,UR
+631,Jaun,ror,ror,ror_1,0.38,0.0,0.0,0.0,0.668,989.78,204000,FR
+632,Weissenburg,ror,ror,ror_1,0.37,0.0,0.0,0.0,0.649,909.0,202560,BE
+633,Dünnern,ror,ror,ror_1,0.37,0.0,0.0,0.0,0.544,395.05,208250,SO
+634,Kollbrunn,ror,ror,ror_1,0.37,0.0,0.0,0.0,0.563,497.5,108300,ZH
+635,Ibach,ror,ror,ror_1,0.36,0.0,0.0,0.0,0.557,461.08,302400,SZ
+636,Grida,ror,ror,ror_1,0.36,0.0,0.0,0.0,0.742,1246.6,104160,GR
+637,Riddes Pied du Mont,ror,ror,ror_1,0.36,0.0,0.0,0.0,0.739,1239.0,505175,VS
+638,Napf,ror,ror,ror_1,0.36,0.0,0.0,0.0,0.644,892.0,302650,NW
+639,Zürchersmühle,ror,ror,ror_1,0.36,0.0,0.0,0.0,0.621,792.45,107450,AR
+640,Piani di Verdabbio,ror,ror,ror_1,0.36,0.0,0.0,0.0,0.543,381.43,601800,GR
+641,Tatz,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.803,2014.0,502420,VS
+642,Arzay Palier Isérables,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.803,1752.0,505125,VS
+643,Nan Ros,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.803,1777.0,601550,GR
+644,Loye La Vierge,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.79,1543.0,503450,VS
+645,Simelemoos,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.67,997.9,202530,BE
+646,Ara Giarsun,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.803,1814.0,800475,GR
+647,Croseau,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.629,827.0,509025,VS
+648,Les Evouettes,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.61,750.0,509050,VS
+649,Niederglatt,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.571,539.28,107200,SG
+650,Juramill,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.543,358.05,109925,BL
+651,Churwalden,ror,ror,ror_1,0.35,0.0,0.0,0.0,0.785,1501.0,104150,GR
+652,Neuägeri,ror,ror,ror_1,0.34,0.0,0.0,0.0,0.6,699.4,304770,ZG
+653,Murkart,ror,ror,ror_1,0.34,0.0,0.0,0.0,0.552,436.0,108270,TG
+654,Nenzlingen,ror,ror,ror_1,0.34,0.0,0.0,0.0,0.543,329.05,110100,BL
+655,Stäubenwald,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.628,825.0,300825,UR
+656,Wolhusen Geistlich,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.578,577.0,304200,LU
+657,Burentobel,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.576,570.1,107650,SG
+658,Baltschieder,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.774,1390.0,502350,VS
+659,Frinvillier,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.568,525.3,206750,BE
+660,Emmenhof,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.553,442.67,207500,SO
+661,Fontanney,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.567,521.0,508950,VD
+662,Intschialp,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.779,1436.0,301050,UR
+663,Des Rochers,ror,ror,ror_1,0.33,0.0,0.0,0.0,0.772,1370.0,504350,VS
+664,Walzmühle 2,ror,ror,ror_1,0.32,0.0,0.0,0.0,0.558,469.8,401790,GL
+665,Blanches-Fontaines,ror,ror,ror_1,0.32,0.0,0.0,0.0,0.579,582.0,109860,JU
+666,Luterbach 2,ror,ror,ror_1,0.32,0.0,0.0,0.0,0.551,429.17,207650,SO
+667,Niollet 1,ror,ror,ror_1,0.32,0.0,0.0,0.0,0.782,1467.37,506000,VS
+668,Taubenloch,ror,ror,ror_1,0.32,0.0,0.0,0.0,0.567,518.09,206800,BE
+669,Vessy,ror,ror,ror_1,0.32,0.0,0.0,0.0,0.544,393.3,509500,GE
+670,Empächli,ror,ror,ror_1,0.31,0.0,0.0,0.0,0.803,1846.0,401250,GL
+671,Roseg,ror,ror,ror_1,0.31,0.0,0.0,0.0,0.803,1908.1,800250,GR
+672,Ri di Foch 2,ror,ror,ror_1,0.31,0.0,0.0,0.0,0.798,1630.0,600650,TI
+673,Schlossmühle,ror,ror,ror_1,0.31,0.0,0.0,0.0,0.548,413.1,108281,TG
+674,Obflue,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.785,1496.0,303750,OW
+675,Spreitenbach Kistler,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.581,595.0,404250,SZ
+676,Chasura Tschlin,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.803,1954.0,800550,GR
+677,Turbinage Comet,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.803,1968.0,506075,VS
+678,Tarschlims,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.792,1572.15,101570,GR
+679,Rotzloch,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.564,503.0,304100,NW
+680,Nufenen Prascherbach,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.803,1988.0,102050,GR
+681,Bäch,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.563,493.8,404500,SZ
+682,Bannwald Altdorf,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.693,1085.05,301550,UR
+683,Madonna degli Angeli,ror,ror,ror_1,0.3,0.0,0.0,0.0,0.641,878.0,602050,TI

@@ -1,0 +1,16 @@
+﻿cluster_name,category,n_plants,power_capacity_MW,pump_capacity_MW,storage_capacity_GWh,agg_storage_hours,expected_gen_GWh_a,summer_infl_share_regime,mean_intake_alt_masl,largest_plants,inflow_share_suggestion
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042
+dam_10,dam,5,190.45,0.0,504.65,2649.777,467.25,0.694,1103.935,Vernayaz CFF; Campocologno 1; La Dernier,0.025
+dam_2,dam,9,1061.0,0.0,357.36,336.814,1814.77,0.786,1602.63,Innertkirchen 1 und 1a; Tierfehd Limmern; Handeck 2 und 2a,0.098
+dam_3,dam,5,310.9,0.0,122.59,394.307,616.76,0.628,819.948,Sarelli; Am Löntsch; Unteraa Lungerersee,0.033
+dam_4,dam,3,656.9,0.0,384.86,585.873,1510.7,0.682,1043.054,Biasca; Sils KHR; Martina,0.082
+dam_5,dam,10,1050.11,0.0,732.5,697.546,2856.99,0.787,1567.915,Pradella; Bärenburg; Tavanasa KVR,0.155
+dam_6,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129
+dam_7,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056
+dam_8,dam,5,457.1,0.0,522.55,1143.185,1359.74,0.696,1093.515,La Bâtiaz; Cavergno; Navizence,0.074
+dam_9,dam,25,2248.26,0.0,3080.97,1370.38,4591.89,0.796,1706.885,Nendaz; Riddes; Stalden KWM,0.249
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,

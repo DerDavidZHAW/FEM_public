@@ -1,0 +1,12 @@
+﻿cluster_name,category,n_plants,power_capacity_MW,pump_capacity_MW,storage_capacity_GWh,agg_storage_hours,expected_gen_GWh_a,summer_infl_share_regime,mean_intake_alt_masl,largest_plants,inflow_share_suggestion
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042
+dam_2,dam,16,1856.6,0.0,868.18,467.618,3887.42,0.789,1610.683,Innertkirchen 1 und 1a; Tierfehd Limmern; Pradella,0.211
+dam_3,dam,7,913.3,0.0,490.44,536.998,2055.46,0.669,988.561,Biasca; Sils KHR; Sarelli,0.112
+dam_4,dam,8,459.62,0.0,320.72,697.794,1104.64,0.574,555.978,Gordola; Verbano 1; Hauterive,0.06
+dam_5,dam,4,1595.2,0.0,1174.71,736.403,2406.15,0.877,2363.378,Bieudron; Fionnay GD; Palü,0.131
+dam_6,dam,29,2505.27,0.0,3387.72,1352.237,5369.78,0.793,1673.514,Nendaz; Riddes; Stalden KWM,0.291
+dam_7,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,

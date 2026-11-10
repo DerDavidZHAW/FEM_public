@@ -1,0 +1,19 @@
+jrc_name,class,jrc_volume_Mm3,our_volume_Mm3,jrc_storage_GWh,our_storage_GWh,our_lakes,note
+Grande Dixence - Cleuson-Dixence (chandolin-fionnay-nen,comparable,400.0,421.0,1764.3,1646.4,Lac des Dix; Lac de Cleuson,full-cascade in both
+Bitsch,comparable,9.2,9.2,16.3,14.1,Gibidum Stausee,single stage
+Mapragg - Gigerwald G1,entity_mismatch,3.34,35.6,3.1,52.7,Gigerwaldsee,JRC 3.34 Mio m3 = Mapragg basin only
+Tierfehd limmern Tierfehd - Limmern GPSW - Linth–Limmer,convention,92.0,93.0,0.7,236.9,Limmerensee,JRC 0.7 GWh implausible; volume checks (92 vs 93)
+Nant drance NANT DE DRANCE - Nant de Drance Pumped Stor,convention,13.8,26.6,20.0,97.7,Lac du Vieux Emosson,JRC 20 GWh = PSP loop; ours full drop to the valley
+KWO Produktion_2 - Innertkirchen 1 Hydroelectric Power ,convention,14.0,27.0,21.9,54.9,Räterichs­bodensee,KWO cascade share
+FERRERA KHR,convention,197.0,197.0,22.6,494.3,Lago di Lei,JRC ~loop accounting; ours full cascade to Sils
+Centrale di RobieiPS,entity_mismatch,126.0,37.7,6.5,181.5,Lago di Robièi; Lago del Zött; Lago dei Cavagnöö,JRC volume 126 unclear; JRC 6.5 GWh ~ loop
+Châtelard - Barberine,entity_mismatch,,227.0,9.0,694.2,Lac d’Emosson,Barberine submerged by Emosson 1975 (we DROP the old lake)
+Etzelwerk Altendorf,comparable,,96.5,104.9,82.7,Sihlsee,our value after regional calibration (x0.78); raw physics estimate ~105 GWh matches JRC
+Grimsel KWO ProduktionPS - Grimsel 3 Pumped Storage Pow,jrc_error,,,210.0,,,plant was never built
+Limmern+Hintersand+Tierfehd,convention,25.0,25.6,34.0,93.9,Muttsee,JRC 34 GWh = PSP loop (SWV: 35); ours full cascade
+Mottec,convention,77.0,78.0,0.2,279.7,Lac de Moiry,JRC 0.22 GWh = basin only; volume checks (77 vs 78)
+Wägital rempen,entity_mismatch,0.5,150.0,0.1,121.3,Wägitalersee,"JRC row = Rempen basin (0.5 Mio m3), not the lake"
+Handeck isogyre Handeck 3 Hydroelectric Power Plant Swi,convention,,,0.5,,,PSP loop basin only
+Sambuco peccia,convention,64.0,64.0,0.1,191.3,Lago del Sambuco,JRC 0.11 GWh = basin only; volume checks (64 vs 64)
+Veytaux - Hongrin léman Usine de Fionnay,comparable,53.2,53.2,107.7,84.1,Lac de l’Hongrin,Hongrin-Leman drop
+Grimsel KWO ProduktionPS - Grimsel 2 Pumped Storage Pow,jrc_error,700.0,164.7,53.4,423.8,Grimselsee; Oberaarsee,JRC volume 700 Mio m3 is wrong (Grimselsee ~100)

@@ -1,0 +1,22 @@
+﻿validate_hydro_plants.py -- summary
+====================================
+[PASS] no duplicate wasta_id
+[PASS] no negative values
+[PASS] all plants found in WASTA
+[PASS] all plants CH and in operation
+[PASS] turbine capacity ~ WASTA anchor -- 17,109 MW (anchor ~17.1 GW)
+[PASS] pump capacity ~ WASTA anchor -- 3,964 MW (anchor ~4.0 GW)
+[PASS] expected generation ~ WASTA anchor -- 37,230 GWh/a (anchor ~37 TWh)
+[PASS] total storage = BFE ogd17 maximum -- 8,895 vs 8,895 GWh
+[PASS] lake energies sum to the same total -- 8,895 GWh
+[PASS] ror storage negligible -- 21 GWh
+[PASS] no plant with E/P > 2 years
+[PASS] capacity within +/-50% for matched JRC entries -- 45/56 within band (token matching is scheme-level, mismatches listed in jrc_capacity_check.csv)
+[PASS] reservoir volumes agree with JRC (curated, excl. JRC errors and entity mismatches) -- 8/10 within +/-25-30%: Lac des Dix 421.0/400.0, Gibidum Stausee 9.2/9.2, Limmerensee 93.0/92.0, Lago di Lei 197.0/197.0, Muttsee 25.6/25.0, Lac de Moiry 78.0/77.0, Lago del Sambuco 64.0/64.0, Lac de l’Hongrin 53.2/53.2
+[PASS] storage energies agree with JRC where conventions align -- Lac des Dix: 1645.1 vs 1764.3 GWh; Gibidum Stausee: 14.1 vs 16.3 GWh; Sihlsee: 82.7 vs 104.9 GWh; Lac de l’Hongrin: 84.1 vs 107.7 GWh
+[PASS] capacity within +/-50% for matched GloHydroRes entries -- 31/39 within band (outliers are scheme-level token multi-matches, see CSV)
+[PASS] reservoir volumes agree with GloHydroRes -- 20/25 within +/-25-30% (misses are usable-vs-total conventions or attribution, see CSV)
+[PASS] mass-balance annual inflow ~ PECD (2008) -- 19,545 vs 18,616 GWh (ratio 1.05)
+[PASS] mass-balance monthly shape ~ PECD (2008) -- correlation 0.96
+[PASS] mass-balance annual inflow ~ PECD (2009) -- 19,256 vs 18,298 GWh (ratio 1.05)
+[PASS] mass-balance monthly shape ~ PECD (2009) -- correlation 0.98

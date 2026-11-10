@@ -1,0 +1,205 @@
+﻿cluster_name,category,n_plants,power_capacity_MW,pump_capacity_MW,storage_capacity_GWh,agg_storage_hours,expected_gen_GWh_a,summer_infl_share_regime,mean_intake_alt_masl,largest_plants,inflow_share_suggestion,n_total
+dam_1,dam,73,8305.34,0.0,7181.99,864.744,17405.74,0.774,1599.958,Bieudron; Innertkirchen 1 und 1a; Nendaz,0.944,4
+psp_open_1,psp_open,12,877.03,821.68,1078.1,1124.872,1025.91,0.814,1966.836,Robiei; Ferrera 1; Mottec,0.056,4
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,4
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,4
+dam_1,dam,22,2343.52,0.0,1112.41,474.675,5364.9,0.687,1046.264,Innertkirchen 1 und 1a; Bitsch; Biasca,0.291,5
+dam_2,dam,51,5961.82,0.0,6069.58,1018.075,12040.84,0.809,1817.609,Bieudron; Nendaz; Fionnay GD,0.653,5
+psp_open_1,psp_open,12,877.03,821.68,1078.1,1124.872,1025.91,0.814,1966.836,Robiei; Ferrera 1; Mottec,0.056,5
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,5
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,5
+dam_1,dam,2,389.5,0.0,21.79,55.944,905.3,0.779,1438.216,Bitsch; Ilanz 2,0.049,6
+dam_2,dam,23,2008.27,0.0,1737.22,865.033,4972.09,0.655,919.563,Biasca; Sils KHR; La Bâtiaz,0.27,6
+dam_3,dam,48,5907.57,0.0,5422.98,917.971,11528.35,0.815,1841.922,Bieudron; Innertkirchen 1 und 1a; Nendaz,0.625,6
+psp_open_1,psp_open,12,877.03,821.68,1078.1,1124.872,1025.91,0.814,1966.836,Robiei; Ferrera 1; Mottec,0.056,6
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,6
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,6
+dam_1,dam,2,389.5,0.0,21.79,55.944,905.3,0.779,1438.216,Bitsch; Ilanz 2,0.049,7
+dam_2,dam,18,3392.6,0.0,2019.19,595.175,6137.12,0.831,1964.726,Bieudron; Innertkirchen 1 und 1a; Fionnay GD,0.333,7
+dam_3,dam,17,1516.92,0.0,964.4,635.762,3635.5,0.64,858.994,Biasca; Sils KHR; Gordola,0.197,7
+dam_4,dam,36,3006.32,0.0,4176.61,1389.277,6727.82,0.778,1583.151,Nendaz; Riddes; La Bâtiaz,0.365,7
+psp_open_1,psp_open,12,877.03,821.68,1078.1,1124.872,1025.91,0.814,1966.836,Robiei; Ferrera 1; Mottec,0.056,7
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,7
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,7
+dam_1,dam,2,389.5,0.0,21.79,55.944,905.3,0.779,1438.216,Bitsch; Ilanz 2,0.049,8
+dam_2,dam,18,3392.6,0.0,2019.19,595.175,6137.12,0.831,1964.726,Bieudron; Innertkirchen 1 und 1a; Fionnay GD,0.333,8
+dam_3,dam,17,1516.92,0.0,964.4,635.762,3635.5,0.64,858.994,Biasca; Sils KHR; Gordola,0.197,8
+dam_4,dam,36,3006.32,0.0,4176.61,1389.277,6727.82,0.778,1583.151,Nendaz; Riddes; La Bâtiaz,0.365,8
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,8
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,8
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,8
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,8
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,9
+dam_2,dam,16,1856.6,0.0,868.18,467.618,3887.42,0.789,1610.683,Innertkirchen 1 und 1a; Tierfehd Limmern; Pradella,0.211,9
+dam_3,dam,17,1516.92,0.0,964.4,635.762,3635.5,0.64,858.994,Biasca; Sils KHR; Gordola,0.197,9
+dam_4,dam,5,1597.13,0.0,1177.28,737.122,2409.05,0.877,2363.248,Bieudron; Fionnay GD; Palü,0.131,9
+dam_5,dam,34,2994.69,0.0,4157.97,1388.448,6703.47,0.777,1580.115,Nendaz; Riddes; La Bâtiaz,0.364,9
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,9
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,9
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,9
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,9
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,10
+dam_2,dam,16,1856.6,0.0,868.18,467.618,3887.42,0.789,1610.683,Innertkirchen 1 und 1a; Tierfehd Limmern; Pradella,0.211,10
+dam_3,dam,12,716.02,0.0,426.3,595.374,1649.4,0.595,660.889,Gordola; Verbano 1; Sarelli,0.089,10
+dam_4,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,10
+dam_5,dam,12,1472.25,0.0,1468.17,997.229,3882.49,0.695,1089.068,Biasca; Sils KHR; La Bâtiaz,0.211,10
+dam_6,dam,29,2334.97,0.0,3246.54,1390.399,4831.43,0.796,1707.042,Nendaz; Riddes; Stalden KWM,0.262,10
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,10
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,10
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,10
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,10
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,11
+dam_2,dam,16,1856.6,0.0,868.18,467.618,3887.42,0.789,1610.683,Innertkirchen 1 und 1a; Tierfehd Limmern; Pradella,0.211,11
+dam_3,dam,7,913.3,0.0,490.44,536.998,2055.46,0.669,988.561,Biasca; Sils KHR; Sarelli,0.112,11
+dam_4,dam,8,459.62,0.0,320.72,697.794,1104.64,0.574,555.978,Gordola; Verbano 1; Hauterive,0.06,11
+dam_5,dam,4,1595.2,0.0,1174.71,736.403,2406.15,0.877,2363.378,Bieudron; Fionnay GD; Palü,0.131,11
+dam_6,dam,29,2505.27,0.0,3387.72,1352.237,5369.78,0.793,1673.514,Nendaz; Riddes; Stalden KWM,0.291,11
+dam_7,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098,11
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,11
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,11
+psp_close_1,psp_close,7,3265.9,3134.0,614.35,183.503,598.66,0.816,1948.172,Limmern; Nant de Drance; Veytaux,,11
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,11
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,12
+dam_2,dam,16,1856.6,0.0,868.18,467.618,3887.42,0.789,1610.683,Innertkirchen 1 und 1a; Tierfehd Limmern; Pradella,0.211,12
+dam_3,dam,7,913.3,0.0,490.44,536.998,2055.46,0.669,988.561,Biasca; Sils KHR; Sarelli,0.112,12
+dam_4,dam,8,459.62,0.0,320.72,697.794,1104.64,0.574,555.978,Gordola; Verbano 1; Hauterive,0.06,12
+dam_5,dam,4,1595.2,0.0,1174.71,736.403,2406.15,0.877,2363.378,Bieudron; Fionnay GD; Palü,0.131,12
+dam_6,dam,29,2505.27,0.0,3387.72,1352.237,5369.78,0.793,1673.514,Nendaz; Riddes; Stalden KWM,0.291,12
+dam_7,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098,12
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,12
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,12
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,12
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,12
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,12
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,13
+dam_2,dam,9,1061.0,0.0,357.36,336.814,1814.77,0.786,1602.63,Innertkirchen 1 und 1a; Tierfehd Limmern; Handeck 2 und 2a,0.098,13
+dam_3,dam,7,913.3,0.0,490.44,536.998,2055.46,0.669,988.561,Biasca; Sils KHR; Sarelli,0.112,13
+dam_4,dam,8,459.62,0.0,320.72,697.794,1104.64,0.574,555.978,Gordola; Verbano 1; Hauterive,0.06,13
+dam_5,dam,11,1064.11,0.0,745.75,700.82,2894.69,0.787,1572.192,Pradella; Bärenburg; Tavanasa KVR,0.157,13
+dam_6,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,13
+dam_7,dam,26,2246.46,0.0,3168.86,1410.602,4569.19,0.796,1706.138,Nendaz; Riddes; Stalden KWM,0.248,13
+dam_8,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098,13
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,13
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,13
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,13
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,13
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,13
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,14
+dam_2,dam,9,1061.0,0.0,357.36,336.814,1814.77,0.786,1602.63,Innertkirchen 1 und 1a; Tierfehd Limmern; Handeck 2 und 2a,0.098,14
+dam_3,dam,7,913.3,0.0,490.44,536.998,2055.46,0.669,988.561,Biasca; Sils KHR; Sarelli,0.112,14
+dam_4,dam,9,1045.1,0.0,727.87,696.46,2834.79,0.787,1565.997,Pradella; Bärenburg; Tavanasa KVR,0.154,14
+dam_5,dam,8,459.62,0.0,320.72,697.794,1104.64,0.574,555.978,Gordola; Verbano 1; Hauterive,0.06,14
+dam_6,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,14
+dam_7,dam,18,1725.54,0.0,2072.55,1201.102,3294.42,0.794,1694.447,Nendaz; Stalden KWM; Bavona,0.179,14
+dam_8,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098,14
+dam_9,dam,10,539.93,0.0,1114.19,2063.582,1334.67,0.802,1750.776,Riddes; Miéville; Lucendro,0.072,14
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,14
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,14
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,14
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,14
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,14
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,15
+dam_10,dam,5,190.45,0.0,504.65,2649.777,467.25,0.694,1103.935,Vernayaz CFF; Campocologno 1; La Dernier,0.025,15
+dam_2,dam,9,1061.0,0.0,357.36,336.814,1814.77,0.786,1602.63,Innertkirchen 1 und 1a; Tierfehd Limmern; Handeck 2 und 2a,0.098,15
+dam_3,dam,5,310.9,0.0,122.59,394.307,616.76,0.628,819.948,Sarelli; Am Löntsch; Unteraa Lungerersee,0.033,15
+dam_4,dam,3,656.9,0.0,384.86,585.873,1510.7,0.682,1043.054,Biasca; Sils KHR; Martina,0.082,15
+dam_5,dam,10,1050.11,0.0,732.5,697.546,2856.99,0.787,1567.915,Pradella; Bärenburg; Tavanasa KVR,0.155,15
+dam_6,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,15
+dam_7,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056,15
+dam_8,dam,5,457.1,0.0,522.55,1143.185,1359.74,0.696,1093.515,La Bâtiaz; Cavergno; Navizence,0.074,15
+dam_9,dam,25,2248.26,0.0,3080.97,1370.38,4591.89,0.796,1706.885,Nendaz; Riddes; Stalden KWM,0.249,15
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,15
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,15
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,15
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,15
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,15
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,16
+dam_10,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098,16
+dam_11,dam,16,1092.46,0.0,1862.35,1704.731,2352.43,0.804,1821.172,Riddes; Sedrun 1; Fionnay FMM,0.128,16
+dam_2,dam,4,486.6,0.0,133.85,275.072,959.1,0.768,1357.388,Innertkirchen 1 und 1a; Ilanz 2; Schwanden Niederenbach,0.052,16
+dam_3,dam,5,574.4,0.0,223.51,389.119,855.67,0.801,1810.386,Tierfehd Limmern; Handeck 2 und 2a; Turtmann,0.046,16
+dam_4,dam,5,310.9,0.0,122.59,394.307,616.76,0.628,819.948,Sarelli; Am Löntsch; Unteraa Lungerersee,0.033,16
+dam_5,dam,3,656.9,0.0,384.86,585.873,1510.7,0.682,1043.054,Biasca; Sils KHR; Martina,0.082,16
+dam_6,dam,7,795.6,0.0,510.82,642.056,2072.65,0.793,1621.423,Pradella; Bärenburg; Göschenen Göscheneralp,0.112,16
+dam_7,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,16
+dam_8,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056,16
+dam_9,dam,14,1422.51,0.0,1541.44,1083.606,3038.8,0.784,1564.976,Nendaz; Stalden KWM; Tavanasa KVR,0.165,16
+psp_open_1,psp_open,3,198.63,273.692,112.43,401.507,47.85,0.849,2232.395,Robiei; Z'Mutt Centrale pomp. et turb.; Bortelalp,0.003,16
+psp_open_2,psp_open,9,678.4,547.988,965.67,1423.452,978.06,0.799,1857.222,Ferrera 1; Mottec; Châtelard Barberine,0.053,16
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,16
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,16
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,16
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,17
+dam_10,dam,8,635.35,0.0,926.06,1457.559,1811.99,0.694,1083.401,La Bâtiaz; Cavergno; Vernayaz CFF,0.098,17
+dam_11,dam,16,1092.46,0.0,1862.35,1704.731,2352.43,0.804,1821.172,Riddes; Sedrun 1; Fionnay FMM,0.128,17
+dam_2,dam,4,486.6,0.0,133.85,275.072,959.1,0.768,1357.388,Innertkirchen 1 und 1a; Ilanz 2; Schwanden Niederenbach,0.052,17
+dam_3,dam,5,574.4,0.0,223.51,389.119,855.67,0.801,1810.386,Tierfehd Limmern; Handeck 2 und 2a; Turtmann,0.046,17
+dam_4,dam,5,310.9,0.0,122.59,394.307,616.76,0.628,819.948,Sarelli; Am Löntsch; Unteraa Lungerersee,0.033,17
+dam_5,dam,3,656.9,0.0,384.86,585.873,1510.7,0.682,1043.054,Biasca; Sils KHR; Martina,0.082,17
+dam_6,dam,7,795.6,0.0,510.82,642.056,2072.65,0.793,1621.423,Pradella; Bärenburg; Göschenen Göscheneralp,0.112,17
+dam_7,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,17
+dam_8,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056,17
+dam_9,dam,14,1422.51,0.0,1541.44,1083.606,3038.8,0.784,1564.976,Nendaz; Stalden KWM; Tavanasa KVR,0.165,17
+psp_open_1,psp_open,2,196.25,268.863,108.59,393.442,42.69,0.849,2229.043,Robiei; Z'Mutt Centrale pomp. et turb.,0.002,17
+psp_open_2,psp_open,1,66.2,30.629,69.48,1049.547,60.0,0.648,906.5,Rempen,0.003,17
+psp_open_3,psp_open,9,614.58,522.188,900.03,1460.566,923.22,0.816,1963.306,Ferrera 1; Mottec; Châtelard Barberine,0.05,17
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,17
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,17
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,17
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,18
+dam_10,dam,19,1901.0,0.0,2511.47,1321.131,3635.86,0.798,1728.981,Nendaz; Riddes; Stalden KWM,0.197,18
+dam_11,dam,7,583.35,0.0,878.77,1506.42,1661.35,0.691,1073.008,La Bâtiaz; Cavergno; Vernayaz CFF,0.09,18
+dam_12,dam,7,138.47,0.0,431.38,3115.332,399.97,0.823,2003.241,Handeck 1; Grimsel 1 Oberaar; Ritom,0.022,18
+dam_2,dam,4,486.6,0.0,133.85,275.072,959.1,0.768,1357.388,Innertkirchen 1 und 1a; Ilanz 2; Schwanden Niederenbach,0.052,18
+dam_3,dam,4,266.9,0.0,96.38,361.109,431.1,0.628,819.28,Sarelli; Am Löntsch; Unteraa Lungerersee,0.023,18
+dam_4,dam,5,574.4,0.0,223.51,389.119,855.67,0.801,1810.386,Tierfehd Limmern; Handeck 2 und 2a; Turtmann,0.046,18
+dam_5,dam,4,700.9,0.0,411.07,586.489,1696.36,0.679,1029.302,Biasca; Sils KHR; Martina,0.092,18
+dam_6,dam,8,865.1,0.0,570.62,659.6,2274.99,0.794,1626.129,Pradella; Bärenburg; Göschenen Göscheneralp,0.123,18
+dam_7,dam,3,1585.5,0.0,1158.64,730.773,2384.7,0.877,2363.236,Bieudron; Fionnay GD; Palü,0.129,18
+dam_8,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056,18
+dam_9,dam,4,458.0,0.0,448.43,979.105,1303.7,0.755,1303.953,Tavanasa KVR; Rothenbrunnen KWZ; Castasegna,0.071,18
+psp_open_1,psp_open,2,196.25,268.863,108.59,393.442,42.69,0.849,2229.043,Robiei; Z'Mutt Centrale pomp. et turb.,0.002,18
+psp_open_2,psp_open,1,66.2,30.629,69.48,1049.547,60.0,0.648,906.5,Rempen,0.003,18
+psp_open_3,psp_open,9,614.58,522.188,900.03,1460.566,923.22,0.816,1963.306,Ferrera 1; Mottec; Châtelard Barberine,0.05,18
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,18
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,18
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,18
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,19
+dam_10,dam,4,328.13,0.0,348.13,1060.951,305.95,0.876,2360.339,Fionnay GD; Palü; Altstafel,0.017,19
+dam_11,dam,15,1497.61,0.0,1826.09,1219.336,2698.26,0.799,1745.802,Nendaz; Stalden KWM; Bavona,0.146,19
+dam_12,dam,7,583.35,0.0,878.77,1506.42,1661.35,0.691,1073.008,La Bâtiaz; Cavergno; Vernayaz CFF,0.09,19
+dam_13,dam,9,530.23,0.0,1098.12,2071.026,1313.22,0.8,1739.146,Riddes; Miéville; Lucendro,0.071,19
+dam_2,dam,4,486.6,0.0,133.85,275.072,959.1,0.768,1357.388,Innertkirchen 1 und 1a; Ilanz 2; Schwanden Niederenbach,0.052,19
+dam_3,dam,4,266.9,0.0,96.38,361.109,431.1,0.628,819.28,Sarelli; Am Löntsch; Unteraa Lungerersee,0.023,19
+dam_4,dam,5,574.4,0.0,223.51,389.119,855.67,0.801,1810.386,Tierfehd Limmern; Handeck 2 und 2a; Turtmann,0.046,19
+dam_5,dam,4,700.9,0.0,411.07,586.489,1696.36,0.679,1029.302,Biasca; Sils KHR; Martina,0.092,19
+dam_6,dam,1,1269.0,0.0,829.15,653.388,2103.1,0.877,2364.0,Bieudron,0.114,19
+dam_7,dam,8,865.1,0.0,570.62,659.6,2274.99,0.794,1626.129,Pradella; Bärenburg; Göschenen Göscheneralp,0.123,19
+dam_8,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056,19
+dam_9,dam,4,458.0,0.0,448.43,979.105,1303.7,0.755,1303.953,Tavanasa KVR; Rothenbrunnen KWZ; Castasegna,0.071,19
+psp_open_1,psp_open,2,196.25,268.863,108.59,393.442,42.69,0.849,2229.043,Robiei; Z'Mutt Centrale pomp. et turb.,0.002,19
+psp_open_2,psp_open,1,66.2,30.629,69.48,1049.547,60.0,0.648,906.5,Rempen,0.003,19
+psp_open_3,psp_open,9,614.58,522.188,900.03,1460.566,923.22,0.816,1963.306,Ferrera 1; Mottec; Châtelard Barberine,0.05,19
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,19
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,19
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,19
+dam_1,dam,1,340.0,0.0,14.16,41.647,770.3,0.779,1436.5,Bitsch,0.042,20
+dam_10,dam,4,328.13,0.0,348.13,1060.951,305.95,0.876,2360.339,Fionnay GD; Palü; Altstafel,0.017,20
+dam_11,dam,4,405.1,0.0,475.26,1173.192,1209.1,0.692,1079.846,La Bâtiaz; Cavergno; Navizence,0.066,20
+dam_12,dam,16,1597.61,0.0,1929.59,1207.798,2964.92,0.797,1725.24,Nendaz; Stalden KWM; Bavona,0.161,20
+dam_13,dam,9,530.23,0.0,1098.12,2071.026,1313.22,0.8,1739.146,Riddes; Miéville; Lucendro,0.071,20
+dam_14,dam,3,178.25,0.0,403.51,2263.731,452.25,0.686,1057.466,Vernayaz CFF; Campocologno 1; La Dernier,0.025,20
+dam_2,dam,4,486.6,0.0,133.85,275.072,959.1,0.768,1357.388,Innertkirchen 1 und 1a; Ilanz 2; Schwanden Niederenbach,0.052,20
+dam_3,dam,4,266.9,0.0,96.38,361.109,431.1,0.628,819.28,Sarelli; Am Löntsch; Unteraa Lungerersee,0.023,20
+dam_4,dam,5,574.4,0.0,223.51,389.119,855.67,0.801,1810.386,Tierfehd Limmern; Handeck 2 und 2a; Turtmann,0.046,20
+dam_5,dam,4,700.9,0.0,411.07,586.489,1696.36,0.679,1029.302,Biasca; Sils KHR; Martina,0.092,20
+dam_6,dam,1,1269.0,0.0,829.15,653.388,2103.1,0.877,2364.0,Bieudron,0.114,20
+dam_7,dam,8,865.1,0.0,570.62,659.6,2274.99,0.794,1626.129,Pradella; Bärenburg; Göschenen Göscheneralp,0.123,20
+dam_8,dam,7,405.12,0.0,303.71,749.679,1032.64,0.571,538.823,Gordola; Verbano 1; Hauterive,0.056,20
+dam_9,dam,3,358.0,0.0,344.93,963.492,1037.04,0.75,1272.292,Tavanasa KVR; Rothenbrunnen KWZ; Tiefencastel Ost,0.056,20
+psp_open_1,psp_open,2,196.25,268.863,108.59,393.442,42.69,0.849,2229.043,Robiei; Z'Mutt Centrale pomp. et turb.,0.002,20
+psp_open_2,psp_open,1,66.2,30.629,69.48,1049.547,60.0,0.648,906.5,Rempen,0.003,20
+psp_open_3,psp_open,9,614.58,522.188,900.03,1460.566,923.22,0.816,1963.306,Ferrera 1; Mottec; Châtelard Barberine,0.05,20
+psp_close_1,psp_close,3,2288.0,2292.0,283.25,123.582,18.76,0.848,2244.113,Limmern; Nant de Drance; Grimsel 2,,20
+psp_close_2,psp_close,4,977.9,842.0,331.1,313.571,579.9,0.746,1305.785,Veytaux; Mapragg; Etzelwerk Altendorf,,20
+ror_1,ror,591,4661.2,8.1,20.59,4.417,18199.71,0.652,899.302,Biaschina; Lötschen; Amsteg,,20
