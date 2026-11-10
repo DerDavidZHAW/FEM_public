@@ -1776,22 +1776,25 @@ def import_avail_plant(
             data_dict[country] = default_data
 
     map_t_month = timemapping_creator("t", "month")
+    # A Swiss RES plant's availability series is stored under its own name or under the CH00 name.
+    # The first hour is enough to find out which.
+    t_first = T_list[0]
     for plant in Plant_list:
         if plant in Plant_RES_CH_list:
 
             try:
                 # First try with original plant name
-                _ = Avail_plant_RES_year_scenario[(plant, t)]
+                _ = Avail_plant_RES_year_scenario[(plant, t_first)]
                 plant2 = plant
 
             except KeyError:
                 # Try replacing "01" with "00" in the plant name
                 plant_alt = plant.replace("01", "00", 1)
                 try:
-                    _ = Avail_plant_RES_year_scenario[(plant_alt, t)]
+                    _ = Avail_plant_RES_year_scenario[(plant_alt, t_first)]
                     plant2 = plant_alt
                 except KeyError:
-                    raise KeyError(f"Neither {plant} nor {plant_alt} found for t={t}")
+                    raise KeyError(f"Neither {plant} nor {plant_alt} found for t={t_first}")
 
             for t in T_list:
                 Avail_plant[plant, t] = Avail_plant_RES_year_scenario[plant2, t]
